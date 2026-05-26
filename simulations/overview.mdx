@@ -1,0 +1,109 @@
+---
+title: "Simulations overview"
+description: "Anatomy of a simulation — what it does, when to use it, and what to expect from results."
+---
+
+A **simulation** is one run of N agents through one specific decision scenario. It produces a distribution of choices, segment breakdowns, an NPS prediction, top objections, and Sentia-generated recommendations.
+
+## When to run a simulation
+
+<CardGroup cols={2}>
+  <Card title="Pre-launch validation" icon="rocket">
+    Before shipping a non-trivial change — pricing, onboarding, plan structure, major UX flow.
+  </Card>
+  <Card title="Tradeoff resolution" icon="scale-balanced">
+    Two competing designs and no consensus. Run both, compare segment receptivity.
+  </Card>
+  <Card title="Risk surfacing" icon="triangle-exclamation">
+    "What could go wrong?" — Objections tab reveals concerns clustered from real verbatims.
+  </Card>
+  <Card title="Roadmap prioritization" icon="list-ol">
+    Run candidate features in parallel against the same population. Compare predicted NPS lift, adoption curves.
+  </Card>
+</CardGroup>
+
+Bad fits: bug fixes, copy tweaks, internal tooling. Agents simulate end users — they have no opinion on engineering churn.
+
+## The four parts of a simulation
+
+A simulation always has these four pieces:
+
+```
+┌────────────┐   ┌────────────┐   ┌────────────┐   ┌────────────┐
+│  Decision  │   │  Scenario  │   │ Population │   │   Config   │
+│            │   │ + captures │   │            │   │            │
+└────────────┘   └────────────┘   └────────────┘   └────────────┘
+```
+
+| Part | What it is |
+| --- | --- |
+| **Decision** | The change being evaluated. Question, hypothesis, success criteria. |
+| **Scenario + captures** | The "what does the change look like?" — Figma frames, captured UI, URL screenshots, or text. |
+| **Population** | The "who is reacting?" — your validated population. |
+| **Config** | The "how rigorous?" — mode (Fast/Deep), agent count, convergence threshold, max duration. |
+
+You configure these in the 4-step [wizard](/simulations/wizard).
+
+## What you get back
+
+After the run completes, the 8-tab results view:
+
+<CardGroup cols={2}>
+  <Card title="Overview" icon="chart-pie">
+    Headline distribution, confidence, top concerns, NPS prediction.
+  </Card>
+  <Card title="Recommendations" icon="lightbulb">
+    Sentia-generated actions to address objections and amplify positives.
+  </Card>
+  <Card title="Segments" icon="users">
+    Breakdown by adopter category, persona, plan tier, tenure. The most important tab.
+  </Card>
+  <Card title="Objections" icon="message-exclamation">
+    Top concern clusters with sample verbatims.
+  </Card>
+  <Card title="Agents" icon="user">
+    Per-agent decisions, sortable and filterable.
+  </Card>
+  <Card title="Transcripts" icon="message-lines">
+    Full Memory → Reflection → Decision chain for any agent.
+  </Card>
+  <Card title="Adoption Cascade" icon="chart-line">
+    12-month projected adoption curve, Innovator → Laggard.
+  </Card>
+  <Card title="Calibration" icon="bullseye">
+    Predicted vs. actual once the feature ships. Updates in real time.
+  </Card>
+</CardGroup>
+
+## How long it takes
+
+| Mode | Agents | Duration | LLM cost (approx) |
+| --- | --- | --- | --- |
+| **Fast** | 200–500 | 2–5 min | ~600–1,500 calls |
+| **Deep** | 1,000–5,000 | 8–25 min | ~3,000–15,000 calls |
+| **Custom** | Up to 10,000 | Up to 60 min | Per agent × 3 calls |
+
+Cost is metered per-token against your workspace contract allocation. Visible in Admin → Usage.
+
+## Where to go from here
+
+<CardGroup cols={2}>
+  <Card title="The wizard" icon="wand-magic-sparkles" href="/simulations/wizard">
+    Walk through the 4-step setup in detail.
+  </Card>
+  <Card title="Input quality hierarchy" icon="image" href="/simulations/inputs">
+    Captured UI beats Figma beats URL beats text. Why and by how much.
+  </Card>
+  <Card title="Fast vs. Deep" icon="gauge-high" href="/simulations/modes">
+    When to pick each mode.
+  </Card>
+  <Card title="Reading results" icon="chart-mixed" href="/simulations/results">
+    The 8-tab tour with screenshots of patterns to look for.
+  </Card>
+  <Card title="Auto-triggers" icon="bolt" href="/simulations/triggers">
+    Run simulations automatically from Linear, Jira, Figma, or Slack.
+  </Card>
+  <Card title="Best practices" icon="trophy" href="/simulations/best-practices">
+    Input quality, convergence, calibration, accuracy benchmarks.
+  </Card>
+</CardGroup>

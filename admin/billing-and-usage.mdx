@@ -1,0 +1,124 @@
+---
+title: "Billing & usage"
+description: "Contract allocation, simulation usage tracking, and reading the usage dashboard."
+---
+
+Sentia bills annually on an enterprise contract. Your contract allocates **simulation budget** (LLM call quota), **seats**, and **integration count**. The billing dashboard at Admin → Billing shows your real-time consumption against allocation.
+
+## What you're billed for
+
+| Resource | Unit | Notes |
+| --- | --- | --- |
+| **Simulation budget** | LLM calls per month | Token cost depends on per-agent prompt size; budget tracked in calls rather than tokens for predictability |
+| **Seats** | Active users per month | Users who signed in or were active in the last 30 days |
+| **Integrations** | Connected count | Some contracts cap integrations; most enterprise contracts are unlimited |
+| **Populations** | Active populations | Most contracts: unlimited |
+| **Storage** | GB stored | Includes captures, verbatim embeddings, audit logs |
+
+Pricing is contract-specific. Talk to your CSM for current pricing or to renegotiate scope.
+
+## Usage dashboard
+
+`/admin/billing` shows:
+
+- **Current period usage** vs. allocation, with burn rate
+- **Days remaining in billing cycle**
+- **Projected end-of-cycle usage**
+- **Top consumers** — users, populations, simulation types by call volume
+- **Historical trend** — last 12 months
+- **Alerts** — when consumption is on track to exceed allocation
+
+## Per-simulation cost preview
+
+Before launching a simulation, the wizard shows:
+
+- **Approximate LLM call count** — typically 3× agent count (Memory + Reflection + Decision per agent)
+- **Budget impact** — % of monthly allocation this run will consume
+- **Cost estimate** — your contract rate × call count
+
+You can adjust mode or agent count if the estimate exceeds what you want to spend.
+
+## Setting consumption alerts
+
+Workspace owners can configure:
+
+- **Warning threshold** (default: 75% of monthly allocation)
+- **Hard cap** (default: 100% — simulations blocked beyond)
+- **Notification routing** — email + Slack channel
+
+Alerts fire when crossing thresholds. The hard cap can be lifted ad hoc by your CSM for a launch surge.
+
+## Reading the usage breakdown
+
+Top consumers are surfaced for budget management:
+
+| Breakdown | Useful for |
+| --- | --- |
+| **By user** | Spot-check if one heavy user is dominating consumption |
+| **By population** | Some populations might be larger than needed; consider downsizing |
+| **By simulation mode** | If Deep runs dominate, audit whether they were all justified |
+| **By decision tag** | Which product areas consume the most budget |
+| **By integration** | Trigger-driven sims vs. manual — useful for tuning trigger rate limits |
+
+## Reducing consumption
+
+If you're trending over allocation:
+
+1. **Audit Deep-mode runs** — many can be Fast mode without sacrificing decision quality
+2. **Tune trigger rate limits** — if a Linear status change is firing simulations on tickets that don't need them, add `sentia:skip` labels
+3. **Cap population sizes** — running 5,000 agents when 1,500 converges is wasteful
+4. **Validate before re-running** — confirm population health before re-running failed simulations
+
+Your CSM can do a usage audit and recommend optimizations.
+
+## Contract upgrades / amendments
+
+Common scenarios:
+
+- **Mid-cycle uplift** — hit allocation mid-month; CSM provisions additional budget
+- **Annual renewal** — re-scope based on actual usage and projected next-year needs
+- **Add a workspace** — for new geo or business unit
+- **Add seats** — for team growth
+
+All contract changes are handled by your CSM. Usage data is shared transparently to inform the conversation.
+
+## Payment & invoicing
+
+- **Annual billing** by default
+- **Invoiced** via Sentia AR
+- **Payment terms** — typically NET 30 or NET 60 per contract
+- **Procurement** — vendor onboarding handled by Sentia operations during initial contract signature
+
+For procurement, security, vendor-management questions: [procurement@sentialabs.ai](mailto:procurement@sentialabs.ai).
+
+## Usage API
+
+Programmatic access to usage data:
+
+```
+GET /admin/usage?startDate=2026-04-01&endDate=2026-04-30&granularity=day
+```
+
+Returns per-day consumption by category. Useful for piping into your internal FinOps tooling. See [API reference](/api-reference/endpoint/admin-usage).
+
+## Audit & compliance
+
+All billing-relevant events are audit-logged:
+
+- Allocation changes (contract amendments)
+- Alert configurations
+- Hard-cap overrides
+- Manual budget grants (CSM-initiated)
+
+Useful for FinOps audits and SOC 2 evidence.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Audit log" icon="clipboard-list" href="/admin/audit-log">
+    Complete activity history for compliance.
+  </Card>
+  <Card title="Limits & quotas" icon="gauge" href="/reference/limits-and-quotas">
+    Default limits and how to adjust them.
+  </Card>
+</CardGroup>

@@ -1,0 +1,164 @@
+---
+title: "GDPR"
+description: "Right to erasure, right to portability, EU data residency, and how to action requests."
+---
+
+Sentia is built for GDPR compliance from the data model up. This page covers the operational specifics: how to issue a deletion or export request, what gets affected, and the SLAs.
+
+## Rights Sentia supports
+
+| Right | Mechanism | SLA |
+| --- | --- | --- |
+| **Right to access** | Data export via dashboard or API | Within 30 days |
+| **Right to portability** | Same — export in machine-readable JSON/CSV | Within 30 days |
+| **Right to erasure** | Data deletion via dashboard or API | Within 30 days; deletion completes within 7 days under normal circumstances |
+| **Right to rectification** | Update via dashboard | Immediate |
+| **Right to object** | Opt out of specific processing | Immediate via Settings |
+| **Right not to be subject to automated decision-making** | Simulation results are advisory; humans make decisions | Always |
+
+## EU data residency
+
+EU-region workspaces operate at `eu.sentialabs.ai`:
+
+- Application services in eu-west-1
+- PostgreSQL Aurora in eu-west-1 with cross-AZ replication; cross-region replica in eu-central-1
+- MongoDB Atlas in eu-west-1
+- Pinecone in eu-west-1
+- S3 buckets in eu-west-1
+- LLM traffic routed to EU-resident endpoints (Anthropic EU, Vertex AI EU)
+- Sub-processors honor EU residency — see [Sub-processors](/security/sub-processors)
+
+EU-region workspaces never route data through US regions, including for fallback LLM calls.
+
+## Right to erasure (data deletion)
+
+Two flavors:
+
+### Workspace-level deletion
+
+Deletes the entire workspace and all associated data.
+
+**How:**
+
+- Dashboard: Owner → Settings → Workspace → **Delete workspace** (requires typing "DELETE ALL DATA")
+- API: `DELETE /admin/data-deletion-request` with `confirmation: "DELETE ALL DATA"` (Owner role required)
+
+**What's deleted:**
+
+- PostgreSQL — all tenant rows, cascading FK deletes across all tables
+- MongoDB — all workspace-scoped documents
+- S3 — all objects under the workspace prefix
+- Pinecone — workspace namespace
+- OpenSearch — all logs in workspace index
+- Backups — KMS key revocation makes existing backups cryptographically inaccessible
+
+**SLA:** request acknowledged within 24 hours; deletion completes within 7 days under normal circumstances; certified within 30 days. The 30-day soft-delete period exists for accidental-deletion recovery.
+
+### User-level deletion (within a workspace)
+
+When a single user requests erasure of their identity:
+
+- Their user record is hard-deleted from PostgreSQL
+- Their audit-log entries are redacted to `[REDACTED-USER]` (the action record is preserved for audit; only the actor identity is anonymized)
+- Their session is terminated
+- Verbatims they may have contributed (if a user account corresponds to a customer in the qualitative data) are also redacted
+
+**SLA:** within 7 days.
+
+## Right to portability (data export)
+
+Export all workspace data in machine-readable format.
+
+**How:**
+
+- Dashboard: Admin → Settings → **Export workspace**
+- API: `POST /admin/data-export-request` (see [API reference](/api-reference/endpoint/admin-data-export))
+
+**What's exported:**
+
+- Simulations (JSON)
+- Populations (JSON) — including agent profiles
+- Decisions (JSON)
+- Integrations (config only; credentials NOT exported)
+- Audit log slice (JSON)
+- Captures (raw binary, organized by simulation)
+- Verbatim corpus snapshot (JSON, redacted per integration boundary)
+
+**Format options:** JSON (default) or CSV.
+
+**Delivery:** signed S3 URL valid for 24 hours, emailed to the requester. URL is single-use and audit-logged.
+
+**SLA:** export job completes within 24 hours under normal circumstances; available for 7 days; never older than the request time.
+
+## How deletion cascades
+
+Sentia's deletion model is designed to be thorough across all data stores:
+
+```
+DELETE workspace request
+   │
+   ├──▶ PostgreSQL: cascade delete via FK constraints
+   │     (RLS-scoped; can't accidentally delete cross-tenant)
+   │
+   ├──▶ MongoDB: delete by workspace_id filter on all collections
+   │
+   ├──▶ S3: list+delete under s3://sentia-prod-artifacts-private/workspaces/{id}/*
+   │     (including all captures, exports, cold-storage audit logs)
+   │
+   ├──▶ Pinecone: delete-by-namespace for the workspace's namespace
+   │
+   ├──▶ OpenSearch: delete-by-index-pattern for workspace logs
+   │
+   ├──▶ KMS: revoke the workspace's per-tenant CMK
+   │     → makes any residual backup data cryptographically unrecoverable
+   │
+   └──▶ Audit: log the deletion event in the *parent* audit log
+         (preserved for 7 years per compliance requirements)
+```
+
+After cascade completes, only the parent-level audit-log entry survives — and it contains only the event metadata, not the deleted data.
+
+## Backups & deletion
+
+Backups retain workspace data for up to 35 days (PG PITR) and 12 months (monthly snapshots) under normal circumstances. After a deletion request:
+
+- Backup data is not selectively scrubbed (technically infeasible at scale)
+- Instead, **KMS key revocation** renders the workspace's backup data cryptographically unreadable
+- Within the standard 12-month rolling window, the encrypted backup data ages out of the system entirely
+
+This approach is industry-standard for SaaS data deletion at scale and satisfies GDPR's "reasonable measures" requirement for backups.
+
+## Sub-processor deletion
+
+When customer data is held by a sub-processor (Pinecone, MongoDB Atlas, etc.), deletion cascades through their APIs. For sub-processors with their own deletion SLAs, Sentia respects the longest applicable SLA.
+
+If a sub-processor cannot guarantee deletion within the SLA, that's disclosed at the time of request.
+
+## DPA & legal
+
+Sentia's standard Data Processing Agreement (DPA) covers:
+
+- Sub-processor obligations
+- Cross-border transfer mechanisms (Standard Contractual Clauses)
+- Breach notification (within 72 hours)
+- Security measures (Article 32 detail)
+
+Available from [security@sentialabs.ai](mailto:security@sentialabs.ai).
+
+## Reporting a privacy concern
+
+- **Customer-facing:** your CSM is the first stop
+- **Privacy-specific:** [privacy@sentialabs.ai](mailto:privacy@sentialabs.ai)
+- **Security incidents:** [security@sentialabs.ai](mailto:security@sentialabs.ai)
+- **DPA / contractual:** [legal@sentialabs.ai](mailto:legal@sentialabs.ai)
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Data handling" icon="database" href="/security/data-handling">
+    What's stored, where, for how long.
+  </Card>
+  <Card title="LLM safety" icon="brain" href="/security/llm-safety">
+    Zero-retention DPAs and prompt-data separation.
+  </Card>
+</CardGroup>

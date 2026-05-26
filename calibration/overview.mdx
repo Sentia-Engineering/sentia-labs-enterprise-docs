@@ -1,0 +1,130 @@
+---
+title: "Calibration overview"
+description: "The flywheel that makes Sentia more accurate every time you ship. Predicted vs. actual, per segment, automatically."
+---
+
+Sentia's accuracy isn't fixed at signup — it improves every time you ship a feature. **Calibration** is the loop that compares simulation predictions to real-world outcomes, then adjusts future predictions per segment.
+
+```
+1. Run simulation predicting feature impact
+2. Ship the feature
+3. Detect ship (LaunchDarkly / GitHub / Slack)
+4. 14-day measurement window
+5. Compare predicted vs. actual metrics
+6. Bayesian model updates per-segment correction factors
+7. Next simulation in this area is more accurate
+```
+
+This page is the conceptual overview. See [Ship detection](/calibration/ship-detection), [Accuracy](/calibration/accuracy), and [Drift](/calibration/drift) for operational detail.
+
+## Why calibration exists
+
+Pure simulation has two failure modes:
+
+1. **Systematic bias** — agents reason in ways that consistently over- or under-predict certain segments
+2. **Drift** — your users evolve and the model doesn't keep up
+
+Calibration addresses both. It's not a quality-control afterthought; it's the mechanism by which Sentia gets sharper for *your* workspace specifically.
+
+## What gets calibrated
+
+For each shipped decision, Sentia compares:
+
+| Predicted | Actual source |
+| --- | --- |
+| Choice distribution (adopt %, churn %, upgrade %) | Your analytics cohorts, segmented |
+| Per-segment NPS delta | Support provider NPS scores |
+| Adoption curve over 12 months | Analytics retention + feature-usage curves |
+| Top objections | Support tickets + interview transcripts post-ship |
+| Confidence vs. accuracy | The simulation's own confidence score, compared to whether it was right |
+
+Each of these produces a per-segment delta. Bayesian updating turns those deltas into correction factors.
+
+## The 14-day measurement window
+
+Why 14 days?
+
+- **< 7 days:** too much launch-day noise (curiosity clicks, novelty effects)
+- **14 days:** captures both initial reaction *and* the early adoption arc
+- **> 30 days:** introduces too many confounders (other launches, seasonality, market shifts)
+
+The 14-day window starts when ship detection fires. Sentia polls actuals daily during the window. On day 14, it computes the predicted-vs-actual delta and records the calibration event.
+
+## Per-segment correction factors
+
+The Bayesian update model produces correction factors per segment:
+
+```
+Segment                  Predicted    Actual    Correction
+─────────────────────────────────────────────────────────────
+Innovators (Pro)         72% adopt    78%       +1.08×
+Early Adopters (Pro)     65% adopt    63%       0.97×
+Early Majority (Free)    42% adopt    36%       0.86×
+Laggards (Free)          18% adopt    9%        0.50× ⚠
+```
+
+Future simulations apply these factors to predictions for matching segments. The Laggards (Free) factor in the example would caution future predictions about that segment — Sentia knows it's previously over-predicted.
+
+## Confidence in corrections
+
+Correction factors aren't fully applied after one event. Bayesian updating accumulates:
+
+| Events recorded | Confidence | Correction strength |
+| --- | --- | --- |
+| 0–4 | LOW | Factors not applied; baseline predictions only |
+| 5–19 | MEDIUM | 50% of computed correction applied |
+| 20+ | HIGH | Full correction applied |
+
+This prevents one anomalous launch from skewing your workspace's prediction model.
+
+## Ground truth weighting
+
+Different actual-source quality gets different weight:
+
+| Source | Weight |
+| --- | --- |
+| **A/B test results** (Statsig / Eppo) | 3× |
+| **Observational analytics** (cohort metric changes) | 1× |
+| **Support NPS shifts** | 1× |
+| **Qualitative pattern shifts** (verbatim themes) | 0.5× |
+
+If you run A/B tests, your calibration accuracy improves ~3× faster than relying on observational signals alone. See [Experimentation integrations](/integrations/experimentation).
+
+## Where to view calibration
+
+| Location | What you see |
+| --- | --- |
+| **Calibration dashboard** (`/calibration`) | Line chart of normalized accuracy over time, segment heatmap, correction-factor table |
+| **Decision detail page** | Per-decision predicted-vs-actual for any decision in Validated state |
+| **Simulation results, Calibration tab** | Real-time chart of actuals streaming in during the measurement window |
+| **Admin → Usage** | Calibration event count, latest accuracy score |
+
+## What makes calibration accurate
+
+Three levers:
+
+1. **Connect ship detection.** Without it, no calibration happens.
+2. **Connect experimentation if you A/B test.** 3× weighting.
+3. **Ship consistently and mark consistently.** Sporadic data produces sporadic improvements.
+
+Workspaces that mark every meaningful ship hit > 0.85 normalized accuracy within ~30 calibration events (typically 2–3 months of normal product velocity).
+
+## Calibration doesn't work for
+
+- **Pure design changes with no behavior implications** (logo tweaks, color changes) — no measurable outcome to calibrate against
+- **Decisions that get reverted in < 14 days** — measurement window incomplete; the decision is logged but no correction is recorded
+- **Shipped changes outside your connected analytics** — Sentia needs to see the metric movement
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Ship detection" icon="rocket" href="/calibration/ship-detection">
+    The four sources that open the measurement window.
+  </Card>
+  <Card title="Accuracy" icon="bullseye" href="/calibration/accuracy">
+    Reading the dashboard and interpreting normalized accuracy.
+  </Card>
+  <Card title="Drift" icon="wave-square" href="/calibration/drift">
+    What to do when predictions systematically diverge.
+  </Card>
+</CardGroup>

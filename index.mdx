@@ -1,97 +1,85 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: "Welcome to Sentia Labs Enterprise"
+description: "Run thousands of AI agents through your product decisions — and know how your users will respond before you ship."
 ---
 
-## Setting up
+Sentia is a **behavioral product simulation platform** built for enterprise product, research, and design teams. Connect your stack, define a decision, and a population of synthetic agents — grounded in census data, behavioral science, and your real customer verbatims — predicts how your users will react before you ship.
 
-Get your documentation site up and running in minutes.
-
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
-
-## Make it yours
-
-Design a docs site that looks great and empowers your users.
-
-<Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
+<CardGroup cols={2}>
+  <Card title="10-minute quickstart" icon="rocket" href="/quickstart">
+    Run your first simulation today. From signing in to results in under 10 minutes.
   </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
+  <Card title="Onboarding checklist" icon="list-check" href="/onboarding/checklist">
+    The complete first-week setup: SSO, integrations, first population, first simulation.
   </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
-  </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
-  </Card>
-</Columns>
+</CardGroup>
 
-## Create beautiful pages
+## What you can do with Sentia
 
-Everything you need to create world-class documentation.
+<CardGroup cols={2}>
+  <Card title="Simulate decisions" icon="flask" href="/simulations/overview">
+    Run 200–10,000 agents through any product change. Get a distribution of choices, confidence score, segment breakdowns, and NPS prediction.
+  </Card>
+  <Card title="Ground agents in real users" icon="users" href="/populations/interview-grounding">
+    Pull behavioral data from your analytics + qualitative tools so agents reflect your actual users — not generic personas.
+  </Card>
+  <Card title="Trigger from your tools" icon="bolt" href="/simulations/triggers">
+    Auto-simulate when a Linear or Jira ticket moves to "In Review", a Figma frame is marked, or a teammate reacts `:simulate:` in Slack.
+  </Card>
+  <Card title="Close the loop" icon="rotate" href="/calibration/overview">
+    After you ship, Sentia compares predicted vs. actual metrics and recalibrates. Every release makes the next simulation more accurate.
+  </Card>
+</CardGroup>
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
+## How Sentia works
+
+Every agent in a simulation runs through a three-step decision chain:
+
+<Steps>
+  <Step title="Memory" icon="brain">
+    The agent recalls its behavioral profile, usage history, and real customer verbatims from your connected tools.
+  </Step>
+  <Step title="Reflection" icon="lightbulb">
+    The agent reasons about the scenario, weighing its history, preferences, and concerns.
+  </Step>
+  <Step title="Decision" icon="check">
+    The agent commits to a choice with a confidence score, rationale, concerns, and an NPS prediction.
+  </Step>
+</Steps>
+
+Results converge through wave-based sampling. With interview-grounded populations, Sentia achieves **~85% normalized accuracy** vs. ~70% for demographic-only agents.
+
+## Who Sentia is for
+
+<Columns cols={3}>
+  <Card title="Product managers" icon="briefcase">
+    Pressure-test roadmap bets, pricing changes, onboarding flows, and feature trade-offs before committing eng time.
   </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
+  <Card title="UX researchers" icon="magnifying-glass">
+    Extend qualitative insight into quantitative prediction. Run "what if" studies on populations 100× larger than any interview cohort.
   </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
+  <Card title="Designers" icon="palette">
+    Validate design hypotheses with thousands of grounded agents. Catch objections and confusion before usability testing.
   </Card>
 </Columns>
 
-## Need inspiration?
+## Get started
 
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+<CardGroup cols={2}>
+  <Card title="Core concepts" icon="book-open" href="/concepts/overview">
+    Simulations, populations, decisions, calibration — the four primitives.
+  </Card>
+  <Card title="Connect your tools" icon="plug" href="/integrations/overview">
+    15 integrations across analytics, qualitative, workflow, docs, experimentation, and ship detection.
+  </Card>
+  <Card title="API reference" icon="terminal" href="/api-reference/introduction">
+    REST API for programmatic access. WorkOS JWT auth, workspace-scoped, rate-limited.
+  </Card>
+  <Card title="Security & compliance" icon="shield-halved" href="/security/overview">
+    SOC 2 Type I posture, SSO/SCIM, per-tenant KMS, GDPR data residency.
+  </Card>
+</CardGroup>
+
+<Note>
+  **Need help?** Email [support@sentialabs.ai](mailto:support@sentialabs.ai) or check the [status page](https://status.sentialabs.ai). Your customer success manager is on the Slack Connect channel set up at kickoff.
+</Note>

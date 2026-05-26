@@ -1,0 +1,143 @@
+---
+title: "Authentication"
+description: "All Sentia API requests require a WorkOS-issued JWT. This page covers getting one, refreshing, and revoking."
+---
+
+Sentia uses **WorkOS-issued JWTs** for API authentication. There are no password flows; corporate IdP only.
+
+## Getting an API token
+
+Three flows, depending on caller type:
+
+### 1. User-issued API key (most common)
+
+For programmatic access on behalf of a specific user:
+
+<Steps>
+  <Step title="Sign in to the dashboard">
+    Visit [app.sentialabs.ai](https://app.sentialabs.ai) and complete SSO.
+  </Step>
+  <Step title="Open API keys">
+    Settings → API keys → **+ Create API key**.
+  </Step>
+  <Step title="Pick scope">
+    Choose which workspace(s) the key has access to. Pick the lowest-privilege role appropriate for the use case.
+  </Step>
+  <Step title="Copy and store">
+    The key is shown once. Store it in your secret manager (AWS Secrets Manager, HashiCorp Vault, etc.). Sentia doesn't store the plaintext.
+  </Step>
+</Steps>
+
+Keys are JWTs internally; they're already signed and validated by WorkOS.
+
+### 2. Service account
+
+For automation and CI:
+
+<Steps>
+  <Step title="Workspace owner creates the service account">
+    Admin → API keys → **+ Create service account**.
+  </Step>
+  <Step title="Assign a role">
+    Pick the role (typically Builder or Viewer). Service accounts can't be Owners.
+  </Step>
+  <Step title="Issue an API key">
+    The service account gets one or more API keys. Multiple keys allow rotation without downtime.
+  </Step>
+</Steps>
+
+Service accounts don't have email addresses; their actions audit-log as `service:<account-name>`.
+
+### 3. CLI token
+
+The `@sentia/capture` CLI uses its own auth flow:
+
+```bash
+sentia auth login
+```
+
+Opens your browser, runs SSO, exchanges for a CLI-scoped token. Stored at `~/.sentia/credentials`. See [Inputs → Captured localhost UI](/simulations/inputs#captured-localhost-ui).
+
+## Using the token
+
+Every API request needs:
+
+```http
+Authorization: Bearer <your-token>
+x-workspace-id: <workspace-uuid>
+```
+
+Example:
+
+```bash
+curl -X GET https://api.sentialabs.ai/api/simulations/7c4e2a-... \
+  -H "Authorization: Bearer eyJhbGciOi..." \
+  -H "x-workspace-id: 8f9a2b-..."
+```
+
+If you omit `x-workspace-id` on data endpoints, the request will fail with `400 missing_workspace_header`.
+
+## Token lifecycle
+
+| Token type | Default lifetime | Refresh model |
+| --- | --- | --- |
+| **User API key** | No expiration (revocable manually) | Rotate via dashboard |
+| **Service account key** | No expiration (revocable manually) | Rotate via dashboard or API |
+| **CLI session token** | 12 hours | Auto-refresh on use, full re-auth after 30 days |
+| **Browser session JWT** | 12 hours inactivity | Auto-refreshes during active use |
+
+## Revoking tokens
+
+| Source | How |
+| --- | --- |
+| **Dashboard** | Settings → API keys → key row → **Revoke** |
+| **API** | `DELETE /admin/api-keys/{key-id}` (Owner or Admin) |
+| **IdP deprovisioning** | SCIM remove → all user tokens revoked immediately |
+| **Workspace owner action** | Owner can revoke any token in their workspace |
+
+Revocation is immediate. The token will be rejected on the next request with `401 token_revoked`.
+
+## Audit logging
+
+Every API request is audit-logged:
+
+- Bearer token ID (not the full token)
+- Workspace ID
+- Endpoint hit
+- HTTP status code
+- Request ID
+- Client IP and user agent
+
+Visible in Admin → Audit log. See [Audit log](/admin/audit-log).
+
+## Security recommendations
+
+- **Store keys in a secret manager**, not env files or repo files
+- **Use service accounts** for automation (not user-issued keys)
+- **Rotate keys quarterly** at minimum
+- **One key per use case** — separate keys for CI, internal tooling, monitoring
+- **Lowest-privilege role** — most read-only callers should use Viewer
+- **Monitor your own usage** — abnormal usage patterns indicate compromise
+
+## Common authentication errors
+
+| Status | Code | Meaning | Fix |
+| --- | --- | --- | --- |
+| 401 | `missing_token` | No `Authorization` header | Include `Authorization: Bearer ...` |
+| 401 | `invalid_token` | Token is malformed | Re-issue the key |
+| 401 | `token_revoked` | Token has been revoked | Create a new key |
+| 401 | `token_expired` | Session token expired (CLI only) | Re-run `sentia auth login` |
+| 403 | `workspace_access_denied` | Token is valid but not authorized for this workspace | Verify `x-workspace-id` matches your token's scope |
+| 403 | `role_insufficient` | Action requires higher role | Get a key with appropriate role |
+| 400 | `missing_workspace_header` | No `x-workspace-id` on a data endpoint | Add the header |
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Workspace scoping" icon="building" href="/api-reference/workspace-scoping">
+    How multi-workspace access works.
+  </Card>
+  <Card title="Rate limits" icon="gauge-high" href="/api-reference/rate-limits">
+    Per-workspace rate limits.
+  </Card>
+</CardGroup>

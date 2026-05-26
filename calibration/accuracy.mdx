@@ -1,0 +1,125 @@
+---
+title: "Accuracy"
+description: "Reading the calibration dashboard: normalized accuracy, segment heatmaps, and correction factors."
+---
+
+The calibration dashboard at `/calibration` is where you read your workspace's overall simulation accuracy. Three views matter most.
+
+## Normalized accuracy (the headline)
+
+A 0–1 score that adjusts raw accuracy for natural human behavioral inconsistency (~81% test-retest baseline).
+
+**Normalized accuracy = 1.0** means Sentia is as accurate at predicting your users as your users are at predicting their own behavior.
+
+| Score | Reading |
+| --- | --- |
+| > 0.85 | Excellent. Trust predictions for high-stakes decisions. |
+| 0.75–0.85 | Good. Use predictions as primary input but stay open to surprises. |
+| 0.65–0.75 | Directional only. Calibrate aggressively; ground populations further. |
+| < 0.65 | Substantial gap. Audit qualitative grounding and ship-detection coverage. |
+
+### Why "normalized"?
+
+Raw accuracy compares predicted vs. actual one-to-one. But humans themselves only predict their own behavior with ~81% test-retest reliability — meaning a perfect model can only score ~0.81 on raw accuracy.
+
+Normalized accuracy divides by the human ceiling. A score of 1.0 means "as accurate as humans predicting humans." Most workspaces converge to 0.85–0.92 within 30 calibration events.
+
+## The accuracy line chart
+
+The main chart on the dashboard:
+
+- **X axis** — time, default last 90 days
+- **Y axis** — normalized accuracy (0–1)
+- **Solid line** — workspace overall accuracy
+- **Dotted line** — accuracy band (P25–P75 across recent simulations)
+
+**What to look for:**
+
+- **Trending up** → calibration is doing its job
+- **Flat at a low number** → consider adding qualitative grounding or experimentation
+- **Trending down** → either user-base drift (see [Drift](/calibration/drift)), or stale populations not getting rebuilt
+
+## Segment heatmap
+
+The heatmap shows per-segment accuracy. Rows are segments (adopter category × plan tier × tenure); columns are time buckets.
+
+- **Dark green** — high accuracy in that segment for that period
+- **Light** — moderate
+- **Red** — poor accuracy
+
+**Common patterns:**
+
+| Pattern | Reading |
+| --- | --- |
+| Even across rows | Population is well-grounded across all segments |
+| One row consistently red | That segment is under-represented in your qualitative grounding |
+| Recent columns drifting red | Population needs refreshing; user base evolved |
+| Innovator/Early Adopter rows accurate, Late Majority/Laggard rows poor | You may not have many Laggard verbatims in your corpus — they don't reach out as often |
+
+## Correction factors table
+
+The bottom of the dashboard lists active per-segment correction factors:
+
+```
+Segment                      Factor    Confidence    Events
+─────────────────────────────────────────────────────────────
+Innovators (Pro)              1.08×    HIGH          24
+Early Adopters (Pro)          0.97×    HIGH          22
+Early Majority (Free)         0.86×    MEDIUM        12
+Late Majority (Free)          0.78×    MEDIUM        8
+Laggards (Free)               0.50×    LOW           3
+```
+
+| Factor | Meaning |
+| --- | --- |
+| **> 1.0** | Sentia has historically *under-predicted* this segment's adoption; future predictions get boosted |
+| **= 1.0** | Predictions are accurate; no correction |
+| **< 1.0** | Sentia has historically *over-predicted*; future predictions get dampened |
+
+| Confidence | Strength of correction applied |
+| --- | --- |
+| HIGH (20+ events) | Full correction applied |
+| MEDIUM (5–19 events) | 50% applied |
+| LOW (< 5 events) | Not applied; baseline used |
+
+## Time-window filters
+
+The dashboard supports:
+
+- **Last 7 / 30 / 90 days** — quick filters
+- **Custom range** — pick start/end
+- **Per-decision-class** — filter by tag (pricing, onboarding, etc.) to see accuracy within domains
+- **Per-population** — filter by which population the calibrated simulations used
+
+Per-domain views are especially useful: "Our pricing predictions are at 0.91, but onboarding is at 0.74" tells you where to focus grounding investment.
+
+## Exporting
+
+Calibration data exports:
+
+- **CSV** — full event list for analysis
+- **PDF** — formatted accuracy report for board reviews
+- **JSON** — via API at `GET /admin/calibration` (see [API reference](/api-reference/introduction))
+
+## Building stakeholder trust
+
+A common question from execs: *"How do we know we can trust these predictions?"*
+
+The honest answer involves three artifacts:
+
+1. **Normalized accuracy trend** — show the up-and-to-the-right
+2. **Per-segment correction factors** — show that Sentia *knows where it's been wrong* and adjusts
+3. **A few representative case studies** — pick 3–5 calibrated decisions and walk through predicted vs. actual
+
+This combination wins skeptical executives faster than any single number.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Drift" icon="wave-square" href="/calibration/drift">
+    What to do when predictions systematically diverge.
+  </Card>
+  <Card title="Best practices" icon="trophy" href="/simulations/best-practices">
+    Accuracy benchmarks and the patterns that maintain them.
+  </Card>
+</CardGroup>

@@ -1,0 +1,139 @@
+---
+title: "Best practices"
+description: "The patterns that consistently produce high-accuracy, decision-grade simulation results."
+---
+
+## Input quality hierarchy
+
+The single biggest accuracy lever (after population grounding) is what you show agents.
+
+| Input | Accuracy | Use when |
+| --- | --- | --- |
+| **Captured localhost UI** | Highest | A working prototype exists |
+| **Figma frames** | High | Design phase, no code yet |
+| **Captured URL** | High | Live product, staging, competitor analysis |
+| **Text only** | Moderate | Early ideation, no visuals |
+
+**Rule of thumb:** captured UI is 15–20% more accurate than text-only descriptions of the same change. For any decision you'll ship, invest the 5 minutes to capture real UI.
+
+See [Inputs](/simulations/inputs).
+
+## Population quality
+
+Interview-grounded populations hit ~85% normalized accuracy vs. ~70% for demographic-only. The single biggest accuracy lever.
+
+**How to maximize:**
+
+1. Connect **Dovetail** (best — structured interview transcripts) or **Intercom/Zendesk** (good — support conversations) or both
+2. Build populations that **target your actual user segments**, not "everyone"
+3. **Validate** every population — pass rate ≥ 80%, fidelity ≥ 0.7
+4. **Rebuild** when drift exceeds 10% (Sentia flags this automatically)
+
+See [Interview grounding](/populations/interview-grounding).
+
+## Sizing your run
+
+| Scenario | Mode | Agent count |
+| --- | --- | --- |
+| Exploratory ("is there signal?") | Fast | 200 |
+| Comparing 3 design variants | Fast | 300 per variant |
+| Pre-launch validation | Deep | 1,500–2,500 |
+| High-stakes pricing or strategic decision | Deep | 3,000–5,000 |
+| Calibrating against an A/B test | Deep | Match the A/B sample size |
+
+Don't over-allocate. Larger isn't always better — past convergence, extra agents add cost without insight.
+
+## The Fast → Deep → Calibrated pattern
+
+For any decision you'll ship:
+
+<Steps>
+  <Step title="Fast run">
+    300 agents. Confirms inputs and population produce sensible reasoning. Reveals input issues before you spend Deep tokens.
+  </Step>
+  <Step title="Deep run">
+    2,000 agents. The real answer with segment-level detail.
+  </Step>
+  <Step title="Ship + calibrate">
+    Ship (or guarded A/B). Sentia auto-pulls 14-day actuals. The Deep run gets a calibration grade.
+  </Step>
+</Steps>
+
+This pattern saves ~70% of total token cost vs. starting with Deep mode and discovering issues mid-run.
+
+## Reading results
+
+**Always read in this order:**
+
+1. **Segments** — variance across segments is where the value is
+2. **Objections** — verbatim sanity check (does it sound like real users?)
+3. **Confidence + Convergence** — trust signals
+4. **Overview** — now you can weigh the headline
+5. **Recommendations** — checklist, not script
+
+See [Reading results](/simulations/results).
+
+## Calibration discipline
+
+Calibration is what compounds Sentia's accuracy over time. Three rules:
+
+1. **Mark every meaningful ship.** Use LaunchDarkly (best), GitHub PR labels (good), or `/shipped` in Slack (manual).
+2. **Connect experimentation if you run A/B tests.** Statsig or Eppo results weight 3× vs. observational changes — the fastest calibration improvement.
+3. **Don't bypass the 14-day window.** It exists to filter out launch-day spikes. Trust it.
+
+See [Calibration](/calibration/overview).
+
+## Common anti-patterns
+
+<AccordionGroup>
+  <Accordion title="Running everything in Deep mode">
+    Burns tokens. Fast first, Deep when you've confirmed inputs are good.
+  </Accordion>
+
+  <Accordion title="Trusting headline numbers without reading Segments">
+    Distribution overall = average. Variance is where the value is. A 50/50 overall split often means "Innovators love it, Laggards hate it" — that's a launch strategy.
+  </Accordion>
+
+  <Accordion title="Text-only inputs on high-stakes decisions">
+    You're giving up 15–20% accuracy. Always provide visual input for shippable decisions.
+  </Accordion>
+
+  <Accordion title="Demographic-only populations">
+    Top out around 70% normalized accuracy. Connect Dovetail/Intercom/Zendesk for the jump to ~85%.
+  </Accordion>
+
+  <Accordion title="Ignoring drift alerts">
+    Populations slowly diverge from your real user base. When Sentia flags drift > 10%, rebuild the population (< 10 min). Continuing to use a drifted population erodes trust.
+  </Accordion>
+
+  <Accordion title="Treating non-convergence as failure">
+    Non-convergence often means the scenario is divisive. Read Segments — that's signal, not noise.
+  </Accordion>
+
+  <Accordion title="Simulating bug fixes or copy tweaks">
+    Agents don't have meaningful opinions on parity changes. Token cost without insight. Reserve simulations for changes that meaningfully affect user experience or business model.
+  </Accordion>
+</AccordionGroup>
+
+## When to re-run
+
+| Signal | Action |
+| --- | --- |
+| Confidence < 0.6 | Re-run with more agents OR ground the population further |
+| Convergence < 0.85 + segments show high variance | Don't re-run — this is the answer. Plan a segmented launch. |
+| Population drift > 10% (flagged) | Rebuild population, re-run any active analysis |
+| Calibration grade < 0.70 on a recent ship | Re-validate population, audit qualitative grounding, re-run pending simulations |
+
+## Accuracy benchmarks
+
+Track these in Admin → Usage:
+
+| Metric | Healthy range |
+| --- | --- |
+| Normalized accuracy (90-day rolling) | > 0.85 |
+| Population fidelity (avg across active populations) | > 0.75 |
+| Calibration events recorded (last 30 days) | > 5 |
+| Drift alerts (last 30 days) | < 2 |
+| Average run convergence score | > 0.93 |
+
+If any drop persistently below these, work with your CSM to identify the cause — usually a gap in qualitative grounding or a stale population.

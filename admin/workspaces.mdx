@@ -1,0 +1,111 @@
+---
+title: "Workspaces"
+description: "Tenant isolation, multi-workspace patterns, and workspace settings."
+---
+
+A **workspace** is the unit of tenant isolation in Sentia. All data — simulations, populations, integrations, decisions, calibration history — is workspace-scoped.
+
+## What's in a workspace
+
+```
+Workspace
+├── Members (with roles)
+├── Integrations (15 supported)
+├── Populations
+├── Simulations
+├── Decisions log
+├── Calibration history
+├── Workspace settings (region, branding, defaults)
+└── Audit log
+```
+
+PostgreSQL row-level security (RLS) is enforced on every tenant table — there's no way for one workspace's data to leak into another, even at the database query level. See [Security overview](/security/overview).
+
+## Single vs. multi-workspace
+
+Most customers use **one workspace per company**. Multi-workspace setups exist for:
+
+- **Holding companies** with distinct product portfolios where leadership doesn't need shared visibility
+- **Enterprises with strict data-residency requirements** — separate US and EU workspaces under one billing contract
+- **Agencies** serving multiple clients with strict client-data separation
+- **Strict regulatory contexts** where audit boundaries must align with business units
+
+If you're not sure whether you need multiple workspaces, default to one. Cross-workspace data sharing is not supported by design — splitting often creates more friction than it removes.
+
+## Workspace settings
+
+| Setting | Notes |
+| --- | --- |
+| **Name** | Display name; can be renamed |
+| **Slug** | URL-safe identifier; used in API paths |
+| **Region** | US (default) or EU. Determines data residency. Cannot be changed post-creation. |
+| **Time zone** | Default for displaying timestamps; user-level overrides possible |
+| **Default simulation mode** | Fast or Deep; default the wizard suggests |
+| **Default convergence threshold** | 0.95 default |
+| **Default notification channel** | Slack channel for completion alerts |
+| **Trigger conventions** | Per-integration defaults for status names, labels, emoji |
+| **Branding** | Workspace name + logo on exported PDFs |
+
+## Data residency
+
+| Region | Where data lives | Sub-processors |
+| --- | --- | --- |
+| **US** (default) | AWS us-east-1 + us-west-2 | LLM, vector, analytics providers in US data centers |
+| **EU** (eu.sentialabs.ai) | AWS eu-west-1 | Same but EU-resident |
+
+Region is set at workspace creation and cannot be changed. If you need to migrate, contact your CSM.
+
+## Workspace creation
+
+New workspaces are created by Sentia (your CSM) at kickoff. Self-serve workspace creation is not available — it's gated by the enterprise contract.
+
+Workspace-level operations supported via API at `/admin/workspaces` (super-admin only):
+
+- List workspaces
+- Create workspace
+- Update workspace settings
+- Archive workspace
+
+See [API reference](/api-reference/endpoint/admin-workspaces).
+
+## Switching workspaces
+
+If you're a member of multiple workspaces:
+
+- The workspace switcher is in the top-left of the dashboard
+- Each workspace has its own URL (`app.sentialabs.ai/{workspace-slug}/...`)
+- Your role can differ per workspace
+
+The CLI (`@sentia/capture`) supports per-workspace contexts: `sentia workspace use <slug>`.
+
+## Archiving
+
+Workspaces can be archived (not deleted) by super-admins. Archived workspaces:
+
+- Are read-only
+- Don't count against contract allocation
+- Preserve all data for audit/legal hold purposes
+- Can be unarchived if needed
+
+Permanent deletion requires explicit `DELETE ALL DATA` confirmation — see [GDPR](/security/gdpr).
+
+## Cross-workspace patterns
+
+Sentia doesn't support cross-workspace data sharing. If you need to share results across workspaces:
+
+- **Export PDF** from one workspace, attach to a meeting/Notion in another
+- **Manually re-create populations** with similar filter sets
+- **Use the API** to programmatically pull simulations from each and aggregate externally
+
+For genuine multi-tenant analytics, your CSM can discuss the **Group Workspace** feature on the enterprise+ tier — a roll-up view across workspaces for executives, while keeping operational data fully isolated.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Members & roles" icon="user-group" href="/admin/members-and-roles">
+    Owner / Admin / Builder / Viewer permissions.
+  </Card>
+  <Card title="SSO & SCIM" icon="key" href="/admin/sso-scim">
+    Authentication and auto-provisioning.
+  </Card>
+</CardGroup>

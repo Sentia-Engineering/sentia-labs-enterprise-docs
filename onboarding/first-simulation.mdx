@@ -1,0 +1,140 @@
+---
+title: "Run your first real simulation"
+description: "Pick a real decision, use your real population, and read results honestly."
+---
+
+The quickstart taught you to run a simulation using the sample population. This walks through the first one against a real upcoming decision in your team's roadmap.
+
+## Pick a decision worth simulating
+
+Good first-simulation candidates:
+
+- A **pricing change** — new tier, increase, or restructure
+- An **onboarding redesign** — new flow, removed steps, or trial change
+- A **plan-tier feature shift** — moving a feature between plans, or adding a paywall
+- A **navigation or IA change** — moving major sections, renaming, consolidation
+- A **deprecation** — removing a feature used by some segments
+
+Bad first-simulation candidates:
+
+- **Copy tweaks** — token cost without much signal
+- **Bug fixes** — agents don't have opinions on parity changes
+- **Internal tooling** — agents simulate your *users*, not your team
+
+## Set up the simulation
+
+<Steps>
+  <Step title="Open the wizard">
+    Press `N`. The 4-step wizard opens.
+  </Step>
+
+  <Step title="Step 1 — Decision">
+    Pick **From scratch** (your built-in templates are useful later, but for a first real run write your own).
+    
+    Fill in:
+    - **Question:** *"Should we move feature X from the Pro plan to the Enterprise plan?"*
+    - **Hypothesis:** *"≥ 60% of current Pro users won't be disrupted because they don't use X. The ~40% who do will see it as the trigger to upgrade."*
+    - **Success criteria:** *"No drop in Pro retention. ≥ 5% of Pro users who use X upgrade in 30 days."*
+    
+    These get attached to the decision and used in agent reasoning.
+  </Step>
+
+  <Step title="Step 2 — Scenario">
+    Add at least one **capture**. Best-to-worst input quality:
+    
+    1. **Captured localhost UI** — point the [`@sentia/capture` CLI](/simulations/inputs#localhost-capture) at your local prototype
+    2. **Figma frame** — paste a Figma URL; Sentia pulls the frame as image input
+    3. **Captured URL** — point at your staging or production page
+    4. **Text description** — written-only, lowest fidelity (~15–20% accuracy hit)
+    
+    For high-stakes decisions, use real UI. For exploratory runs, text is fine.
+  </Step>
+
+  <Step title="Step 3 — Population">
+    Select the population you built in [Build your first population](/onboarding/first-population). Sentia auto-suggests **segments to focus on** based on your decision text — you can accept the defaults or pick specific adopter categories.
+  </Step>
+
+  <Step title="Step 4 — Configure">
+    For your first real run, pick **Deep mode** with **2,000 agents**. Cost ≈ 6,000 LLM calls; runs in ~10–15 minutes. Lower for fast iteration, higher only if you need fine segment slicing.
+    
+    Click **Launch** or `⌘⇧L`.
+  </Step>
+</Steps>
+
+## Watch it run
+
+Open the live run view. Useful things to do while it runs:
+
+- **Tail transcripts** to see individual agents reasoning — this is the fastest way to build intuition about what the agents "know"
+- **Watch convergence** — if it stays amber through 800+ agents, the scenario may be genuinely divisive
+- **Pause anytime** — you can stop the run if early waves show the answer; partial results are kept
+
+## Read results honestly
+
+The 8-tab results view tempts everyone to anchor on the Overview tab. Discipline yourself to read in this order:
+
+<Steps>
+  <Step title="1. Segments">
+    Always start here. The overall distribution hides everything important. Look for: does the answer change dramatically by adopter category, plan tier, or tenure?
+  </Step>
+  <Step title="2. Objections">
+    Read 5–10 verbatim-style objection quotes. If they sound nothing like your actual users, your population is under-grounded — pause the analysis and fix the population first.
+  </Step>
+  <Step title="3. Confidence + Convergence">
+    Headline confidence > 0.8 *and* convergence > 0.95 → trust the number. Either below → directional only.
+  </Step>
+  <Step title="4. Overview">
+    Now read the headline. By this point you have enough context to weigh it.
+  </Step>
+  <Step title="5. Recommendations">
+    Sentia-generated actions to address objections. Treat as a checklist, not a script.
+  </Step>
+  <Step title="6. Adoption Cascade">
+    The 12-month projected adoption curve. Useful for forecasting; don't over-fit on the exact slope.
+  </Step>
+</Steps>
+
+## Share the result
+
+Press `⌘E` to export a PDF. The PDF includes:
+
+- Decision question, hypothesis, success criteria
+- Overview distribution + confidence + NPS
+- Top 5 segments and their breakdowns
+- Top 5 objection clusters with sample verbatims
+- Sentia recommendations
+- Population provenance (which integrations, sample sizes, fidelity score)
+
+This is the artifact to bring to your decision meeting. Annotate it with team disagreements before the meeting.
+
+## What to do with the answer
+
+Three honest scenarios:
+
+| Result | Action |
+| --- | --- |
+| Sentia confirms what you already believed | Ship faster. Use the simulation as one signal in the decision write-up. |
+| Sentia contradicts the team consensus | This is the high-value case. Read the Segments and Objections tabs carefully. Decide whether to: re-scope, A/B test cautiously, or trust the model and ship narrowly. |
+| Sentia is split / low confidence | The decision is genuinely contested. Use it as input to a smaller A/B test rather than a full launch. |
+
+## After you ship
+
+Once the feature rolls out (LaunchDarkly > 50%, GitHub merge, or `/shipped` in Slack):
+
+- Sentia auto-detects the ship and opens a **14-day measurement window**
+- It pulls actuals from your analytics + support providers
+- Predicted vs. actual lands in the Calibration tab of the original simulation
+- Per-segment correction factors update — your next simulation in this area is more accurate
+
+See [Calibration](/calibration/overview) for the full loop.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Set up auto-triggers" icon="bolt" href="/simulations/triggers">
+    Skip the wizard for routine simulations.
+  </Card>
+  <Card title="Best practices" icon="trophy" href="/simulations/best-practices">
+    Input-quality hierarchy, fast vs. deep, when to re-run, when to rebuild populations.
+  </Card>
+</CardGroup>

@@ -1,0 +1,142 @@
+---
+title: "Reading results"
+description: "A tour of the 8-tab results view, with the patterns to look for in each."
+---
+
+A completed simulation lands at `/simulations/[id]/results`. Eight tabs, each a different cut of the same data. The temptation is to read Overview only and stop — discipline yourself to read at least Segments and Objections too.
+
+Press `1`–`8` to switch tabs. Press `⌘E` to export the full report as PDF.
+
+## 1 · Overview
+
+The headline tab. What you'd put on the first slide of a decision review.
+
+**Components:**
+
+- **Final distribution** (bar chart) — agents' final choices across the simulation
+- **Confidence + convergence scores** — at-a-glance trust signals
+- **NPS prediction** — predicted change in Net Promoter Score, overall and per-segment
+- **Top 3 concerns** — clustered objection themes
+- **Top 3 amplifiers** — what excited agents most
+
+**What to look for:**
+
+- Is the distribution lopsided or balanced? Lopsided + high confidence = clear answer. Balanced + high confidence = genuinely contested.
+- Is NPS predicted to move? Negative movements > 3 points are worth deep investigation in the Segments tab.
+
+## 2 · Recommendations
+
+Sentia-generated actions to address objections and amplify positives. Each recommendation includes:
+
+- The specific objection or amplifier it addresses
+- A concrete action suggestion
+- Which segments benefit most
+- Confidence in the recommendation
+
+**Treat as a checklist, not a script.** Recommendations are starting points; your team adds product judgment.
+
+## 3 · Segments
+
+**The most important tab.** Always read this before forming a conclusion.
+
+Shows the distribution sliced by:
+
+- **Adopter category** — Innovator → Laggard
+- **Persona** (if your population has persona tags)
+- **Plan tier** — Free / Pro / Enterprise (from your analytics)
+- **Tenure** — < 30d, 30–90d, 90d+ (from your analytics)
+- **Custom cohorts** — any cohort you defined in your analytics provider
+
+**Pattern to look for:** large variance across segments. If Innovators love it and Laggards hate it, that's not "mixed signal" — that's a launch strategy (target Innovators first, plan messaging for Laggards).
+
+## 4 · Objections
+
+Top concern clusters with sample verbatims. Powered by clustering of agent reasoning, grounded in your real customer language (when interview-grounded).
+
+Each cluster shows:
+
+- A short label ("Trial too short to evaluate")
+- 5 sample verbatim-style quotes
+- The segments most likely to raise this objection
+- Approximate share of agents voicing this concern
+
+**What to look for:** objections that sound exactly like things you've heard in real interviews. That's the validation signal that your interview grounding is working. Objections that sound generic suggest your population needs more qualitative data.
+
+## 5 · Agents
+
+Sortable, filterable table of every individual agent's decision.
+
+Columns: agent ID, persona, segment, choice, confidence, rationale (first 80 chars), concerns, NPS delta.
+
+**Use it for:**
+
+- Auditing specific segments ("show me only Pro+Tenure 90d+ agents who chose Adopt")
+- Spot-checking that reasoning makes sense
+- Building a presentation-ready quote pull (filter, sort by confidence, export to CSV)
+
+`J` / `K` to navigate rows, `Enter` to expand the full agent transcript.
+
+## 6 · Transcripts
+
+Full Memory → Reflection → Decision chain for any agent.
+
+**Memory step:** the retrieved verbatims, behavioral profile, and usage history the agent had access to.
+
+**Reflection step:** the agent's reasoning, including weighing its history and the scenario.
+
+**Decision step:** the final choice, confidence, rationale, concerns, NPS delta.
+
+**Why you'd open this:** to build trust. After reading 3–5 transcripts, you'll have a strong intuition for whether the agents "sound right" for your users. If they don't, the population needs more grounding.
+
+## 7 · Adoption Cascade
+
+A 12-month projected adoption curve, Innovator → Laggard.
+
+Shows:
+
+- Cumulative adoption % over 12 months
+- Adopter category contribution per quarter
+- Confidence band (P10 / P90)
+- Comparison to baseline (last quarter's adoption rate for similar features)
+
+**What it's for:** roadmap forecasting and capacity planning. Don't over-fit on the exact slope — the relative ranking between features matters more than the absolute numbers.
+
+## 8 · Calibration
+
+Once you ship the feature and Sentia detects the rollout, this tab populates with predicted vs. actual.
+
+**Empty state (pre-ship):** "Ship this feature to start calibration. Sentia auto-detects via LaunchDarkly, GitHub PR, or `/shipped` in Slack."
+
+**During measurement (14-day window):** real-time chart of actuals streaming in, alongside the predicted distribution.
+
+**Post-measurement:** final predicted vs. actual delta, normalized accuracy score, per-segment correction factors applied to future simulations.
+
+See [Calibration](/calibration/overview).
+
+## Exporting
+
+| Format | How | Includes |
+| --- | --- | --- |
+| **PDF** | `⌘E` | All 8 tabs, branded, ready for stakeholder review |
+| **CSV** (Agents tab) | Click "Export" in Agents tab | Per-agent rows for analysis in Excel/Sheets |
+| **JSON** (raw) | API `GET /simulations/{id}` | Full structured data; see [API reference](/api-reference/endpoint/simulations-get) |
+| **Slack snapshot** | Click "Share to Slack" | Posts headline + chart image to a channel |
+
+## Sharing with your team
+
+Three patterns we see work:
+
+1. **PDF + decision meeting** — export PDF, share async 24h before the meeting, use the meeting to discuss segments and objections (not headline numbers)
+2. **Slack snapshot + link** — for quick async updates; the link goes to the live results page where teammates can drill in
+3. **Push to Linear/Jira** — `⌘⇧L` from the results page pushes the headline + link into the originating issue, closing the loop on the decision
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Auto-triggers" icon="bolt" href="/simulations/triggers">
+    Run simulations automatically from Linear, Jira, Figma, Slack.
+  </Card>
+  <Card title="Best practices" icon="trophy" href="/simulations/best-practices">
+    The patterns that consistently produce high-accuracy results.
+  </Card>
+</CardGroup>

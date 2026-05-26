@@ -1,43 +1,61 @@
-# Mintlify Starter Kit
+# Sentia Labs Enterprise — Documentation
 
-Use the starter kit to get your docs deployed and ready to customize.
+Customer-facing documentation for the Sentia Labs Enterprise platform, built with [Mintlify](https://mintlify.com).
 
-Click the green **Use this template** button at the top of this repo to copy the Mintlify starter kit. The starter kit contains examples with
+Production: [docs.sentialabs.ai](https://docs.sentialabs.ai)
 
-- Guide pages
-- Navigation
-- Customizations
-- API reference pages
-- Use of popular components
-
-**[Follow the full quickstart guide](https://starter.mintlify.com/quickstart)**
-
-## Development
-
-Install the [Mintlify CLI](https://www.npmjs.com/package/mint) to preview your documentation changes locally. To install, use the following command:
+## Structure
 
 ```
+.
+├── docs.json                 # Mintlify config — navigation, branding, contextual menus
+├── favicon.svg
+├── logo/                     # Light + dark logos (white-fill variant for dark mode)
+├── index.mdx                 # Welcome page
+├── quickstart.mdx            # 10-minute first-simulation guide
+├── concepts/                 # Core concepts — primitives, lifecycle, glossary
+├── onboarding/               # Week-one checklist + per-step guides
+├── simulations/              # Wizard, inputs, modes, convergence, results, triggers, best-practices
+├── populations/              # Build, interview grounding, validation
+├── decisions/                # Log + lifecycle
+├── integrations/             # Per-category guides (15 integrations)
+├── calibration/              # Flywheel, ship detection, accuracy, drift
+├── admin/                    # Workspaces, members/roles, SSO/SCIM, billing, audit
+├── security/                 # SOC 2 posture, data handling, sub-processors, GDPR, LLM safety
+├── reference/                # Keyboard shortcuts, limits, release notes, support
+└── api-reference/            # REST API reference + per-endpoint pages + OpenAPI spec
+```
+
+## Local preview
+
+```bash
 npm i -g mint
-```
-
-Run the following command at the root of your documentation, where your `docs.json` is located:
-
-```
 mint dev
 ```
 
-View your local preview at `http://localhost:3000`.
+Opens at `http://localhost:3000`.
 
-## Publishing changes
+## Source of truth
 
-Install our GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app) to propagate changes from your repo to your deployment. Changes are deployed to production automatically after pushing to the default branch.
+This repo is the **customer-facing** documentation. The product source-of-truth lives in the [`sentia-labs-enterprise`](../sentia-labs-enterprise) repo at `docs/`:
 
-## Need help?
+- `docs/api-reference.yaml` — canonical OpenAPI spec (mirrored to `api-reference/openapi.yaml` here)
+- `docs/integration-guides.md` — internal integration architecture
+- `docs/simulation-best-practices.md` — internal best-practices reference
+- `docs/incident-playbook.md` — internal SRE runbooks (NOT for customer docs)
+- `docs/render-production.md` — internal deployment notes
 
-### Troubleshooting
+When something material changes in the product, update the relevant page here. The OpenAPI spec is hand-mirrored to keep API reference in sync.
 
-- If your dev environment isn't running: Run `mint update` to ensure you have the most recent version of the CLI.
-- If a page loads as a 404: Make sure you are running in a folder with a valid `docs.json`.
+## Publishing
 
-### Resources
-- [Mintlify documentation](https://mintlify.com/docs)
+The Mintlify GitHub App deploys this repo automatically on push to `main`. See the [Mintlify dashboard](https://dashboard.mintlify.com).
+
+## Conventions
+
+- Customer-facing language. Avoid internal jargon. Avoid links to `apps/...` or `packages/...` paths.
+- One `<h1>` per page (via the frontmatter `title`).
+- Always include a "Next" card group at the bottom for navigability.
+- Code blocks: use real-shaped examples, not placeholders like `<your-api-key>`. Always show a curl example for API endpoints.
+- Tables for structured comparisons, not bullet lists.
+- Keep page-length under ~800 lines. If longer, split.

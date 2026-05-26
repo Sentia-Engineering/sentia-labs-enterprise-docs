@@ -1,33 +1,103 @@
 ---
-title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+title: "Introduction"
+description: "Sentia REST API — auth, workspace scoping, rate limits, and the conventions used everywhere."
 ---
 
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
+The Sentia REST API is workspace-scoped, JWT-authenticated, and rate-limited. Use it to programmatically create simulations, manage populations, query results, administer workspaces, or wire Sentia into your internal tooling.
 
-## Welcome
+## Base URLs
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
+| Region | URL |
+| --- | --- |
+| **Production (US)** | `https://api.sentialabs.ai` |
+| **Production (EU)** | `https://api.eu.sentialabs.ai` |
 
-<Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
->
-  View the OpenAPI specification file
-</Card>
+Use the region matching your workspace residency. Requests to the wrong region's API will fail with a clear error message.
 
-## Authentication
+## Conventions
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+| | |
+| --- | --- |
+| **Auth** | `Authorization: Bearer <WorkOS-issued JWT>` |
+| **Workspace** | `x-workspace-id: <uuid>` header on all data operations |
+| **Content type** | `application/json` for request and response bodies |
+| **Date format** | ISO 8601 with UTC timezone (`2026-05-25T14:32:17Z`) |
+| **IDs** | UUID v4 unless noted |
+| **Pagination** | `cursor`-based, with `next_cursor` in the response |
+| **Errors** | Standard HTTP status codes + structured JSON error body |
 
-```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
-```
+## Where to start
+
+<CardGroup cols={2}>
+  <Card title="Authentication" icon="key" href="/api-reference/authentication">
+    How to get a token, refresh, and revoke.
+  </Card>
+  <Card title="Workspace scoping" icon="building" href="/api-reference/workspace-scoping">
+    Why `x-workspace-id` is required and how multi-workspace access works.
+  </Card>
+  <Card title="Rate limits" icon="gauge-high" href="/api-reference/rate-limits">
+    Default limits and how to handle 429s.
+  </Card>
+  <Card title="Errors" icon="circle-exclamation" href="/api-reference/errors">
+    The error envelope, status codes, and common cases.
+  </Card>
+  <Card title="Webhooks" icon="bolt" href="/api-reference/webhooks">
+    Signature verification, event types, retry behavior.
+  </Card>
+</CardGroup>
+
+## Resources
+
+<CardGroup cols={2}>
+  <Card title="Simulations" icon="flask" href="/api-reference/endpoint/simulations-create">
+    Create, retrieve, and manage simulation runs.
+  </Card>
+  <Card title="Populations" icon="users" href="/api-reference/endpoint/populations-create">
+    Create populations and run validation.
+  </Card>
+  <Card title="Captures" icon="image" href="/api-reference/endpoint/captures-url">
+    Capture URLs for simulation input.
+  </Card>
+  <Card title="Integrations" icon="plug" href="/api-reference/endpoint/integrations-list">
+    List connected integrations and their sync state.
+  </Card>
+  <Card title="Admin & GDPR" icon="user-shield" href="/api-reference/endpoint/admin-data-deletion">
+    Workspace administration, SCIM, usage, GDPR data deletion / export.
+  </Card>
+  <Card title="Health" icon="signal-bars" href="/api-reference/endpoint/health">
+    Liveness and readiness probes.
+  </Card>
+</CardGroup>
+
+## SDKs
+
+| Language | Status |
+| --- | --- |
+| **TypeScript / Node.js** | Coming Q3 2026 — currently the [`@sentia/capture`](/simulations/inputs#captured-localhost-ui) CLI exposes a subset of the API |
+| **Python** | Coming Q4 2026 |
+| **Go** | Roadmap; on-demand |
+| **Other languages** | Use any HTTP client — the API is plain REST + JSON |
+
+The OpenAPI 3.1 spec lives at `/api-reference/openapi.yaml` in this docs repo, and is mirrored in production at `https://api.sentialabs.ai/openapi.yaml`.
+
+## API stability
+
+Sentia uses **resource-level versioning**, not a global version. Resources are versioned in their URL path when breaking changes occur (e.g., `/api/v2/simulations`). Non-breaking additions don't bump versions.
+
+We commit to:
+
+- **6-month deprecation window** for any resource version we plan to retire
+- **Migration guides** for breaking changes, with side-by-side examples
+- **No silent breaking changes** to existing resources
+
+## API quotas
+
+See [Rate limits](/api-reference/rate-limits). Defaults:
+
+- 100 requests / minute / workspace (general)
+- 10 simulation creates / minute / workspace
+- 1,000 webhook deliveries / minute / provider
+
+## Support
+
+API questions: [support@sentialabs.ai](mailto:support@sentialabs.ai) with subject prefix `[API]`. Include the request ID from the `X-Request-Id` response header for fastest resolution.

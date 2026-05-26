@@ -1,0 +1,112 @@
+---
+title: "GDPR data export"
+api: "POST /admin/data-export-request"
+description: "Export all workspace data in machine-readable format. GDPR right to portability."
+---
+
+Queues an export of all workspace data. Returns a job ID; the export is delivered via signed S3 URL when complete (typically within 24 hours, usually < 1 hour for small workspaces).
+
+For the dashboard flow and what's included, see [GDPR → Right to portability](/security/gdpr#right-to-portability-data-export).
+
+## Request
+
+```bash
+curl -X POST https://api.sentialabs.ai/admin/data-export-request \
+  -H "Authorization: Bearer $SENTIA_TOKEN" \
+  -H "x-workspace-id: $WORKSPACE_ID" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "workspaceId": "ws_8f9a2b...",
+    "format": "json",
+    "includeCaptures": true,
+    "notifyEmail": "owner@example.com"
+  }'
+```
+
+## Body
+
+| Field | Type | Required | Notes |
+| --- | --- | --- | --- |
+| `workspaceId` | UUID | ✅ | Must match `x-workspace-id` |
+| `format` | enum | Optional | `"json"` (default) or `"csv"` |
+| `includeCaptures` | bool | Optional | Default `true`. Captures can be very large. |
+| `notifyEmail` | string | Optional | Email to notify with the download link |
+| `dateRange` | object | Optional | `{ "start": "2026-01-01", "end": "2026-05-25" }` — defaults to all-time |
+
+## Response — 202 Accepted
+
+```json
+{
+  "exportRequestId": "exp_8f9a2b...",
+  "workspaceId": "ws_8f9a2b...",
+  "status": "queued",
+  "estimatedCompletionMs": 1800000,
+  "format": "json",
+  "includeCaptures": true,
+  "notifyEmail": "owner@example.com"
+}
+```
+
+## Getting the result
+
+Poll:
+
+```bash
+GET /admin/data-export-request/exp_8f9a2b...
+```
+
+Returns:
+
+```json
+{
+  "exportRequestId": "exp_8f9a2b...",
+  "status": "completed",
+  "completedAt": "2026-05-25T15:08:42Z",
+  "expiresAt": "2026-06-01T15:08:42Z",
+  "format": "json",
+  "downloadUrl": "https://s3.us-east-1.amazonaws.com/sentia-exports-private/...?X-Amz-Signature=...",
+  "totalSizeBytes": 4823402100,
+  "manifest": {
+    "simulations": { "count": 1247, "files": ["simulations/manifest.json", "..."] },
+    "populations": { "count": 12, "...": "..." },
+    "decisions": { "count": 489, "...": "..." },
+    "captures": { "count": 89, "totalSizeBytes": 3210000000 },
+    "auditLog": { "count": 28401, "...": "..." }
+  }
+}
+```
+
+The signed download URL is **single-use** and valid for 7 days. Re-request the export if expired.
+
+## What's in the export
+
+- `simulations/` — JSON per simulation with all metadata, configuration, results, agent decisions
+- `populations/` — JSON per population including agent profiles
+- `decisions/` — JSON per decision with full lifecycle history
+- `integrations/` — Integration configs (credentials excluded)
+- `auditLog/` — JSONL of all audit events in the export period
+- `captures/` — Raw images and content, organized by simulation ID
+- `manifest.json` — File index and integrity hashes
+
+## Errors
+
+| Status | Code | Cause |
+| --- | --- | --- |
+| 403 | `role_insufficient` | Requires Admin or Owner role |
+| 422 | `invalid_date_range` | `dateRange.start` > `dateRange.end` |
+| 429 | `rate_limit_exceeded` | Max 5 export requests per workspace per day |
+
+## Audit
+
+The export request, completion, and any download events are all audit-logged. See [Audit log](/admin/audit-log).
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="GDPR (dashboard)" icon="user-shield" href="/security/gdpr">
+    What's exported and how to action requests.
+  </Card>
+  <Card title="Data deletion" icon="trash" href="/api-reference/endpoint/admin-data-deletion">
+    Permanent deletion via right-to-erasure.
+  </Card>
+</CardGroup>

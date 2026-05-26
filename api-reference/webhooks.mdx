@@ -1,0 +1,228 @@
+---
+title: "Webhooks"
+description: "Sentia delivers events to your URL with HMAC signatures, retries, and dead-letter handling."
+---
+
+Sentia delivers events to your URL via signed HTTPS POSTs. Use webhooks to react to simulation completions, decision state changes, calibration grades, or drift alerts in your own systems.
+
+## Configuring webhooks
+
+<Steps>
+  <Step title="Create the webhook endpoint">
+    Settings → Webhooks → **+ New webhook**.
+    
+    Fields:
+    - **URL** — your endpoint (HTTPS only)
+    - **Events** — which event types to deliver (multi-select)
+    - **Secret** — HMAC secret; Sentia generates one or you can paste your own
+    - **Description** — for your reference
+  </Step>
+  <Step title="Implement the verification logic">
+    Verify the HMAC signature on every request. See [Verification](#verification) below.
+  </Step>
+  <Step title="Test">
+    Click **Send test event** in the webhook detail page. Sentia delivers a synthetic event of each type so you can confirm parsing and signature verification.
+  </Step>
+</Steps>
+
+## Event format
+
+Every webhook POST has:
+
+```http
+POST /your-endpoint HTTP/1.1
+Content-Type: application/json
+X-Sentia-Signature: t=1716656400,v1=<hex-hmac>
+X-Sentia-Event-Type: simulation.completed
+X-Sentia-Event-Id: evt_8f9a2b...
+X-Sentia-Delivery-Id: del_3b4c5d...
+X-Sentia-Webhook-Id: wh_7c4e2a...
+User-Agent: Sentia-Webhook/1.0
+
+{
+  "id": "evt_8f9a2b...",
+  "type": "simulation.completed",
+  "created_at": "2026-05-25T14:32:17Z",
+  "workspace_id": "ws_...",
+  "data": {
+    "simulation_id": "sim_...",
+    "decision_id": "dec_...",
+    "status": "completed",
+    "...": "..."
+  }
+}
+```
+
+## Verification
+
+Compute the expected HMAC and compare:
+
+```python
+import hmac, hashlib, time
+
+def verify(payload_body, signature_header, secret, tolerance=300):
+    # Parse "t=...,v1=..."
+    parts = dict(p.split("=") for p in signature_header.split(","))
+    ts = int(parts["t"])
+    received = parts["v1"]
+
+    # Reject stale (>5 min) requests
+    if abs(time.time() - ts) > tolerance:
+        raise ValueError("Stale signature")
+
+    # Compute expected
+    signed_payload = f"{ts}.{payload_body}".encode()
+    expected = hmac.new(
+        secret.encode(),
+        signed_payload,
+        hashlib.sha256
+    ).hexdigest()
+
+    if not hmac.compare_digest(expected, received):
+        raise ValueError("Invalid signature")
+```
+
+```javascript
+const crypto = require('crypto');
+
+function verify(payloadBody, signatureHeader, secret, toleranceSec = 300) {
+  const parts = Object.fromEntries(
+    signatureHeader.split(',').map(p => p.split('='))
+  );
+  const ts = parseInt(parts.t, 10);
+  const received = parts.v1;
+
+  // Reject stale
+  if (Math.abs(Date.now() / 1000 - ts) > toleranceSec) {
+    throw new Error('Stale signature');
+  }
+
+  const signedPayload = `${ts}.${payloadBody}`;
+  const expected = crypto
+    .createHmac('sha256', secret)
+    .update(signedPayload)
+    .digest('hex');
+
+  if (!crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(received))) {
+    throw new Error('Invalid signature');
+  }
+}
+```
+
+**Critical:** verify *before* parsing or acting on the payload. Reject any request that fails verification with a 400 — don't process it.
+
+## Event types
+
+| Event | When fired |
+| --- | --- |
+| `simulation.created` | New simulation queued |
+| `simulation.running` | Simulation entered running state |
+| `simulation.completed` | Simulation finished successfully |
+| `simulation.failed` | Simulation failed |
+| `simulation.cancelled` | Simulation manually cancelled |
+| `population.built` | Population generation completed |
+| `population.validated` | Validation suite finished |
+| `population.drift_detected` | Drift CUSUM threshold exceeded |
+| `decision.proposed` | New decision created |
+| `decision.simulated` | Decision transitioned to Simulated |
+| `decision.shipped` | Decision transitioned to Shipped (calibration window opens) |
+| `decision.validated` | Calibration window closed; grade available |
+| `decision.reverted` | Decision rolled back |
+| `calibration.event_recorded` | New calibration event landed |
+| `calibration.drift_alert` | Workspace-wide drift alert |
+| `integration.connected` | New integration successfully connected |
+| `integration.sync_failed` | Integration sync failed (3 consecutive failures) |
+| `audit.gdpr_request_completed` | GDPR data deletion or export finished |
+
+You can subscribe to all events or a subset per webhook.
+
+## Retry behavior
+
+If your endpoint returns non-2xx or fails to respond within 10 seconds:
+
+| Attempt | Delay |
+| --- | --- |
+| 1 (initial) | 0s |
+| 2 | 30s |
+| 3 | 2 min |
+| 4 | 10 min |
+| 5 | 30 min |
+| 6 | 1 hr |
+| 7 | 4 hr |
+| 8 | 12 hr |
+
+After 8 failed attempts spanning ~17 hours, the delivery is moved to dead-letter.
+
+## Idempotency
+
+Always treat webhook events as **at-least-once delivery**. Use `X-Sentia-Event-Id` as an idempotency key in your handler — store processed event IDs and skip duplicates.
+
+Events for the same logical change (e.g., simulation status updates) may arrive out of order. The event body always includes the resource's current state; use it as source of truth.
+
+## Dead-letter queue
+
+Failed deliveries that exhaust retries:
+
+- Are logged in Settings → Webhooks → webhook detail → **Dead letter** tab
+- Can be manually replayed from the dashboard
+- Are retained for 7 days
+
+If you see lots of dead letters, your endpoint is unhealthy or misconfigured.
+
+## Webhook health monitoring
+
+The webhook detail page shows:
+
+- Total deliveries (last 30 days)
+- Success rate
+- Average response time
+- 4xx / 5xx counts
+- Last successful delivery
+
+Health degradation (> 5% failure rate over an hour) triggers a Slack notification to workspace admins.
+
+## Disabling and rotating
+
+| Action | Effect |
+| --- | --- |
+| **Pause** | Webhook stops receiving events. Existing in-flight deliveries complete. |
+| **Resume** | Receiving resumes immediately. No backfill of events delivered during pause. |
+| **Rotate secret** | New secret takes effect for future events. Update your verification code first. |
+| **Delete** | Permanent. Dead-letter queue is also purged after 7 days. |
+
+For zero-downtime secret rotation:
+
+<Steps>
+  <Step title="In Sentia">
+    Rotate secret. Get the new secret value.
+  </Step>
+  <Step title="In your endpoint">
+    Add the new secret as a secondary acceptance key. Verify against both old and new for an overlap period.
+  </Step>
+  <Step title="After 24h">
+    Remove the old secret from your endpoint's verification config.
+  </Step>
+</Steps>
+
+## Security recommendations
+
+- **Always verify the signature.** Sentia rejects unauthenticated webhooks; your endpoint should too.
+- **Use HTTPS.** Sentia refuses to send to HTTP endpoints.
+- **Implement idempotency.** At-least-once delivery means duplicates happen.
+- **Respond quickly.** Return 2xx within 10 seconds; do heavy work async.
+- **Don't log payloads.** They contain workspace data; treat as sensitive.
+
+## Test signing
+
+For local development, the dashboard has a "Send test event" button that delivers synthetic events of each type. Useful for testing your handler without waiting for real events.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Errors" icon="circle-exclamation" href="/api-reference/errors">
+    Error envelope and codes.
+  </Card>
+  <Card title="Audit log" icon="clipboard-list" href="/admin/audit-log">
+    Webhook events are also audit-logged.
+  </Card>
+</CardGroup>

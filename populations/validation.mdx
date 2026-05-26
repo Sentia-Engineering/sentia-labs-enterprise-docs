@@ -1,0 +1,126 @@
+---
+title: "Validation"
+description: "The 5-experiment behavioral suite that confirms your population behaves like real humans before you trust it for real decisions."
+---
+
+Before running real simulations against a population, validate that the agents behave like real humans. Sentia uses a standard suite of behavioral economics experiments — the same ones used in academic research on human decision-making.
+
+## The 5-experiment suite
+
+Each experiment puts agents in a well-studied decision context where human behavior follows known patterns. If your agents' behavior matches expected patterns, the population has high fidelity.
+
+| Experiment | What it tests | Expected human pattern |
+| --- | --- | --- |
+| **Dictator game** | Generosity & social norms | ~28% give away half; ~76% give something |
+| **Trust game** | Trust & reciprocity | Trustees return ~50% of what's sent on average |
+| **Public goods** | Cooperation under self-interest | Initial contribution ~40–60% of endowment, declining over rounds |
+| **Prisoner's dilemma** | Strategic cooperation | ~50% cooperate in one-shot; cooperation increases when reputation is at stake |
+| **Ultimatum** | Fairness & rejection | Proposals < 20% get rejected ~50% of the time |
+
+If the population's responses are within tolerance of these patterns, fidelity is high. If they're not, the population is too generic, too narrow, or under-grounded.
+
+## Running validation
+
+Validation runs automatically on first build. You can re-run anytime.
+
+<Steps>
+  <Step title="Open the population">
+    Populations → click the population card. The first tab is **Validation**.
+  </Step>
+  <Step title="Click 'Run validation'">
+    Sentia runs a 200-agent sample through all 5 experiments. ~2 minutes.
+  </Step>
+  <Step title="Read the report">
+    The report shows pass rate, overall fidelity score, per-experiment results with reference distributions.
+  </Step>
+</Steps>
+
+## Reading the report
+
+### Headline scores
+
+| Metric | Healthy | What it means |
+| --- | --- | --- |
+| **Pass rate** | ≥ 80% | Fraction of experiments where the population's behavior is within tolerance of the expected human pattern |
+| **Fidelity score** | ≥ 0.7 | Composite score across all experiments, weighted by experiment importance |
+
+Both need to be healthy for the population to be trusted in production simulations.
+
+### Per-experiment view
+
+Each experiment expands to show:
+
+- **Distribution chart** — your agents' behavior overlaid on the expected human distribution
+- **Statistical fit** — KL divergence between your agents' distribution and the reference
+- **Pass/fail** — whether the divergence is within tolerance
+- **Sample agent transcripts** — read 3–5 to spot-check reasoning
+
+## Common failure patterns
+
+<AccordionGroup>
+  <Accordion title="Pass rate 60–80%, fidelity 0.5–0.7 — under-grounded">
+    The most common failure mode. Agents pass *some* experiments but show generic patterns on others.
+    
+    **Fix:** add or expand qualitative sources. Connect Dovetail or another support source. Rebuild.
+  </Accordion>
+
+  <Accordion title="Pass rate < 60% — bad scope">
+    Population scope is wrong — too narrow (effective N too small), wrong region, or incompatible cohort filters.
+    
+    **Fix:** review filters. Broaden the cohort or split into multiple populations.
+  </Accordion>
+
+  <Accordion title="Pass rate 80%+, fidelity > 0.7, but agents 'sound off'">
+    Quantitative validation passes but agent transcripts read poorly.
+    
+    **Fix:** check the qualitative corpus — are verbatims relevant to your domain? Filter to higher-relevance segments. Refresh embeddings.
+  </Accordion>
+
+  <Accordion title="High variance across runs">
+    Re-running validation produces different scores each time.
+    
+    **Fix:** the population's effective N is too small. Increase agent count, or reduce filter narrowness.
+  </Accordion>
+</AccordionGroup>
+
+## What validation can't tell you
+
+- It doesn't validate that agents will respond accurately to *your* specific product changes — that's what calibration is for
+- It can't catch systematic biases inherited from biased qualitative data (e.g., if all your interviews are from happy customers)
+- It can't validate a population for use outside its intended scope (an SMB population validated on SMB experiments won't transfer to enterprise scenarios)
+
+Validation is necessary but not sufficient. **Calibration** is what closes the loop on real-world accuracy. See [Calibration](/calibration/overview).
+
+## Re-validation cadence
+
+Re-validate when:
+
+- **Drift > 10%** (Sentia flags this automatically)
+- **You refresh the qualitative corpus** (new interviews, ticket re-sync)
+- **You edit filters** (validation reruns automatically)
+- **Calibration accuracy drops** below your workspace's expected range
+
+Re-validation is fast (~2 minutes) and free against contract allocation.
+
+## DPD — bias detection
+
+Beyond the behavioral suite, populations are also checked for **DPD (Demographic Parity Difference)** — a fairness metric that flags when protected demographic segments show statistically anomalous behavior.
+
+If DPD exceeds the workspace threshold (default 0.10):
+
+- An amber badge appears on the population
+- Admins get a Slack notification
+- The population is still usable, but high-stakes decisions should be reviewed manually
+
+DPD is conservative. It can flag legitimate behavioral patterns. Your CSM can help interpret specific alerts.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Calibration" icon="rotate" href="/calibration/overview">
+    The flywheel that closes the loop on real-world accuracy.
+  </Card>
+  <Card title="Build a population" icon="users-gear" href="/populations/build">
+    Builder reference if you need to rebuild after a failed validation.
+  </Card>
+</CardGroup>

@@ -1,0 +1,124 @@
+---
+title: "Release notes"
+description: "What's new in Sentia. We ship continuously; major releases are summarized here monthly."
+---
+
+Sentia ships continuously. This page summarizes major releases that affect customer workflows. For real-time deploy notifications, subscribe via Slack Connect with your CSM.
+
+For the live status of production services, see [status.sentialabs.ai](https://status.sentialabs.ai).
+
+## May 2026
+
+### Highlights
+
+- **Auto-trigger pipeline now includes Firecrawl URL enrichment.** When a Linear/Jira issue or Slack message references an external URL, Sentia auto-scrapes the content as part of simulation context.
+- **Population drift detection** — CUSUM-based drift monitoring now runs continuously. Affected populations get a "Drift detected" badge when threshold exceeded. See [Drift](/calibration/drift).
+- **Dovetail integration GA** — interview transcripts and highlights now first-class qualitative sources. See [Qualitative integrations](/integrations/qualitative).
+- **EU residency for LLM traffic** — EU workspaces now route Anthropic and Vertex calls through EU endpoints exclusively.
+
+### Improvements
+
+- Convergence chart now shows two-wave stability indicator in real time
+- Calibration heatmap supports per-decision-tag filtering
+- Export PDF includes population provenance section
+- SCIM provisioning errors now surface in the Audit log with actionable detail
+
+### Fixes
+
+- Fixed: Slack `/shipped` command sometimes failed when issue key contained hyphens
+- Fixed: Mixpanel cohort sync occasionally double-counted users in segmented cohorts
+- Fixed: Figma frame triggers fired twice in rare race conditions
+
+## April 2026
+
+### Highlights
+
+- **Behavioral validation suite** — every population now auto-runs the 5-experiment suite on first build. Fidelity score and pass rate surfaced prominently. See [Validation](/populations/validation).
+- **Per-tenant KMS keys** for all credential storage. Customer-requested deletion now triggers KMS key revocation for cryptographic shred of backup data.
+- **Statsig and Eppo integrations GA** — A/B test results weighted 3× in calibration. See [Experimentation](/integrations/experimentation).
+
+### Improvements
+
+- Quickstart now uses the Sample US Census Population (1,000 agents) by default — first-run experience under 10 minutes end-to-end
+- Decision detail page shows per-segment correction factors applied to future simulations
+- Workspace admins can now configure per-source rate limits for auto-triggers
+
+### Fixes
+
+- Fixed: Captures with very large viewports occasionally timed out during URL capture
+- Fixed: Audit log filter for `outcome=failure` missed some authorization failures
+
+## March 2026
+
+### Highlights
+
+- **Multi-source trigger engine** — Linear, Jira, Figma, Slack triggers unified through a single pipeline with dedup, rate limit, and context enrichment. See [Auto-triggers](/simulations/triggers).
+- **8-tab results view** — replaces the previous 5-tab layout. Adds Adoption Cascade, Calibration, and dedicated Recommendations tabs.
+- **Calibration confidence levels** — corrections now have HIGH/MEDIUM/LOW confidence based on event count, with proportional application.
+
+### Improvements
+
+- Convergence chart switched to Recharts (was custom D3) — better keyboard navigation and accessibility
+- All charts have `<figure>` + `<figcaption>` wrappers
+- New skip-to-main link on every page
+- Focus moves to `<main>` on route change
+
+### Fixes
+
+- Fixed: Population drift alerts occasionally fired for populations that had been refreshed within the last 24h
+- Fixed: SCIM deprovisioning sometimes left session cookies valid for up to 5 minutes (now immediate)
+
+## February 2026
+
+### Highlights
+
+- **WorkOS AuthKit migration complete** — all workspaces now on the WorkOS-managed SSO/SCIM/Directory Sync infrastructure
+- **Render production environment GA** — Sentia's primary production hosting now on Render with image-backed CI/CD
+- **Calibration backfill** — admins can retroactively trigger calibration on past shipped decisions (up to 90 days)
+
+### Improvements
+
+- Per-agent transcripts now include the full Memory → Reflection → Decision chain
+- Live run page tail mode shows up to 20 most recent agent transcripts simultaneously
+- API rate-limit headers added to all responses (`X-RateLimit-*`)
+
+### Fixes
+
+- Fixed: PostHog self-hosted instances occasionally failed first connect with custom CA bundles (now supported)
+- Fixed: Figma frame captures lost annotations in rare edge cases
+
+## January 2026
+
+### Highlights
+
+- **Calibration flywheel** — full predicted-vs-actual loop now production-grade. Ship detection from LaunchDarkly, GitHub, Slack, and Statsig/Eppo.
+- **Decisions log** — central tracking of every product decision through the simulated → shipped → validated lifecycle
+- **Notion and Confluence integrations** — PRDs auto-attach to triggered simulations
+
+### Improvements
+
+- Wizard auto-saves drafts every 30 seconds
+- Slack `/simulate` and `/shipped` commands GA
+- Audit log export to S3 (cold storage) GA — 7-year retention for compliance
+
+## Older releases
+
+For historical releases prior to January 2026, contact your CSM. Pre-GA changelogs are not maintained for production-customer reading.
+
+## How to follow along
+
+- **Slack Connect** — your CSM-managed channel gets release-summary posts
+- **In-app banner** — major release banners auto-appear in the dashboard for 14 days
+- **RSS feed** — `https://docs.sentialabs.ai/feed.xml` (coming H2 2026)
+- **Email digest** — opt in via Settings → Notifications
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Support" icon="life-ring" href="/reference/support">
+    Channels for questions, bugs, and feedback.
+  </Card>
+  <Card title="Status" icon="signal-bars" href="https://status.sentialabs.ai">
+    Live production status.
+  </Card>
+</CardGroup>

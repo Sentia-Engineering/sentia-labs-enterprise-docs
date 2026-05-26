@@ -1,0 +1,114 @@
+---
+title: "Keyboard shortcuts"
+description: "Everything in Sentia is keyboard-driven. Press ? in the app to see this overlay."
+---
+
+Sentia is built keyboard-first. Power users navigate almost entirely without the mouse. Shortcuts are registered via a singleton registry so they're consistent everywhere.
+
+Press `?` in the app to open the live shortcut overlay.
+
+## Global navigation
+
+| Shortcut | Action |
+| --- | --- |
+| `S` | Simulations |
+| `P` | Populations |
+| `D` | Decisions |
+| `I` | Integrations |
+| `C` | Calibration |
+| `⌘,` | Settings |
+| `⌘B` | Toggle sidebar |
+| `⌘⇧N` | Open notifications |
+| `?` | Keyboard shortcuts overlay |
+| `⌘K` | Command palette (search everything) |
+
+## Lists and tables
+
+| Shortcut | Action |
+| --- | --- |
+| `J` | Next row |
+| `K` | Previous row |
+| `Enter` | Open selected row or expand agent |
+| `/` | Focus search |
+| `1`–`6` | Filter by status (varies by list) |
+
+## New simulation wizard
+
+| Shortcut | Action |
+| --- | --- |
+| `N` | New simulation (from anywhere) |
+| `⌘Enter` | Advance to next wizard step |
+| `⌘⌫` | Go back one wizard step |
+| `⌘⇧L` | Launch the simulation |
+| `Esc` | Save as draft and exit wizard |
+
+## Simulation results
+
+| Shortcut | Action |
+| --- | --- |
+| `1` | Overview tab |
+| `2` | Recommendations tab |
+| `3` | Segments tab |
+| `4` | Objections tab |
+| `5` | Agents tab |
+| `6` | Transcripts tab |
+| `7` | Adoption Cascade tab |
+| `8` | Calibration tab |
+| `⌘E` | Export PDF |
+| `⌘⇧L` | Push results to Linear / Jira |
+| `⌘⇧S` | Share to Slack |
+
+## Live simulation run view
+
+| Shortcut | Action |
+| --- | --- |
+| `Space` | Pause / resume |
+| `Esc` | Cancel simulation (confirms first) |
+| `T` | Tail transcripts |
+| `⌘F` | Focus filter on agents view |
+
+## Population builder
+
+| Shortcut | Action |
+| --- | --- |
+| `⌘Enter` | Advance to next step |
+| `⌘⌫` | Go back |
+| `⌘B` | Build / regenerate |
+| `⌘V` | Run validation |
+
+## Decisions log
+
+| Shortcut | Action |
+| --- | --- |
+| `T` | Add tag to selected decision |
+| `M` | Mark as shipped |
+| `R` | Mark as reverted |
+| `A` | Archive selected |
+| `⌘E` | Export decisions to CSV |
+
+## Accessibility
+
+All shortcuts respect `prefers-reduced-motion` — animations are disabled when set. Focus rings are always visible on the focused element.
+
+For screen reader users:
+
+- Skip-to-main link is always present (focus on page load)
+- Focus moves to `<main>` on route change
+- Agent counter updates announce via `aria-live` every 10 agents
+- Tab panels are linked via `aria-controls` / `aria-labelledby`
+
+## Customizing shortcuts
+
+Shortcuts are not currently customizable. Submit feature requests to [support@sentialabs.ai](mailto:support@sentialabs.ai) for shortcuts that would help your team's workflow.
+
+## Common workflows in keystrokes
+
+Some flows users have memorized:
+
+| Workflow | Keys |
+| --- | --- |
+| Run a new simulation from scratch | `N` → fill wizard → `⌘⇧L` |
+| Open the most recent simulation and export | `S` → `Enter` → `⌘E` |
+| Switch from results to populations | `P` (from anywhere) |
+| Search for a specific decision | `D` → `/` → type → `Enter` |
+| Run validation on a population | `P` → `J/K` to select → `Enter` → `⌘V` |

@@ -1,0 +1,105 @@
+---
+title: "Validate population"
+api: "POST /api/populations/{populationId}/validate"
+description: "Run the 5-experiment behavioral suite against a sample of agents to verify behavioral fidelity."
+---
+
+Runs the canonical behavioral validation suite — dictator game, trust game, public goods, prisoner's dilemma, and ultimatum — against a 200-agent sample from the population. Returns when complete (~2 minutes).
+
+See [Validation (dashboard)](/populations/validation) for what the suite measures and how to read results.
+
+## Request
+
+```bash
+curl -X POST https://api.sentialabs.ai/api/populations/pop_8f9a2b.../validate \
+  -H "Authorization: Bearer $SENTIA_TOKEN" \
+  -H "x-workspace-id: $WORKSPACE_ID"
+```
+
+## Path parameters
+
+| Parameter | Type | Notes |
+| --- | --- | --- |
+| `populationId` | UUID | Must be in `ready` or `drifted` state |
+
+## Response — 200 OK
+
+```json
+{
+  "populationId": "pop_8f9a2b...",
+  "validatedAt": "2026-05-25T14:34:17Z",
+  "passRate": 0.84,
+  "overallFidelityScore": 0.76,
+  "outcome": "passed",
+  "experiments": [
+    {
+      "name": "dictator_game",
+      "passed": true,
+      "fitScore": 0.82,
+      "klDivergence": 0.04,
+      "expectedPattern": { "...": "..." },
+      "agentDistribution": { "...": "..." }
+    },
+    {
+      "name": "trust_game",
+      "passed": true,
+      "fitScore": 0.79,
+      "klDivergence": 0.06,
+      "...": "..."
+    },
+    {
+      "name": "public_goods",
+      "passed": false,
+      "fitScore": 0.68,
+      "klDivergence": 0.12,
+      "...": "..."
+    },
+    {
+      "name": "prisoners_dilemma",
+      "passed": true,
+      "fitScore": 0.74,
+      "klDivergence": 0.05,
+      "...": "..."
+    },
+    {
+      "name": "ultimatum",
+      "passed": true,
+      "fitScore": 0.80,
+      "klDivergence": 0.05,
+      "...": "..."
+    }
+  ],
+  "dpdReport": {
+    "overall": 0.07,
+    "perSegment": { "...": "..." },
+    "thresholdExceeded": false
+  }
+}
+```
+
+## Outcome values
+
+| Outcome | Meaning |
+| --- | --- |
+| `"passed"` | Pass rate ≥ 80% AND fidelity ≥ 0.7. Population is production-trustworthy. |
+| `"marginal"` | Pass rate 60–80% OR fidelity 0.5–0.7. Use with caution. |
+| `"failed"` | Either threshold below floor. Don't use for production simulations until fixed. |
+
+## Errors
+
+| Status | Code | Cause |
+| --- | --- | --- |
+| 404 | `resource_not_found` | Population doesn't exist |
+| 409 | `resource_conflict` | Population is still building |
+| 422 | `quota_exceeded` | Validation rate limit hit (rare) |
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Create population" icon="plus" href="/api-reference/endpoint/populations-create">
+    Build a new population.
+  </Card>
+  <Card title="Validation (dashboard)" icon="check-double" href="/populations/validation">
+    What the validation suite measures.
+  </Card>
+</CardGroup>

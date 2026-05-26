@@ -1,0 +1,148 @@
+---
+title: "Decision lifecycle"
+description: "Proposed → Simulated → Shipped → Validated → Reverted. What happens at each stage."
+---
+
+Every decision in Sentia moves through a five-stage lifecycle. Each stage has a clear definition, who can advance it, and what triggers the transition.
+
+## The five stages
+
+```
+┌──────────┐    ┌──────────┐    ┌─────────┐    ┌──────────┐    ┌──────────┐
+│ Proposed │───▶│Simulated │───▶│ Shipped │───▶│Validated │    │ Reverted │
+└──────────┘    └──────────┘    └────┬────┘    └──────────┘    └──────────┘
+                                     │
+                                     └──────────────────────────────▲
+                                     (rollback)
+```
+
+### Proposed
+
+The decision exists but hasn't been simulated.
+
+**Created when:** A teammate opens `/decisions/new`, or a simulation wizard step 1 is saved as a draft.
+
+**Useful for:** queueing decisions that need simulation before a planning meeting. Bulk-prepare a roadmap review.
+
+### Simulated
+
+At least one simulation has been run and completed against the decision.
+
+**Created when:** A simulation completes (auto-transitions from Proposed). The decision gains a simulation summary in the log.
+
+**Multiple simulations:** a decision can have many simulations (e.g., Fast → Deep, or one per design variant). The log shows the latest by default; you can browse the history.
+
+### Shipped
+
+The change has been released to production.
+
+**Created when:**
+
+- LaunchDarkly flag crosses 50% rollout
+- A GitHub PR merges with a `shipped` label (configurable label)
+- A teammate runs `/shipped <decision-id>` in Slack
+- A teammate clicks "Mark as shipped" in the dashboard
+
+The Shipped transition opens a **14-day measurement window**. Sentia begins pulling actuals from your analytics and support providers.
+
+### Validated
+
+The 14-day measurement window has closed and Sentia has compared predicted vs. actual.
+
+**Created when:** 14-day window completes.
+
+The decision now has a **calibration grade** — a 0–1 score of how accurate the simulation prediction was. Per-segment correction factors update.
+
+### Reverted
+
+The change shipped but was rolled back.
+
+**Created when:**
+
+- LaunchDarkly flag drops below 5% rollout after being above 50%
+- A teammate marks the decision as reverted in the dashboard
+- A GitHub PR labeled `reverted` merges referencing the decision
+
+Reverted decisions are kept in the log permanently. They're often the most teachable cases — *why did Sentia predict it would work?* Understanding misses sharpens future simulations.
+
+## State transitions
+
+| From | To | Trigger |
+| --- | --- | --- |
+| (none) | Proposed | Decision created |
+| Proposed | Simulated | Simulation completes |
+| Simulated | Simulated | Additional simulation completes (state stays, new run logged) |
+| Simulated | Shipped | LaunchDarkly > 50%, GitHub merge with label, `/shipped`, or manual |
+| Shipped | Validated | 14-day measurement window closes |
+| Shipped | Reverted | Rollback signal received |
+| Validated | Reverted | Late rollback (rare; possible if a shipped feature is later pulled) |
+
+Transitions are audit-logged. You can see who advanced what, when, and from which surface (Slack / dashboard / GitHub / LaunchDarkly).
+
+## State-specific behaviors
+
+### Proposed
+
+- Can be edited freely
+- Can be deleted by the owner or workspace admin
+- Doesn't count against any quotas
+
+### Simulated
+
+- Cannot be deleted, only archived (preserves history)
+- Editing the question or hypothesis is allowed but flagged (you'll see a "Question was edited after simulation" warning on the detail page)
+- Re-simulation is encouraged when scope or design changes
+
+### Shipped
+
+- Cannot be unmade except via Revert
+- Triggers calibration window
+- Locks the linked simulation(s) — they can't be re-run (you can run a new simulation, which creates a new decision)
+
+### Validated
+
+- Calibration grade is final
+- Per-segment correction factors are baked into the workspace's calibration model
+- Useful for retrospectives — annotate the decision with what you learned
+
+### Reverted
+
+- Calibration grade may still apply (depending on how much data accumulated before rollback)
+- Often tagged with `reverted-reason:<reason>` for analysis
+- A revert can also trigger a new Proposed decision (e.g., "Should we re-attempt this with X change?")
+
+## Who can advance decisions
+
+| State transition | Allowed roles |
+| --- | --- |
+| Anything | Owner |
+| Most things | Admin |
+| Proposed → Simulated (via running a sim) | Builder, Admin, Owner |
+| Simulated → Shipped (manual) | Builder, Admin, Owner |
+| Shipped → Reverted (manual) | Admin, Owner |
+| Edit question/hypothesis | Decision owner + Admin + Owner |
+| Delete (Proposed only) | Decision owner + Admin + Owner |
+| Archive | Admin, Owner |
+
+Builders can advance decisions through the routine flow. Sensitive transitions (deletion, revert, post-hoc edits) require Admin+ roles. Viewers can only read.
+
+See [Members & roles](/admin/members-and-roles).
+
+## Bulk operations
+
+For workspace admins, the decisions log supports bulk actions:
+
+- Bulk archive (clean up old proposed decisions)
+- Bulk tag (categorize a quarter's worth of decisions)
+- Bulk export (CSV of all shipped decisions for a board review)
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Calibration" icon="rotate" href="/calibration/overview">
+    What happens during the 14-day measurement window.
+  </Card>
+  <Card title="Audit log" icon="clipboard-list" href="/admin/audit-log">
+    Every state transition is audit-logged.
+  </Card>
+</CardGroup>

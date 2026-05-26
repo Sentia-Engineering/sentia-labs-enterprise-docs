@@ -1,0 +1,159 @@
+---
+title: "Build a population"
+description: "Step-by-step: filters, grounding, generation, and the patterns that make populations sharp."
+---
+
+A walkthrough of the Population Builder. For a faster first-pass version, see [Build your first population](/onboarding/first-population) in the onboarding flow.
+
+## Before you start
+
+Check that these are connected:
+
+- ✅ One analytics provider (Amplitude / Mixpanel / PostHog)
+- ✅ At least one qualitative source (Dovetail / Intercom / Zendesk) — see [Interview grounding](/populations/interview-grounding)
+
+Without qualitative grounding, populations top out around 70% normalized accuracy.
+
+## Step 1 · Define intent
+
+Open Populations → **+ New population**. Step 1 asks for:
+
+| Field | Notes |
+| --- | --- |
+| **Name** | Descriptive — "SMB trial users — May 2026" is better than "Population 4" |
+| **Description** | Optional, helps teammates know when to use this population |
+| **Agent count** | 200 – 100,000. Most workspaces start with 1,000. |
+| **Region** | US or EU. Determines census source and data residency. |
+| **Sampling strategy** | Stratified (default — preserves segment proportions) or Random |
+
+### How many agents?
+
+| Agent count | Good for | Trade-off |
+| --- | --- | --- |
+| 200–500 | Quick experimentation, single-segment focus | Limited segment slicing |
+| 1,000 | First real populations, narrow scopes | Sweet spot — fast, accurate enough for most decisions |
+| 3,000–5,000 | Broad populations, multi-segment analysis | Slower generation, more storage |
+| 10,000+ | Enterprise breadth, finely-segmented analysis | Generation ~30–60 min; only worth it for high-volume usage |
+
+Default to **1,000 unless you have a reason to go bigger**. You can always have multiple specialized populations instead of one giant one.
+
+## Step 2 · Filter
+
+Combine **census filters** with **analytics cohorts**.
+
+### Census filters
+
+| Filter | Options |
+| --- | --- |
+| Age | Ranges, custom |
+| Income | Brackets ($0–25k, $25–50k, etc.) |
+| Region | Country, state/province, urbanity |
+| Education | Less than HS → Doctorate |
+| Household | Single, couple, family with kids, etc. |
+| Employment | Industry sector, role seniority |
+
+### Analytics cohorts
+
+Pick from saved cohorts in your analytics provider, or define on the fly:
+
+- **Amplitude** — any saved cohort or behavioral filter
+- **Mixpanel** — any cohort, with rate-limited query (max 5 concurrent)
+- **PostHog** — any cohort, including from self-hosted instances
+
+The right-side preview updates live, showing:
+
+- **Projected sample size** — how many agents will be built
+- **Demographic mix chart** — age/income/region breakdown
+- **Cohort overlap warning** — if filters produce < 100 effective agents (too narrow)
+
+### Sharp filters > broad filters
+
+The instinct to "include everyone" produces blurry populations. Sharp filters produce populations that converge fast and read clearly.
+
+**Sharp:** *"SMB trial users, 25–54, US, did not complete activation in first 7 days"*
+**Blurry:** *"All US customers"*
+
+## Step 3 · Ground
+
+This is the highest-leverage step. Pick which qualitative sources contribute to agent memory.
+
+### Sources
+
+| Source | What it provides | Recommended weight |
+| --- | --- | --- |
+| **Dovetail** | Structured interview transcripts + highlights | High |
+| **Intercom** | Support conversations, satisfaction ratings | Medium-high |
+| **Zendesk** | Tickets, satisfaction scores | Medium-high |
+
+You can use multiple sources. Default weights are sensible; advanced users can tune them.
+
+### Date range
+
+Default: last 90 days. Trade-off:
+
+- **Shorter (< 90 days)** — captures current customer sentiment, smaller corpus
+- **Longer (> 90 days)** — larger corpus, but may include outdated language ("our old design", "before the X feature shipped")
+
+### Filters
+
+- **Sentiment filter** — exclude very negative or very positive verbatims if you want a balanced sample
+- **Topic filter** — only include verbatims about specific topics (advanced; usually leave open)
+- **Persona match** — only ground agents from a verbatim if the persona signals match
+
+### Preview
+
+Click "Preview a sample agent" to see what an agent in this population will look like:
+
+- The full demographic + behavioral profile
+- The retrieved verbatims that ground its memory
+- A sample Memory-step reasoning chain
+
+If the agent looks generic or the verbatims feel off-topic, adjust your sources before generating.
+
+## Step 4 · Build
+
+Click **Build population**. Generation runs in the background.
+
+| Agent count | Typical build time |
+| --- | --- |
+| 200 | 1–2 min |
+| 1,000 | 3–8 min |
+| 5,000 | 15–25 min |
+| 10,000+ | 30–60 min |
+
+You'll get a Slack notification + in-app toast when generation completes.
+
+## After build
+
+The population auto-runs the **behavioral validation suite** (5 canonical experiments). Results land on the Validation tab.
+
+If pass rate < 80% or fidelity < 0.7, you'll see a warning and a one-click "rebuild with more grounding" option. See [Validation](/populations/validation).
+
+## Updating an existing population
+
+Three update modes:
+
+| Mode | What it does | Use when |
+| --- | --- | --- |
+| **Refresh** | Re-syncs analytics + qualitative data, regenerates verbatim grounding | Drift > 10%, or new interviews are available |
+| **Edit filters** | Change census/cohort filters and rebuild | The scope was wrong |
+| **Resize** | Add or remove agents while keeping filters/grounding | Need finer or coarser segment slicing |
+
+Refresh is free of charge against your contract allocation. Edit and Resize are billed as a new build.
+
+## Archiving
+
+Archive populations you no longer use. They stay in your workspace history (for audit and old-simulation reference) but are removed from the active list.
+
+You can unarchive at any time. Active populations re-sync; archived populations don't.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Interview grounding" icon="microphone" href="/populations/interview-grounding">
+    Deep dive into how qualitative data ends up in agent memory.
+  </Card>
+  <Card title="Validation" icon="check-double" href="/populations/validation">
+    The 5-experiment behavioral suite.
+  </Card>
+</CardGroup>

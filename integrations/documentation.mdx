@@ -1,0 +1,120 @@
+---
+title: "Documentation integrations"
+description: "Notion and Confluence — PRDs and design docs auto-attach to simulations when referenced from Linear/Jira."
+---
+
+Notion and Confluence integrations let Sentia pull PRDs, design docs, and project context into simulations automatically.
+
+## Notion
+
+<Steps>
+  <Step title="OAuth via Nango">
+    Integrations → Notion → **Connect**. Authorize Sentia for read access.
+  </Step>
+  <Step title="Pick accessible spaces">
+    During OAuth, Notion lets you grant access to specific pages or entire workspaces. Most teams grant access to their Product and Design workspaces.
+  </Step>
+  <Step title="Initial sync">
+    Sentia indexes all accessible pages and databases. Typical duration: 5–20 minutes depending on workspace size.
+  </Step>
+  <Step title="Configure ongoing sync">
+    30-minute polling for changes; on-demand fetch when a page is referenced from a Linear/Jira issue.
+  </Step>
+</Steps>
+
+**What's synced:**
+
+- Page content (text, headings, lists, code blocks)
+- Database items (PRD trackers, decision logs, etc.)
+- Page metadata (last-edited, author, tags)
+
+Block-level attachments (images, embeds, videos) are referenced but not deeply ingested. Sentia primarily uses Notion content as *context* attached to simulations, not as agent grounding.
+
+## Confluence
+
+Same role as Notion, on Atlassian.
+
+<Steps>
+  <Step title="OAuth via Nango">
+    Integrations → Confluence → **Connect**.
+  </Step>
+  <Step title="Choose spaces">
+    Pick which Confluence spaces to index. Common pattern: Product space + Design space + Engineering space.
+  </Step>
+  <Step title="Initial sync">
+    ~5–20 minutes.
+  </Step>
+  <Step title="Configure ongoing sync">
+    30-minute cadence.
+  </Step>
+</Steps>
+
+**Confluence Server (self-hosted):** supported with service-account auth. Provide base URL and credentials.
+
+## How documentation context gets attached
+
+When you launch a simulation — manually or via auto-trigger — Sentia:
+
+1. Detects Notion/Confluence URLs in the Linear/Jira issue description, comments, or Slack thread
+2. Fetches the linked pages
+3. Includes them as **context** alongside captures
+4. Agents see the PRD content as supporting material during reasoning
+
+You can also paste Notion/Confluence URLs directly into the wizard's Scenario step.
+
+## What documentation does NOT do
+
+Notion and Confluence content **does not become agent memory** like qualitative verbatims do. The distinction:
+
+- **Agent memory** (Dovetail/Intercom/Zendesk verbatims) — *what your users say*. Drives reasoning.
+- **Simulation context** (Notion/Confluence pages) — *what the team is proposing*. Frames the scenario.
+
+This separation is intentional. PRDs reflect team thinking; verbatims reflect user reality. Conflating them would bias agent reasoning toward the team's framing.
+
+## Privacy & access
+
+Sentia respects source-side permissions:
+
+- **Notion:** only pages the granted-access workspace can see are indexed
+- **Confluence:** only spaces the service account can read
+
+When a user permission changes in Notion/Confluence, Sentia's next sync respects the change. Cached content is invalidated when source access is revoked.
+
+## Sync health
+
+Each integration shows:
+
+- Pages indexed
+- Last sync timestamp
+- Any access errors (page deleted, permission revoked)
+- Activity log
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="PRDs aren't attaching to triggered simulations">
+    Check that:
+    - The Notion/Confluence URL is in the Linear/Jira issue description or comments (not an attachment outside the issue body)
+    - The URL is to a page Sentia can access (test by opening it in an incognito window using the Sentia service account)
+    - The integration is in Connected (green) state
+  </Accordion>
+
+  <Accordion title="Confluence sync slow on first run">
+    Large Confluence instances (10,000+ pages) take ~30–60 minutes for first index. Subsequent syncs are incremental and fast.
+  </Accordion>
+
+  <Accordion title="Notion 'page restricted' errors">
+    A page was indexed previously but access was revoked. Re-grant access in Notion, or remove the page from your accessible scope. Sentia drops the cached content on next sync.
+  </Accordion>
+</AccordionGroup>
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Workflow integrations" icon="bolt" href="/integrations/workflow">
+    Linear and Jira — where Notion/Confluence URLs typically live.
+  </Card>
+  <Card title="Auto-triggers" icon="bolt" href="/simulations/triggers">
+    How auto-attached context flows into triggered simulations.
+  </Card>
+</CardGroup>

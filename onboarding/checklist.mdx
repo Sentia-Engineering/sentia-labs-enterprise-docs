@@ -1,0 +1,118 @@
+---
+title: "Week-one checklist"
+description: "Everything to do in your first week to get Sentia delivering production value."
+---
+
+This checklist takes a new workspace from empty to running real simulations against your real users. Allow ~3–5 working hours total across the team, spread over a week. Your CSM is on the Slack Connect channel for any blocker.
+
+## Day 1 — Workspace setup (Admin, ~45 min)
+
+<Steps>
+  <Step title="Confirm SSO is configured">
+    Your workspace ships with WorkOS SSO already wired up at kickoff. Test it by signing in at [app.sentialabs.ai](https://app.sentialabs.ai). If anything fails, see [SSO setup](/onboarding/sso-setup).
+  </Step>
+  <Step title="Set up SCIM provisioning (recommended)">
+    SCIM auto-provisions and deprovisions users from your IdP (Okta, Entra ID, OneLogin, Google Workspace). Strongly recommended for enterprise workspaces. See [SSO & SCIM](/admin/sso-scim).
+  </Step>
+  <Step title="Invite the first cohort">
+    Add 3–5 power users — typically 1 PM lead, 1 UX research lead, 1 design lead, 1 data/analytics partner. See [Invite your team](/onboarding/invite-team).
+  </Step>
+  <Step title="Set workspace defaults">
+    In Settings → Workspace: confirm time zone, data residency (US or EU), default simulation mode, and notification routing (Slack channel for completion alerts).
+  </Step>
+</Steps>
+
+## Day 2 — Connect core integrations (PM + data partner, ~60 min)
+
+<Steps>
+  <Step title="One analytics provider">
+    Connect **one** of Amplitude, Mixpanel, or PostHog. Required for agent grounding. See [Analytics integrations](/integrations/analytics).
+  </Step>
+  <Step title="One qualitative source (highest ROI)">
+    Connect Dovetail (preferred for interview transcripts), or Intercom/Zendesk for support conversations. This is **the single biggest accuracy lever** — agents grounded in real verbatims hit ~85% normalized accuracy vs. ~70% for demographic-only.
+  </Step>
+  <Step title="Linear or Jira">
+    For issue-level context and auto-triggers on status changes.
+  </Step>
+  <Step title="Slack">
+    For `/simulate` and `/shipped` commands, completion notifications, and `:simulate:` emoji triggers.
+  </Step>
+</Steps>
+
+## Day 3 — Build a real population (UX research + PM, ~90 min)
+
+<Steps>
+  <Step title="Define population intent">
+    Decide who you want to simulate: "All paying customers", "SMB free-trial users", "Enterprise admins". Don't try to model everyone in one population — narrower populations converge faster and read clearer.
+  </Step>
+  <Step title="Build the population">
+    Use the **Population Builder** to combine census filters with cohorts from your connected analytics. See [Build a population](/populations/build).
+  </Step>
+  <Step title="Validate fidelity">
+    Run the 5-experiment behavioral validation suite. Target pass rate ≥ 80%, fidelity ≥ 0.7. If lower, add more qualitative data and rebuild. See [Validation](/populations/validation).
+  </Step>
+</Steps>
+
+## Day 4 — Run two real simulations (Product lead, ~60 min)
+
+<Steps>
+  <Step title="Pick two upcoming decisions">
+    One safe (medium-confidence team prediction) and one contested (no team consensus). Running both teaches you to read confidence and convergence honestly.
+  </Step>
+  <Step title="Run in Fast mode first">
+    200–500 agents. Confirms your setup is sane and gives you a directional answer in ~5 minutes.
+  </Step>
+  <Step title="Re-run in Deep mode">
+    1,000–3,000 agents on the contested decision. Read the Segments tab carefully — that's where most of the value is.
+  </Step>
+  <Step title="Share the report">
+    Export PDF (`⌘E`) and share with your decision-making group. Annotate where Sentia changed your mind, where it confirmed, and where you disagreed.
+  </Step>
+</Steps>
+
+## Day 5 — Close the calibration loop (Eng / Analytics partner, ~45 min)
+
+<Steps>
+  <Step title="Connect ship detection">
+    Connect **LaunchDarkly** (flag rollout > 50% triggers measurement), **GitHub** (merged PR with `shipped` label), or use the Slack `/shipped` command manually.
+  </Step>
+  <Step title="(Best-in-class) Connect experimentation">
+    Connect **Statsig** or **Eppo** if you run A/B tests. A/B test results are weighted 3× in calibration vs. observational changes.
+  </Step>
+  <Step title="Pick a recently-shipped feature">
+    Ask Sentia to retroactively calibrate against it. Confirms the measurement pipeline is healthy before you ship anything new.
+  </Step>
+</Steps>
+
+## Optional but valuable
+
+<CardGroup cols={2}>
+  <Card title="Notion / Confluence" icon="file-lines" href="/integrations/documentation">
+    PRDs and design docs auto-attach to simulations when linked from Linear/Jira issues.
+  </Card>
+  <Card title="Figma" icon="pen-ruler" href="/integrations/workflow">
+    Frame-level triggers. Mark a frame "simulate" and Sentia auto-runs.
+  </Card>
+  <Card title="Segment" icon="route" href="/integrations/ship-detection">
+    Use Segment as a CDP source if it's already your event backbone.
+  </Card>
+  <Card title="GitHub" icon="code-branch" href="/integrations/ship-detection">
+    Merged PRs with labels feed ship detection — most accurate for engineering-led teams.
+  </Card>
+</CardGroup>
+
+## After week one
+
+You should have:
+
+- ✅ SSO working, team invited, SCIM provisioning
+- ✅ 1 analytics + 1 qualitative + Linear/Jira + Slack connected
+- ✅ At least one validated population (fidelity ≥ 0.7)
+- ✅ 2+ simulations run against real upcoming decisions
+- ✅ Ship detection wired, first calibration event recorded
+
+From here, the daily loop is: **decision proposed → simulate → ship → calibrate → next simulation is more accurate.** That's the product.
+
+<Note>
+  **Recommended cadence:** Simulate every meaningful product decision (pricing changes, onboarding redesigns, plan tier changes, major flow changes). Don't simulate trivial copy tweaks — token cost without much signal.
+</Note>

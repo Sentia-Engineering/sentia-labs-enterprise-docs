@@ -1,0 +1,90 @@
+---
+title: "The decisions log"
+description: "Track every product decision you've simulated, shipped, and calibrated against — in one place."
+---
+
+The **Decisions log** at `/decisions` is the source of truth for everything your team has evaluated with Sentia. Every simulation creates a decision; every shipped decision becomes a calibration event.
+
+## What's in the log
+
+Each decision shows:
+
+- **Question** — what was being evaluated
+- **State** — current lifecycle stage (Proposed / Simulated / Shipped / Validated / Reverted)
+- **Owner** — the teammate who initiated it
+- **Simulation summary** — distribution, confidence, headline prediction
+- **Calibration grade** — predicted vs. actual once shipped (if applicable)
+- **Linked artifacts** — Linear/Jira issue, Figma frames, PRDs, related decisions
+
+## Filters
+
+- **State** — narrow by lifecycle stage
+- **Owner** — your decisions, your team's, all
+- **Time window** — last 7d / 30d / 90d / custom
+- **Confidence range** — find high- or low-confidence decisions
+- **Calibration grade** — find decisions where Sentia was very accurate or notably off
+- **Tag** — custom tags (e.g., `pricing`, `onboarding`, `enterprise`)
+
+`/` focuses search; `J`/`K` navigate rows; `Enter` opens the decision detail page.
+
+## What the log is for
+
+Three real uses:
+
+<CardGroup cols={2}>
+  <Card title="Audit trail" icon="clipboard-list">
+    Every product decision is recorded with its prediction, what shipped, and how it actually performed. Useful for retrospectives, quarterly reviews, and onboarding new PMs.
+  </Card>
+  <Card title="Calibration trust" icon="rotate">
+    Browse decisions sorted by calibration grade to build a mental model of where Sentia is sharp and where it needs more grounding.
+  </Card>
+  <Card title="Pattern recognition" icon="chart-network">
+    Filter to `state=reverted` to find decisions that shipped and got pulled — often a teaching set for what to look for in future simulations.
+  </Card>
+  <Card title="Roadmap context" icon="map">
+    When proposing a new decision similar to a past one, link to the prior decision — the prediction and calibration history give your team well-founded context.
+  </Card>
+</CardGroup>
+
+## Decision detail page
+
+Click any decision row to open `/decisions/[id]`:
+
+- **Header** — question, hypothesis, success criteria, owner, state, tags
+- **Linked simulation(s)** — every simulation run for this decision (some decisions get re-simulated as scope changes)
+- **Calibration** — actuals once shipped, predicted vs. actual delta, accuracy grade
+- **Linked artifacts** — issues, frames, PRDs auto-pulled from your connected tools
+- **Activity** — full history of state transitions with timestamps and actors
+- **Comments** — team annotations (great for retros)
+
+## Custom tags
+
+Add tags to organize:
+
+- By domain — `pricing`, `onboarding`, `notifications`, `mobile`
+- By campaign — `q2-launches`, `migration-2026`
+- By outcome — `revenue-positive`, `npsneutral`
+- By learning — `model-was-wrong`, `surprised-by-result`
+
+Tags are workspace-scoped. You can filter and report on them.
+
+## Exporting
+
+Decisions log exports:
+
+- **CSV** — for analysis in spreadsheets
+- **PDF** — formatted report for quarterly business reviews
+- **JSON** — via API at `GET /decisions` — for piping into your own tooling
+
+See the [API reference](/api-reference/introduction).
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Decision lifecycle" icon="diagram-project" href="/decisions/lifecycle">
+    The full lifecycle: proposed → simulated → shipped → validated → reverted.
+  </Card>
+  <Card title="Calibration" icon="rotate" href="/calibration/overview">
+    How decisions become calibration events.
+  </Card>
+</CardGroup>

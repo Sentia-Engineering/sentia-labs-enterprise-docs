@@ -1,0 +1,87 @@
+---
+title: "Invite your team"
+description: "Add teammates manually or use SCIM auto-provisioning."
+---
+
+## Two ways to add people
+
+| Method | When to use | Provisioning speed |
+| --- | --- | --- |
+| **SCIM auto-provisioning** | Recommended for any workspace with > 10 users or strict IT requirements | Real-time (driven by IdP) |
+| **Manual invite** | Small pilot teams, or before SCIM is set up | Immediate (email link) |
+
+## Manual invite (workspace owners & admins)
+
+<Steps>
+  <Step title="Open Settings → Team">
+    Press `⌘,` then click **Team**, or visit `app.sentialabs.ai/settings/team`.
+  </Step>
+  <Step title="Invite by email">
+    Click **Invite member**. Paste up to 50 email addresses, comma- or newline-separated.
+  </Step>
+  <Step title="Assign roles">
+    Pick a role per invitee (see the role table below). You can change roles later.
+  </Step>
+  <Step title="Send">
+    Invitees receive a magic link valid for 7 days. They click → SSO with your IdP → land in the workspace.
+  </Step>
+</Steps>
+
+<Note>
+  Invites only work for email domains your IdP is authoritative for. Adding a user from a personal domain will fail at SSO. For external collaborators, see [Guest access](#guest-access) below.
+</Note>
+
+## Roles
+
+| Role | Capabilities |
+| --- | --- |
+| **Owner** | Full admin: workspace settings, billing, integrations, SSO, data deletion, team management. Cannot be removed except by another owner. |
+| **Admin** | Everything except billing and SSO. Manages integrations, populations, simulations, members. |
+| **Builder** | Creates and runs simulations, builds populations, connects integrations they own. Most teammates land here. |
+| **Viewer** | Read-only. Sees simulations, results, populations. Cannot run simulations or modify config. Good for execs and observers. |
+
+Role assignments are enforced at the API middleware. Every mutation is audit-logged with actor, role, target, and timestamp.
+
+## Bulk invite via CSV
+
+For initial seeding > 10 users, paste a CSV in the invite dialog:
+
+```csv
+email,role
+ada@example.com,Builder
+grace@example.com,Admin
+linus@example.com,Viewer
+```
+
+Roles must match exactly: `Owner`, `Admin`, `Builder`, `Viewer`.
+
+## Guest access
+
+For agency partners or external consultants, request **Guest** seats from your CSM. Guests:
+
+- Are scoped to specific populations or decisions you grant them
+- Can't see workspace-wide settings, billing, or other populations
+- Can't trigger calibration writes
+- Auto-expire after 90 days unless renewed
+
+## What teammates see on first sign-in
+
+A brief 4-screen welcome:
+
+1. **Welcome to \{your workspace name\}** — explainer + their role
+2. **Pick your role focus** — PM / Researcher / Designer / Other (tailors keyboard hints and recommended templates)
+3. **Tour** — `S`, `P`, `D`, `I`, `C` nav shortcuts and `?` for the full overlay
+4. **First sim suggestion** — Sentia suggests a sample simulation they can run immediately
+
+They can skip the welcome anytime. It's available again from the help menu.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Set up SCIM" icon="users-gear" href="/admin/sso-scim">
+    Auto-provisioning from your IdP — the long-term answer.
+  </Card>
+  <Card title="Build your first population" icon="users" href="/onboarding/first-population">
+    Once your team is in, build a population grounded in your real users.
+  </Card>
+</CardGroup>

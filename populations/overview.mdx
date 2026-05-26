@@ -1,0 +1,80 @@
+---
+title: "Populations overview"
+description: "What a population is, how it's grounded, and why it's the single biggest accuracy lever."
+---
+
+A **population** is a reusable, validated set of synthetic agents grounded in census data, behavioral science, and your real customer data. Every simulation runs against one population. Better population → better simulation.
+
+## What a population contains
+
+```
+Population
+├── Agents (1,000 – 100,000)
+│   ├── Demographic profile (census-grounded)
+│   ├── Behavioral profile (adopter category, decision biases)
+│   ├── Usage history (from your analytics)
+│   └── Memory (verbatims retrieved from your qualitative data)
+├── Segments (auto-tagged + custom cohorts)
+├── Validation report (5-experiment behavioral suite)
+└── Drift status (compared to baseline demographic mix)
+```
+
+## Where the grounding comes from
+
+| Layer | Source | What it contributes |
+| --- | --- | --- |
+| **Demographic baseline** | US/EU Census Bureau | Age, income, education, region, household composition |
+| **Behavioral priors** | Sentia's behavioral science library | Adopter categories, decision biases, social proof, loss aversion, urgency response |
+| **Usage history** | Your analytics (Amplitude / Mixpanel / PostHog) | Feature adoption, retention, frequency, cohort membership |
+| **Qualitative memory** | Your interviews + support (Dovetail / Intercom / Zendesk) | Real verbatims clustered into pain points, retrieved during simulation |
+
+The first two are always present. The last two are what separate ~70% accuracy populations from ~85% accuracy populations.
+
+## Why "reusable"
+
+A population is built once and used many times. Cost is paid up-front (generation + validation, typically 5–15 minutes for 1,000 agents). Simulations against the population are then fast.
+
+Most workspaces have 3–8 active populations:
+
+- A broad "all customers" population for high-level roadmap questions
+- 2–4 segment-specific populations (e.g., "SMB trial users", "Enterprise admins", "Power users")
+- 1–2 special-purpose populations (e.g., "Churned users", "New signups")
+
+You can have many. There's no limit beyond contract allocation.
+
+## Population health
+
+Each population has three health signals:
+
+| Signal | Healthy threshold | What it means |
+| --- | --- | --- |
+| **Validation pass rate** | ≥ 80% | Fraction of behavioral experiments where agents respond like real humans |
+| **Fidelity score** | ≥ 0.7 | Overall behavioral realism — composite of pass rate, verbatim retrieval quality, and demographic coverage |
+| **Drift** | < 10% | How much the population's demographic mix has diverged from baseline since build |
+
+The Populations list view shows all three at a glance. Rebuild any population with drift > 10% — it takes < 10 minutes and keeps accuracy up.
+
+## Lifecycle
+
+```
+DRAFT          ──→ BUILDING ──→ VALIDATING ──→ READY ──→ DRIFTED ──→ ARCHIVED
+(configuring)      (~5-15min)    (~2min)       (use it)  (rebuild)   (history only)
+```
+
+You can pause a building population at any time. Validation is automatic on first build; you can re-run it anytime.
+
+Archived populations stay in your workspace history for audit purposes but can't be used in new simulations.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Build a population" icon="users-gear" href="/populations/build">
+    Step-by-step: filters, grounding, generation.
+  </Card>
+  <Card title="Interview grounding" icon="microphone" href="/populations/interview-grounding">
+    The single biggest accuracy lever. How qualitative data ends up in agent memory.
+  </Card>
+  <Card title="Validation" icon="check-double" href="/populations/validation">
+    The 5-experiment behavioral suite and how to read it.
+  </Card>
+</CardGroup>

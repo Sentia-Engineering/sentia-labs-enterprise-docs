@@ -1,0 +1,124 @@
+---
+title: "Interview grounding"
+description: "How real customer verbatims become agent memory — and why this is the single biggest accuracy lever in Sentia."
+---
+
+Populations grounded only in demographic data top out around **~70% normalized accuracy**. Populations grounded in real customer interviews, support conversations, and verbatims hit **~85%** (Park et al. 2024, validated on Sentia workspaces).
+
+This page explains how grounding works and how to maximize its impact.
+
+## The pipeline
+
+```
+Qualitative source         Pinecone vector store        Agent memory
+(Dovetail, Intercom,  ──→  (Cohere embeddings,    ──→  (retrieved at run time
+ Zendesk)                   clustered themes)            via similarity scoring)
+```
+
+Three stages:
+
+1. **Ingest** — pull conversations, transcripts, and tickets from connected qualitative sources
+2. **Embed** — chunk verbatims, embed via Cohere, store in Pinecone with persona + segment metadata
+3. **Retrieve** — at simulation time, each agent's profile is used as a query; top-K relevant verbatims (scored by `recency × importance × relevance`) become part of that agent's Memory step
+
+## Sources
+
+### Dovetail — preferred
+
+- **What you get:** structured interview transcripts and highlights, organized by project
+- **Best for:** workspaces with mature qualitative practice — scheduled interviews, tagged themes, highlight reels
+- **Sync:** OAuth via Nango. Pulls transcripts hourly, highlights daily.
+- **Volume sweet spot:** 50+ interviews across diverse personas
+
+### Intercom
+
+- **What you get:** support conversations + satisfaction ratings
+- **Best for:** workspaces where most user feedback comes through support
+- **Sync:** OAuth via Nango, every 24 hours
+- **Filter:** by satisfaction rating, conversation tags, custom attributes
+
+### Zendesk
+
+- **What you get:** tickets, conversation history, satisfaction scores
+- **Best for:** enterprise-y stacks where Zendesk is the canonical voice-of-customer surface
+- **Sync:** OAuth via Nango, every 24 hours
+- **Filter:** by ticket type, priority, satisfaction, custom fields
+
+### Combining sources
+
+You can ground a single population from multiple sources. Sentia de-duplicates verbatims across sources by content similarity.
+
+A common high-leverage combination: **Dovetail (interviews) + Intercom (in-the-flow support feedback)**. Interviews give structured depth; support gives high-volume current sentiment.
+
+## What "grounding" looks like in practice
+
+Without grounding, an agent's Memory step looks generic:
+
+> *"I value my time and am cautious about new tools. As an early adopter, I'd evaluate this change against my current workflow."*
+
+With grounding (same agent), Memory pulls relevant real verbatims:
+
+> *"From recent interviews: 'We tried shortening trials at our last company — the rushed feeling pushed power users away.' From support: 'The 14-day trial was perfect, I needed every day of it to convince my team.' From a Dovetail highlight: 'Trial length is a leading indicator of commitment quality.'"*
+
+The Reflection and Decision steps that follow are dramatically more grounded.
+
+## Scoring: recency × importance × relevance
+
+When an agent retrieves memories, Sentia ranks verbatims by:
+
+| Factor | What it captures |
+| --- | --- |
+| **Recency** | How recent the verbatim is. Decays exponentially. 30-day half-life by default. |
+| **Importance** | Highlighted/tagged content + high-satisfaction-impact conversations score higher |
+| **Relevance** | Cosine similarity between the agent's profile (query embedding) and the verbatim embedding |
+
+Top 5–8 verbatims per agent end up in the Memory step. You can preview this in the [Population Builder](/populations/build) before generation.
+
+## Volume guidelines
+
+| Verbatim corpus size | Accuracy improvement vs. demographic-only |
+| --- | --- |
+| 0 (demographic only) | Baseline (~70%) |
+| 1–50 verbatims | Small lift (~73%) |
+| 100–500 | Meaningful (~78%) |
+| 1,000–5,000 | Strong (~82%) |
+| 5,000+ | Best in class (~85%+) |
+
+Quality and persona diversity matter as much as volume. 200 diverse, well-tagged Dovetail interviews beat 5,000 unsorted support tickets.
+
+## What to do if your corpus is small
+
+For workspaces new to qualitative research:
+
+1. **Connect Intercom or Zendesk** — usually the fastest path to 500+ verbatims
+2. **Run a 10-interview discovery sprint** — concentrate on key segments and load into Dovetail
+3. **Use NPS responses** — many workspaces have hundreds of NPS comments sitting unused
+4. **Start small** — even 50 well-tagged verbatims beat zero. You'll see the lift immediately.
+
+Your CSM can help you scope a "qualitative ramp" plan for the first 30 days.
+
+## Privacy & compliance
+
+- **All verbatims stay in your workspace's Pinecone namespace** — strict tenant isolation, no cross-workspace retrieval
+- **PII redaction** — Sentia automatically detects and redacts emails, phone numbers, and full names in stored verbatims (configurable)
+- **Right to erasure** — when a user requests deletion, Sentia cascades through PG, MongoDB, S3, *and* Pinecone — verbatims are permanently removed
+- **EU residency** — workspaces on EU residency use eu-west-1 Pinecone region
+
+See [Security & data handling](/security/data-handling).
+
+## What grounding can't do
+
+- Agents won't predict reactions to products totally outside their experience (e.g., a B2C agent population on an enterprise SaaS feature)
+- Verbatims about old features may anchor agents on outdated framings — refresh the corpus periodically
+- Grounding doesn't fix bad input quality — show agents real UI for full accuracy
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Validation" icon="check-double" href="/populations/validation">
+    Verify your population behaves like real humans.
+  </Card>
+  <Card title="Qualitative integrations" icon="microphone" href="/integrations/qualitative">
+    Per-provider setup for Dovetail, Intercom, Zendesk.
+  </Card>
+</CardGroup>

@@ -1,0 +1,160 @@
+---
+title: "Inputs & captures"
+description: "What you show agents matters as much as who they are. Capture types, setup, and the quality hierarchy."
+---
+
+Agents don't read your mind — they react to what you show them. Input quality is the second-biggest accuracy lever after population grounding (interview data is first).
+
+## The quality hierarchy
+
+| Input | Accuracy | When to use |
+| --- | --- | --- |
+| **Captured localhost UI** | Highest | A working prototype exists |
+| **Figma designs** | High | Design phase, no code yet |
+| **Captured URL** | High | Live product, staging, or competitor analysis |
+| **Uploaded image** | Medium-high | Mockups, sketches, slides |
+| **Text only** | Moderate | Early ideation, no visuals available |
+
+Captured UI is typically **15–20% more accurate** than text-only descriptions of the same change, measured via cross-input-mode calibration. For high-stakes decisions, always provide visual input.
+
+## Captured localhost UI
+
+The most accurate input. Captures your real prototype as agents would experience it, including interaction states, animations, and copy-in-context.
+
+### One-time setup
+
+<Steps>
+  <Step title="Install the CLI">
+    ```bash
+    npm i -g @sentia/capture
+    ```
+  </Step>
+
+  <Step title="Authenticate">
+    ```bash
+    sentia auth login
+    ```
+    Opens your browser, runs SSO, returns a workspace-scoped CLI token. Stored at `~/.sentia/credentials`.
+  </Step>
+
+  <Step title="Confirm workspace">
+    ```bash
+    sentia workspace list
+    sentia workspace use <workspace-slug>
+    ```
+  </Step>
+</Steps>
+
+### Capturing a flow
+
+```bash
+sentia capture http://localhost:3000/onboarding \
+  --name "Onboarding — 7-day trial variant" \
+  --route "/welcome,/profile,/billing,/done"
+```
+
+The CLI:
+
+1. Spins up a headless Chromium against your dev server
+2. Navigates each route in order
+3. Captures screenshot + DOM snapshot per route
+4. Uploads as a single capture group to your workspace
+5. Prints the capture ID you paste into the simulation wizard
+
+### Interactive captures
+
+For multi-step flows with form input:
+
+```bash
+sentia capture http://localhost:3000 --interactive
+```
+
+Opens a browser you drive manually. Sentia records every navigation and screenshot. End the session with `⌘.` or close the window — the capture uploads automatically.
+
+### Privacy
+
+Localhost captures stay on your machine until you explicitly upload. The CLI never auto-uploads. Captures are workspace-scoped and respect your data residency setting.
+
+## Figma frames
+
+For design-phase decisions before code exists.
+
+### Setup
+
+Connect Figma in **Integrations**. See [Workflow integrations](/integrations/workflow#figma). Once connected, paste any Figma frame URL into the scenario step.
+
+Sentia pulls:
+
+- The frame as a rendered image
+- The frame name, parent page, and file metadata
+- Any plugin-attached annotations (e.g., FigJam comments on the frame)
+
+### Multi-frame scenarios
+
+For before/after or A/B comparisons, paste multiple URLs separated by newlines or commas. Sentia presents them to agents as labeled variants.
+
+## Captured URL
+
+Point at a live URL — staging, production, or a competitor's page.
+
+### How it works
+
+Sentia uses a managed headless browser pool (Firecrawl + internal pool). Captures include:
+
+- Full-page screenshot
+- Cleaned HTML/text content
+- Title and meta description
+- Wait-for-selector or wait-for-timeout if specified
+
+### Authenticated pages
+
+For pages behind login, use one of:
+
+- **Cookie injection** — paste a session cookie into the wizard
+- **Service user** — provision a service account; Sentia stores credentials in AWS Secrets Manager
+- **CLI capture** — use `sentia capture` after signing in via your normal browser session
+
+Cookie storage is encrypted at rest with per-tenant KMS keys. See [Data handling](/security/data-handling).
+
+### SSRF protection
+
+Captured URL blocks private IPs, cloud metadata endpoints (169.254.x.x, 192.168.x.x, fd00::, etc.), and IPv4-mapped IPv6 addresses. You can't accidentally have Sentia capture internal infrastructure.
+
+## Uploaded images
+
+Drag-drop PNG, JPG, or WebP files into the scenario step. Max 20MB per file, up to 10 files per scenario.
+
+Use for: design mocks not in Figma, slide decks, whiteboard photos, hand-sketches, third-party screenshots.
+
+## Text only
+
+The fallback. Type a description of the change directly into the wizard.
+
+**Good text input:**
+> "We're shortening the free trial from 14 days to 7 days. The signup flow stays the same. The trial countdown banner becomes more prominent. Day 5 gets an automated email reminder."
+
+**Bad text input:**
+> "Shorter trial."
+
+Specificity matters: the more concrete your description, the more grounded agent reasoning will be.
+
+## Combining inputs
+
+You can attach multiple captures per scenario:
+
+- **Before-and-after**: capture current production + your new design
+- **Multi-variant**: three competing design directions
+- **Context + change**: a PRD excerpt (text) + a Figma frame (visual)
+
+Agents see all attached captures together. Use thoughtful labeling — Sentia uses the capture name in agent prompting.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Run the wizard" icon="wand-magic-sparkles" href="/simulations/wizard">
+    Combine inputs with population and config.
+  </Card>
+  <Card title="Modes" icon="gauge-high" href="/simulations/modes">
+    Fast vs. Deep, and when each fits.
+  </Card>
+</CardGroup>

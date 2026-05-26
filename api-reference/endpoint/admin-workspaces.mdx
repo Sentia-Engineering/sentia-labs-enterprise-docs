@@ -1,0 +1,101 @@
+---
+title: "Workspaces"
+api: "GET /admin/workspaces"
+description: "List or create workspaces. Super-admin scope only."
+---
+
+Workspace-level operations. These endpoints require **super-admin** tokens, which are issued only to Sentia operations users, not to customer-issued API keys.
+
+Customers manage their own workspace via the **Settings → Workspace** dashboard. The endpoints below exist primarily for Sentia operations and audit purposes.
+
+## List workspaces
+
+```bash
+GET /admin/workspaces
+```
+
+Returns all workspaces accessible to the token's super-admin scope.
+
+```json
+{
+  "workspaces": [
+    {
+      "id": "ws_8f9a2b...",
+      "slug": "acme-product",
+      "name": "Acme — Product",
+      "region": "us",
+      "createdAt": "2026-01-15T10:00:00Z",
+      "memberCount": 47,
+      "status": "active"
+    }
+  ]
+}
+```
+
+## Create workspace
+
+```bash
+POST /admin/workspaces
+```
+
+Body:
+
+```json
+{
+  "name": "Acme — EU",
+  "slug": "acme-eu",
+  "region": "eu",
+  "ownerEmail": "owner@example.com"
+}
+```
+
+Returns `201 Created` with the new workspace details.
+
+## Update workspace settings
+
+```bash
+PATCH /admin/workspaces/{workspaceId}
+```
+
+Body (any subset):
+
+```json
+{
+  "name": "Acme — EU (Frankfurt)",
+  "defaultSimulationMode": "deep",
+  "defaultConvergenceThreshold": 0.95,
+  "alertConfig": {
+    "warningThreshold": 0.75,
+    "hardCapThreshold": 1.0
+  }
+}
+```
+
+## Archive workspace
+
+```bash
+POST /admin/workspaces/{workspaceId}/archive
+```
+
+Archived workspaces are read-only and don't count against contract allocation. Unarchive with `POST /admin/workspaces/{workspaceId}/unarchive`.
+
+For permanent deletion, see [Data deletion](/api-reference/endpoint/admin-data-deletion).
+
+## Errors
+
+| Status | Code | Cause |
+| --- | --- | --- |
+| 403 | `super_admin_required` | Caller is not a super-admin |
+| 409 | `slug_taken` | Slug already used by another workspace |
+| 422 | `invalid_region` | Region must be `"us"` or `"eu"` |
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Workspaces (dashboard)" icon="building" href="/admin/workspaces">
+    Tenant isolation and workspace settings.
+  </Card>
+  <Card title="GDPR data deletion" icon="user-shield" href="/api-reference/endpoint/admin-data-deletion">
+    Permanent workspace deletion.
+  </Card>
+</CardGroup>

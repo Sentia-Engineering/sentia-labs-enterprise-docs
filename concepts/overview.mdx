@@ -1,0 +1,102 @@
+---
+title: "Core concepts"
+description: "Four primitives — simulations, populations, decisions, and calibration — make up the entire Sentia mental model."
+---
+
+Sentia has exactly four primitives. Everything you do in the dashboard is one of these.
+
+<CardGroup cols={2}>
+  <Card title="Simulation" icon="flask" href="/simulations/overview">
+    A run of N agents through a specific scenario. Produces a distribution of choices with a confidence score, segment breakdowns, and NPS prediction.
+  </Card>
+  <Card title="Population" icon="users" href="/populations/overview">
+    A reusable set of synthetic agents — grounded in census data + your analytics + your interview transcripts. Validated for behavioral fidelity.
+  </Card>
+  <Card title="Decision" icon="diamond" href="/decisions/log">
+    A product change you're evaluating: proposed, simulated, shipped, validated, or reverted. The unit of the calibration flywheel.
+  </Card>
+  <Card title="Calibration" icon="rotate" href="/calibration/overview">
+    The continuous loop that compares predicted vs. actual outcomes after you ship, then adjusts per-segment correction factors.
+  </Card>
+</CardGroup>
+
+## How they relate
+
+```
+┌─────────────┐      ┌─────────────┐
+│  Decision   │─────▶│ Simulation  │
+│ (proposed)  │      │   (run N    │
+└─────────────┘      │   agents)   │
+       │             └──────┬──────┘
+       │                    │
+       │             ┌──────▼──────┐
+       │             │ Population  │
+       │             │ (grounded)  │
+       │             └─────────────┘
+       │
+       │   ship
+       ▼
+┌─────────────┐      ┌─────────────┐
+│  Decision   │─────▶│ Calibration │
+│  (shipped)  │      │ (predicted  │
+└─────────────┘      │  vs actual) │
+                     └──────┬──────┘
+                            │
+                            ▼
+                     adjust correction
+                     factors per segment
+                            │
+                            ▼
+                     next simulation is
+                     more accurate
+```
+
+## Walking through a real flow
+
+A product manager wants to evaluate shortening the free trial from 14 to 7 days.
+
+<Steps>
+  <Step title="They create a Decision">
+    *"Reduce free trial: 14 → 7 days. Success: maintain trial-to-paid conversion ≥ current baseline."* The decision starts in the **proposed** state.
+  </Step>
+  <Step title="They run a Simulation">
+    They select an existing Population (~5,000 agents grounded in their Amplitude data + Dovetail interviews), add a Figma capture of the proposed shorter onboarding, and configure Deep mode (3,000 agents).
+  </Step>
+  <Step title="The agents reason">
+    Each agent recalls its profile and verbatims (Memory), reasons about the change (Reflection), and commits to a decision (Decision). Wave-by-wave the distribution converges.
+  </Step>
+  <Step title="They read results">
+    62% adopt, 28% churn, 10% upgrade earlier. Concerns cluster around *"not enough time to evaluate"* for late-tenure trials. NPS predicted to drop 4 points.
+  </Step>
+  <Step title="They ship — or don't">
+    They decide to test on the SMB segment only. The Decision moves to **shipped**. LaunchDarkly flags the rollout.
+  </Step>
+  <Step title="Sentia measures">
+    14 days later, Calibration pulls actuals from Amplitude. Predicted 62% adopt vs. actual 58%. The Bayesian correction model updates per-segment factors. Next simulation in this area is more accurate.
+  </Step>
+</Steps>
+
+## What grounds the agents
+
+Agents aren't generic personas. They draw from real data your workspace has connected:
+
+| Source | What it contributes |
+| --- | --- |
+| **US/EU Census** | Demographic baseline — age, income, education, region, household composition |
+| **Behavioral science library** | Adopter categories, decision biases, social proof responses, loss-aversion calibration |
+| **Your analytics** (Amplitude / Mixpanel / PostHog) | Usage frequency, feature adoption, retention curves, cohort behaviors |
+| **Your qualitative data** (Dovetail / Intercom / Zendesk) | Real customer language — concerns, delights, objections — embedded into agent memory |
+| **Your experimentation history** (Statsig / Eppo) | Past A/B test outcomes used as calibration ground truth |
+
+Without your data connected, agents fall back to generic profiles. **The single biggest accuracy lever is connecting qualitative data.** See [Interview grounding](/populations/interview-grounding).
+
+## Where to go next
+
+<CardGroup cols={2}>
+  <Card title="Simulation lifecycle" icon="diagram-project" href="/concepts/lifecycle">
+    Queued → running → converging → completed. What happens at each stage and why.
+  </Card>
+  <Card title="Glossary" icon="book" href="/concepts/glossary">
+    Adopter category, convergence threshold, DPD, J-S divergence, normalized accuracy, fidelity score — definitions in one place.
+  </Card>
+</CardGroup>

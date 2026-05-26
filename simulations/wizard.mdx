@@ -1,0 +1,122 @@
+---
+title: "The simulation wizard"
+description: "A walkthrough of the 4-step Decision → Scenario → Population → Configure flow."
+---
+
+Every simulation starts with the wizard at `/simulations/new`. Press `N` from anywhere to open it.
+
+The wizard has four steps. You can move forward with `⌘Enter`, back with `⌘⌫`. Your draft auto-saves so you can leave and resume.
+
+## Step 1 · Decision
+
+Describe what you're evaluating in three fields:
+
+| Field | What goes here | Example |
+| --- | --- | --- |
+| **Question** | The decision as a clear question | "Should we shorten the free trial from 14 days to 7?" |
+| **Hypothesis** | Your team's current best guess | "Conversion will increase 5–10% because urgency drives action." |
+| **Success criteria** | What "win" looks like measurably | "Trial-to-paid conversion ≥ baseline; no drop in 90-day retention." |
+
+<Tip>
+  These fields are *passed into agent reasoning*. Agents see your hypothesis and success criteria — clearer framing → clearer answers. Vague hypotheses produce vague results.
+</Tip>
+
+### Templates
+
+The Decision step has built-in templates for common decisions:
+
+- Pricing change (tier add, increase, restructure)
+- Onboarding redesign (trial length, steps, gating)
+- Plan-tier feature shift
+- Navigation restructure
+- Feature deprecation
+- Notification frequency change
+
+Picking a template prefills hypothesis defaults, success criteria, and recommended captures. You can edit anything.
+
+## Step 2 · Scenario
+
+Attach **captures** — what the change *looks like* — so agents can react to the actual experience, not just a written description.
+
+| Capture type | How | Accuracy lift |
+| --- | --- | --- |
+| **Captured localhost UI** | `@sentia/capture` CLI against your local dev server | Highest |
+| **Figma frame** | Paste a Figma frame URL | High |
+| **Captured URL** | Provide a URL; Sentia screenshots via headless browser | High |
+| **Uploaded image** | Drag-drop PNGs/JPGs | Medium-high |
+| **Text description** | Paste-only fallback | Moderate |
+
+You can attach multiple captures per scenario (e.g., before + after screenshots).
+
+See [Inputs](/simulations/inputs) for setup details.
+
+### Context auto-attached
+
+When you launched the wizard from an integration (Linear, Jira, Figma, Slack), Sentia auto-attaches relevant context:
+
+- Linear/Jira issue title, description, attached Figma URLs, linked PRDs
+- Figma file context if the wizard came from a frame trigger
+- Slack thread + reacted message if triggered by `:simulate:` emoji
+
+You can edit, replace, or remove auto-attachments before launching.
+
+## Step 3 · Population
+
+Pick which population to run against.
+
+The picker shows:
+
+- All populations you've built, with **agent count**, **fidelity score**, and **last validation date**
+- Auto-suggested **segment focus** (e.g., "Early Adopters only", or "Pro plan tier") based on your decision text
+- Sample size projection — if you focus on a segment, Sentia tells you how many agents you'll actually run
+
+<Warning>
+  If a population's fidelity score is below 0.7 or has drift > 10%, you'll see an amber warning. You can still launch, but consider rebuilding for high-stakes decisions. See [Validation](/populations/validation).
+</Warning>
+
+## Step 4 · Configure
+
+Set the run parameters.
+
+| Setting | Default | Notes |
+| --- | --- | --- |
+| **Mode** | Deep | Fast for quick directional signals, Deep for segment-level claims |
+| **Agent count** | 1,000 | 200–10,000 range |
+| **Convergence threshold** | 0.95 | Lower = stricter, slower; higher = looser, faster |
+| **Max duration** | 30 min | Hard timeout. Beyond this, partial results are returned |
+| **Provider** | Auto (Claude → Gemini fallback) | Override only if your CSM advised it |
+| **Notification** | Slack channel | Where to ping when run completes |
+
+### Cost preview
+
+The wizard shows an LLM cost preview before launch: approximate token count and contract-allocation impact. For a 2,000-agent Deep run, expect ~6,000 LLM calls and ~10 minutes of compute.
+
+## Launch
+
+Click **Launch simulation** or press `⌘⇧L`.
+
+You're redirected to the live run page. The simulation queues, then enters the running state typically within 10 seconds. See [Simulation lifecycle](/concepts/lifecycle).
+
+## Editing a running simulation
+
+You can't change the population or scenario mid-run, but you can:
+
+- **Pause** the simulation (preserves partial results)
+- **Cancel** the simulation (no further token cost)
+- **Adjust the max-duration timeout** (extend only)
+- **Re-route notifications** to a different Slack channel
+
+## Saving as a template
+
+Once a simulation completes, you can click **Save as template** to reuse Decision + Scenario + Population + Config. Useful for recurring decisions ("monthly pricing test") or for sharing a canonical setup with teammates.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Picking inputs" icon="image" href="/simulations/inputs">
+    Which capture type to use and how to set each up.
+  </Card>
+  <Card title="Reading results" icon="chart-mixed" href="/simulations/results">
+    The 8-tab tour, with patterns to look for.
+  </Card>
+</CardGroup>

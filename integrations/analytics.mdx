@@ -1,0 +1,138 @@
+---
+title: "Analytics integrations"
+description: "Amplitude, Mixpanel, or PostHog. Pick one — analytics grounds agents in your real usage data."
+---
+
+Sentia requires exactly **one** analytics provider per workspace. Agents use this data to know how your real users behave — feature adoption, retention, cohort membership, frequency.
+
+If you need to switch providers later, contact your CSM. A guided migration preserves population history.
+
+## Amplitude
+
+<Steps>
+  <Step title="Get your API key pair">
+    In Amplitude → Settings → Projects → your project → **API Keys**. You'll need:
+    - **API Key**
+    - **Secret Key**
+    
+    (Basic Auth credentials. Sentia uses these to query the Cohort Sync, Funnel, and Behavioral Cohorts APIs.)
+  </Step>
+  <Step title="Connect in Sentia">
+    Integrations → Amplitude → **Connect**. Paste both keys + your Amplitude project region (US or EU).
+  </Step>
+  <Step title="Initial sync">
+    First sync runs immediately, pulling:
+    - All cohorts
+    - Funnel definitions (last 90 days of runs)
+    - Event frequency (top 100 events, 30-day window)
+    - Retention curves (default cohorts)
+    
+    Typical first-sync duration: 5–15 minutes.
+  </Step>
+  <Step title="Configure ongoing sync">
+    Daily sync at 02:00 UTC (configurable). You can trigger an on-demand sync from the integration card.
+  </Step>
+</Steps>
+
+**What gets synced:** cohorts, funnels, event frequency, retention, user profiles (anonymized at integration boundary).
+
+**Rate limits:** Amplitude charts API. Sentia respects per-project rate limits and queues requests as needed.
+
+## Mixpanel
+
+<Steps>
+  <Step title="Create a Service Account">
+    In Mixpanel → Settings → Service Accounts → **+ Add Service Account**. Pick role: **Consumer** (read-only).
+    
+    Save the username and secret. (Service Accounts have stricter rate limits — Sentia queues requests max 5 concurrent.)
+  </Step>
+  <Step title="Connect in Sentia">
+    Integrations → Mixpanel → **Connect**. Paste service account credentials and your project ID + region.
+  </Step>
+  <Step title="Initial sync">
+    Pulls cohorts, funnels, event frequency, retention. Typically 10–20 minutes (slower than Amplitude due to rate limits).
+  </Step>
+  <Step title="Configure ongoing sync">
+    Daily, configurable. On-demand sync available.
+  </Step>
+</Steps>
+
+**Rate limits:** Mixpanel's per-project query limits apply. Sentia's queue prevents you from accidentally hitting hard caps.
+
+## PostHog
+
+<Steps>
+  <Step title="Generate a Personal API Key">
+    PostHog → Settings → Personal API Keys → **+ Create Personal API Key**.
+    
+    Scopes needed: `cohort:read`, `feature_flag:read`, `insight:read`, `event_definition:read`, `person:read`.
+  </Step>
+  <Step title="Connect in Sentia">
+    Integrations → PostHog → **Connect**. Paste:
+    - **Personal API Key**
+    - **Host URL** (e.g., `https://app.posthog.com`, or your self-hosted URL)
+    - **Project ID**
+  </Step>
+  <Step title="Initial sync">
+    Pulls cohorts, funnels, events, retention, person profiles. Typically 5–15 minutes.
+  </Step>
+  <Step title="Configure ongoing sync">
+    Daily at 02:00 UTC (configurable). Self-hosted PostHog supported with same setup.
+  </Step>
+</Steps>
+
+**Self-hosted PostHog:** fully supported. Provide the host URL of your self-hosted instance. Sentia respects your PostHog rate limits.
+
+## What gets synced (all providers)
+
+| Data | What it does in Sentia |
+| --- | --- |
+| **Cohorts** | Become selectable filters when building populations |
+| **Funnels** | Used to predict conversion impact in simulation results |
+| **Event frequency** | Becomes agent usage history |
+| **Retention curves** | Calibration baseline for retention predictions |
+| **User profiles** | Anonymized at boundary; demographic signals (region, plan) used for population matching |
+
+PII is not synced. Sentia uses analytics IDs only for cohort membership; identifying fields (email, name, IP) are dropped at the integration boundary.
+
+## Switching providers
+
+Switching analytics providers is supported but rare. Contact your CSM. They'll:
+
+1. Audit which populations are bound to the current provider
+2. Map equivalent cohorts/funnels in the new provider
+3. Migrate populations one by one with parity validation
+4. Disconnect the old provider only after migration
+
+Typical timeline: 3–10 business days depending on workspace size.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="'Authentication failed' on connect">
+    Most often: scope/role too restrictive. Amplitude needs full read on cohort + funnel APIs; PostHog needs the scopes listed above. Re-create credentials with broader scope.
+  </Accordion>
+
+  <Accordion title="Cohorts not appearing in the Population Builder">
+    Run an on-demand sync from the integration card. If cohorts still don't appear, check that the cohorts are not marked as private/personal in the provider — Sentia only sees cohorts your service account/key has access to.
+  </Accordion>
+
+  <Accordion title="Sync stuck at 'Syncing' for > 30 minutes">
+    Likely a rate-limit backoff (most common with Mixpanel). The sync will complete; if it doesn't within 2 hours, contact support.
+  </Accordion>
+
+  <Accordion title="Disconnecting an analytics provider">
+    Disconnect is irreversible for sync state. Existing populations keep their snapshot of data; you can't run new builds without reconnecting. Plan ahead.
+  </Accordion>
+</AccordionGroup>
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Qualitative integrations" icon="microphone" href="/integrations/qualitative">
+    Dovetail, Intercom, Zendesk — the highest accuracy lever.
+  </Card>
+  <Card title="Build a population" icon="users-gear" href="/populations/build">
+    Now that analytics is connected, build your first real population.
+  </Card>
+</CardGroup>

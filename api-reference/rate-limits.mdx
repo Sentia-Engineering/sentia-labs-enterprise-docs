@@ -1,0 +1,129 @@
+---
+title: "Rate limits"
+description: "Per-workspace limits, how to read them in response headers, and the correct retry-after handling."
+---
+
+Sentia enforces per-workspace rate limits to keep the platform fair and stable.
+
+## Default limits
+
+| Limit | Default |
+| --- | --- |
+| **API requests (general)** | 100 / minute / workspace |
+| **Simulation creates** | 10 / minute / workspace |
+| **Webhook deliveries (inbound)** | 1,000 / minute / provider |
+| **On-demand integration sync** | 10 / hour / integration |
+
+For more workspace-level quotas (concurrent simulations, storage), see [Limits & quotas](/reference/limits-and-quotas).
+
+## Response headers
+
+Every API response includes rate-limit headers:
+
+```http
+X-RateLimit-Limit: 100
+X-RateLimit-Remaining: 87
+X-RateLimit-Reset: 1716656400
+X-RateLimit-Resource: api-general
+```
+
+- **`X-RateLimit-Limit`** — the limit for the current bucket
+- **`X-RateLimit-Remaining`** — requests remaining in the current window
+- **`X-RateLimit-Reset`** — Unix timestamp when the window resets
+- **`X-RateLimit-Resource`** — which bucket (e.g., `api-general`, `simulations-create`)
+
+## When you hit a limit
+
+```http
+HTTP/1.1 429 Too Many Requests
+Retry-After: 28
+Content-Type: application/json
+
+{
+  "error": "rate_limit_exceeded",
+  "message": "Rate limit exceeded for this workspace",
+  "resource": "api-general",
+  "retry_after_seconds": 28
+}
+```
+
+The `Retry-After` header tells you when to retry. Always honor it.
+
+## Recommended retry strategy
+
+For 429 responses:
+
+1. **Wait `Retry-After` seconds** before retrying
+2. **If the same request fails again with 429**, double the wait (exponential backoff)
+3. **Cap at 5 minutes** of accumulated wait
+4. **Surface to monitoring** after 3 retries — there's likely an actual problem
+
+For other transient errors (5xx, network), retry with exponential backoff starting at 1 second, max 60 seconds. Don't retry on 4xx (client errors).
+
+## Burst tolerance
+
+The general API rate limit has ~1.5× burst tolerance. You can briefly exceed 100/minute as long as your average stays under. Sustained bursting eventually triggers 429s.
+
+Simulation creates are stricter — they don't have burst tolerance because of the downstream LLM and compute cost.
+
+## Per-bucket reasoning
+
+Different buckets exist because operations have different cost profiles:
+
+| Bucket | Cost profile | Why a separate bucket |
+| --- | --- | --- |
+| `api-general` | Cheap reads | High limit, burst-tolerant |
+| `simulations-create` | Expensive (LLM calls downstream) | Low limit, strict |
+| `populations-build` | Very expensive | Counted within `simulations-create` |
+| `captures-url` | Moderate (headless browser) | Stricter than general |
+| `admin-export` | Heavy I/O | Strict; per-day quota too |
+
+## Webhook inbound rate
+
+When integration webhooks send Sentia events (Slack reactions, LaunchDarkly flag changes, etc.), Sentia enforces per-provider rate limits. Excess events are dropped with a 429 response to the provider; providers retry per their own schedule.
+
+If you're seeing webhook dropouts, your CSM can raise the inbound webhook limit for specific high-volume integrations.
+
+## Asking for higher limits
+
+Custom limits available on request:
+
+- High-volume CI integrations
+- Bulk migrations or backfills
+- Production traffic patterns Sentia hasn't seen before
+
+Contact your CSM. Most increases happen within hours.
+
+## Throttling vs. blocking
+
+429 means "slow down" — the request didn't happen and you can retry. It's not a block.
+
+Persistent abuse (1000+ 429s in a short window, or repeated 429 ignoring) escalates to:
+
+- Slack notification to workspace admin
+- Temporary lower limit (auto-revert after 1 hour)
+- Email to security@sentialabs.ai for review
+
+This is to protect you from accidentally taking down your own integration.
+
+## SDKs
+
+When Sentia ships official SDKs, they'll:
+
+- Automatically honor `Retry-After`
+- Use exponential backoff for transient errors
+- Surface rate-limit warnings to your application logger
+- Optionally rate-limit client-side to stay below quota
+
+Until then, implement these in your HTTP client wrapper.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Errors" icon="circle-exclamation" href="/api-reference/errors">
+    The full error envelope and codes.
+  </Card>
+  <Card title="Webhooks" icon="bolt" href="/api-reference/webhooks">
+    Signature verification and retry behavior.
+  </Card>
+</CardGroup>
