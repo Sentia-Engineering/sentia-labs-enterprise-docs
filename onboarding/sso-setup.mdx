@@ -27,7 +27,11 @@ Your Customer Success Manager provisions SSO with your IT/SecOps team before you
     Your IdP shows its normal sign-in screen (with MFA if enforced). On success, you're redirected back to Sentia.
   </Step>
   <Step title="Land in the app">
-    First-time users see a brief welcome flow. Returning users land on `/simulations`.
+    Where you land depends on your role and whether onboarding is complete:
+
+    - **Owner / Admin, first sign-in** → `/onboarding` (the 5-step setup guide).
+    - **Operator / Viewer / Billing / Guest** → `/welcome` (workspace readiness summary, then **Enter Sentia**).
+    - **Returning users with completed onboarding** → `/overview`.
   </Step>
 </Steps>
 
@@ -59,7 +63,7 @@ In production, auth cookies use `COOKIE_DOMAIN=.sentialabs.ai` so the app at `ap
   </Accordion>
 
   <Accordion title="`/api/auth/callback` returns an error">
-    Most commonly: the WorkOS redirect URI doesn't match your domain. Workspace owners can check this in Settings → Workspace → Authentication. If you can't access settings, email support.
+    Most commonly: the WorkOS redirect URI doesn't match your domain. This is a workspace-level setting maintained by your CSM, not exposed in the Settings UI (the in-app Settings tabs are **General · Team · Integrations · Design system**). Send the browser network trace to [hello@sentialabs.io](mailto:hello@sentialabs.io).
   </Accordion>
 
   <Accordion title="MFA prompt loop">

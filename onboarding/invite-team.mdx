@@ -1,6 +1,6 @@
 ---
 title: "Invite your team"
-description: "Add teammates manually or use SCIM auto-provisioning."
+description: "Add teammates manually from Settings → Team, or auto-provision via SCIM."
 ---
 
 ## Two ways to add people
@@ -10,70 +10,52 @@ description: "Add teammates manually or use SCIM auto-provisioning."
 | **SCIM auto-provisioning** | Recommended for any workspace with > 10 users or strict IT requirements | Real-time (driven by IdP) |
 | **Manual invite** | Small pilot teams, or before SCIM is set up | Immediate (email link) |
 
-## Manual invite (workspace owners & admins)
+## Manual invite (Owners & Admins)
+
+Manual invites are sent one at a time from the team tab. The same flow runs inside the onboarding wizard's "Invite your team" step.
 
 <Steps>
   <Step title="Open Settings → Team">
-    Press `⌘,` then click **Team**, or visit `app.sentialabs.ai/settings?tab=team`.
+    Press `⌘,` then click **Team**, or go to `app.sentialabs.ai/settings?tab=team`. From inside Settings → Team, `⌘I` opens the invite dialog directly.
   </Step>
-  <Step title="Invite by email">
-    Click **Invite member**. Paste up to 50 email addresses, comma- or newline-separated.
+  <Step title="Enter the invitee's email">
+    Paste a single work email address. Bulk CSV paste is not supported in the dialog — repeat the flow for each invitee, or use SCIM for larger seeding.
   </Step>
-  <Step title="Assign roles">
-    Pick a role per invitee (see the role table below). You can change roles later.
+  <Step title="Pick a role">
+    Choose one of **Admin**, **Operator**, **Viewer**, **Billing**, or **Guest**. **Owner** is only available when the inviter is themselves an Owner. You can change roles later from the same tab.
   </Step>
   <Step title="Send">
-    Invitees receive a magic link valid for 7 days. They click → SSO with your IdP → land in the workspace.
+    The invitee receives a magic link. They click → SSO with your IdP → land in the workspace. Pending invitations show in Settings → Team with **Resend** and **Revoke** actions.
   </Step>
 </Steps>
 
 <Note>
-  Invites only work for email domains your IdP is authoritative for. Adding a user from a personal domain will fail at SSO. For external collaborators, see [Guest access](#guest-access) below.
+  Invites only work for email domains your IdP is authoritative for. Adding a user from a personal domain will fail at SSO. For external collaborators, use the **Guest** role.
 </Note>
 
 ## Roles
 
+Sentia has six workspace roles. Roles are enforced on every API request, and every change is audit-logged with actor, role, target, and timestamp.
+
 | Role | Capabilities |
 | --- | --- |
-| **Owner** | Full admin: workspace settings, billing, integrations, SSO, data deletion, team management. Cannot be removed except by another owner. |
-| **Admin** | Manages members, integrations, design system context, populations, simulations, and workspace settings. |
-| **Operator** | Creates Design Agent projects, runs simulations, builds populations, uploads research, and saves reports. Most active researchers and designers land here. |
-| **Viewer** | Read-only. Sees simulations, results, populations. Cannot run simulations or modify config. Good for execs and observers. |
+| **Owner** | Full control — billing, transfer ownership, delete workspace. Only an Owner can promote someone else to Owner. |
+| **Admin** | User management, integrations, security, design system context. Cannot manage other Owners. |
+| **Operator** | Runs simulations, manages populations and captures, uses Design Agent, saves reports. Most active researchers and designers land here. |
+| **Viewer** | Read-only: simulation results and reports. Cannot run simulations or modify config. Good for execs and observers. |
+| **Billing** | Invoices and payment methods only — no workspace data access. |
+| **Guest** | Resource-scoped, time-bounded external access for partners or consultants. |
 
-Role assignments are enforced at the API middleware. Every mutation is audit-logged with actor, role, target, and timestamp.
+## Bulk seeding
 
-## Bulk invite via CSV
-
-For initial seeding > 10 users, paste a CSV in the invite dialog:
-
-```csv
-email,role
-ada@example.com,Operator
-grace@example.com,Admin
-linus@example.com,Viewer
-```
-
-Roles must match exactly: `Owner`, `Admin`, `Operator`, `Viewer`.
-
-## Guest access
-
-For agency partners or external consultants, request **Guest** seats from your CSM. Guests:
-
-- Are scoped to the projects, reports, or workspace areas you grant them
-- Can't see workspace-wide settings, billing, or other populations
-- Can't manage workspace settings
-- Auto-expire after 90 days unless renewed
+For initial seeding of more than a handful of users, prefer **SCIM**. The in-app dialog accepts one email per invite and the team tab doesn't expose a CSV importer. SCIM also handles deprovisioning automatically.
 
 ## What teammates see on first sign-in
 
-A brief 4-screen welcome:
+- **Owner / Admin** → the 5-step setup guide at `/onboarding` (Welcome → Invite team → Connect Figma → Build first population → Launch first simulation).
+- **Operator / Viewer / Billing / Guest** → `/welcome` with a workspace readiness summary (Figma, Population, First simulation, Calibration) and an **Enter Sentia** button.
 
-1. **Welcome to \{your workspace name\}** — explainer + their role
-2. **Pick your role focus** — PM / Researcher / Designer / Other (tailors keyboard hints and recommended templates)
-3. **Tour** — `D`, `S`, `P`, `R`, `I` nav shortcuts and `?` for the full overlay
-4. **First study suggestion** — Sentia points them toward Figma, a population, or a first simulation depending on workspace readiness
-
-They can skip the welcome anytime. It's available again from the help menu.
+Returning users with onboarding completed land on `/overview`.
 
 ## Next
 

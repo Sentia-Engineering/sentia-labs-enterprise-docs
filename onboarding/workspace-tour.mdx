@@ -3,61 +3,80 @@ title: "Workspace tour"
 description: "How the current Sentia dashboard is organized for UX research and design teams."
 ---
 
-Sentia is organized around the research and design workflow: bring in design work, define who should react to it, run a study, then preserve the evidence for the team.
+Sentia is organized around the design research workflow: bring in design work, define who should react to it, run a study, then preserve the evidence for the team.
 
-## Main navigation
+## Sidebar navigation
+
+The left sidebar is collapsible (`⌘B`). Items in *italics* are gated by feature flags in the current rollout — if a row is missing, the flag is off for your workspace and your CSM can enable it.
 
 | Area | Shortcut | Use it for |
 | --- | --- | --- |
 | **Overview** | `O` | Workspace status, recent work, and high-level activity. |
-| **Design Agent** | `D` | Import Figma files, generate editable surfaces, create variants, and send selected designs to simulation. |
-| **Simulations** | `S` | Run synthetic user studies, monitor live runs, compare completed reports, and organize runs by project or tag. |
-| **Populations** | `P` | Build behavioral cohorts of synthetic users from a natural-language audience brief and optional research artifacts. |
-| **Resource library** | `R` | Upload research inputs and store simulation or comparison reports. |
-| **Settings** | `⌘,` | Manage team access, Figma, design system guidance, integrations, and workspace settings. |
+| ***Design Agent*** | `D` | Import Figma files, generate editable surfaces, create variants, and send selected designs to simulation. Gated by `design-agent`. |
+| ***Simulations*** | `S` | Run synthetic user studies, monitor live runs, compare reports, and organize runs. Gated by `simulations-page`. |
+| **Populations** | `P` | Build behavioral cohorts of synthetic users from a natural-language brief and optional research artifacts. |
+| ***Resource library*** | `R` | Store research artifacts and saved reports. Gated by `resource-library`. |
+| **Docs** | — | Opens these docs in a new tab. |
+| **Settings** | `⌘,` | General · Team · Integrations · Design system. |
 
-`⌘K` opens the command palette. `⌘L` opens Ask Sentia AI. `⌘⇧A` toggles the AI Co-Pilot panel.
+## Global shortcuts
+
+| Shortcut | Action |
+| --- | --- |
+| `⌘K` | Command palette |
+| `⌘L` | Ask Sentia AI (palette in natural-language mode) |
+| `⌘⇧A` | Toggle the AI Co-Pilot panel |
+| `⌘⇧N` | Open notifications |
+| `N` | New simulation (when Simulations is enabled) |
+| `I` | Settings → Integrations |
+| `⌘B` | Collapse / expand the sidebar |
+
+Inside the simulation wizard, `⌘↵` advances a step, `⌘⌫` goes back, and `⌘⇧L` launches on step 3.
 
 ## The first-week mental model
 
 <Steps>
   <Step title="Connect Figma">
-    Figma is the default design source in the current rollout. It powers both direct simulation inputs and Design Agent imports.
-  </Step>
-  <Step title="Add research context">
-    Upload transcripts, survey CSVs, persona documents, call recordings, or prior experiment files in the Resource Library. These artifacts can ground future cohorts.
+    Figma is the default design source. It powers both direct simulation inputs and Design Agent imports.
   </Step>
   <Step title="Build one cohort">
-    Create a 10-100 agent behavioral cohort that represents the audience you want to study first.
+    Create a 10–100 agent behavioral cohort that represents the audience you want to study first.
   </Step>
   <Step title="Import or describe the design">
-    Use Design Agent for Figma-driven variant work, or start a simulation directly with Figma frames or plain text.
+    Use Design Agent (when enabled) for Figma-driven variant work, or start a simulation directly with Figma frames or plain text.
   </Step>
-  <Step title="Run and save the report">
-    Watch live metrics, read the completed report, then save the PDF to the Resource Library for critique, planning, or stakeholder review.
+  <Step title="Run and read the report">
+    Launch from the 3-step wizard at `/simulations/new`, watch live progress, then read the report.
+  </Step>
+  <Step title="Save evidence">
+    Save the report or export to PDF (PDF requires the `export-pdf-enabled` flag) for critique, planning, or stakeholder review.
   </Step>
 </Steps>
 
 ## Roles
 
-| Role | Good fit | Can do |
-| --- | --- | --- |
-| **Owner** | Workspace sponsor or operations lead | Full workspace control, billing, role management. |
-| **Admin** | Research/design lead or platform owner | Manage members, Figma, design system docs, and advanced settings. |
-| **Operator** | UX researcher, designer, or PM running studies | Build cohorts, run simulations, use Design Agent, and save reports. |
-| **Viewer** | Stakeholders and read-only partners | Read reports, review runs, and follow workspace evidence. |
+Sentia has six workspace roles. Owners and Admins can invite from **Settings → Team**.
 
-For most research and design teams, give active practitioners **Operator** access and reserve **Admin** for the people maintaining workspace configuration.
+| Role | Good fit | Notes |
+| --- | --- | --- |
+| **Owner** | Workspace sponsor or operations lead | Full control: billing, transfer ownership, delete workspace. Only an Owner can promote someone else to Owner. |
+| **Admin** | Research / design lead or platform owner | User management, integrations, security; cannot manage other Owners. |
+| **Operator** | UX researcher, designer, or PM running studies | Builds cohorts, runs simulations, uses Design Agent, saves reports. |
+| **Viewer** | Stakeholders and read-only partners | Sees simulation results and reports only. |
+| **Billing** | Finance contact | Invoices and payment methods only — no workspace data access. |
+| **Guest** | External collaborator | Resource-scoped, time-bounded external access. |
+
+For most teams, give active practitioners **Operator** and reserve **Admin** for the people maintaining workspace configuration.
 
 ## What is not required on day one
 
-You do not need analytics, calibration, or workflow automation to run the first study. Those are useful later for mature release loops, but current onboarding is Figma-first: connect designs, define a cohort, and run a clear study.
+You do not need analytics, calibration, or workflow automation to run the first study. The Day 1 path is Figma → population → simulation. Release-loop integrations are useful later for calibration workflows.
 
 ## Next
 
 <CardGroup cols={2}>
-  <Card title="Week-one checklist" icon="list-check" href="/onboarding/checklist">
-    The recommended rollout sequence for a new enterprise workspace.
+  <Card title="Onboarding checklist" icon="list-check" href="/onboarding/checklist">
+    The in-app 5-step setup guide, mapped step-by-step.
   </Card>
   <Card title="Design Agent" icon="pen-ruler" href="/design-agent/overview">
     Import Figma files and turn design variants into simulation-ready surfaces.
