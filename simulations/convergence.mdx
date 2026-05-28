@@ -1,0 +1,91 @@
+---
+title: "Convergence & confidence"
+description: "What it means for a simulation to converge, and how to read the difference between convergence and confidence."
+---
+
+Two scores get reported and people mix them up: **convergence** and **confidence**. They measure different things. Read both.
+
+## Convergence
+
+A simulation has **converged** when adding more agents stops changing the answer.
+
+Mathematically, Sentia measures **Jensen-Shannon divergence** between each wave's choice distribution and the previous wave's. When that divergence falls below your convergence threshold (default `0.95`) and stays there for **two consecutive waves**, the simulation converges.
+
+The two-wave rule prevents false positives from a lucky stable wave.
+
+### Reading the convergence chart
+
+The live chart shows divergence per wave:
+
+- **Amber** — divergence is still moving wave-over-wave. Keep running.
+- **Green** — two consecutive stable waves. Converged.
+- **Red** — divergence climbed back up after going down. Often signals a divisive scenario.
+
+### What convergence scores mean
+
+| Score | Reading |
+| --- | --- |
+| > 0.95 | Stable distribution. Trust the headline numbers. |
+| 0.85–0.95 | Directional signal. Good for tradeoffs and tendencies; verify before high-stakes ship. |
+| < 0.85 | Genuinely divisive scenario, or the population/inputs are too thin. |
+
+## Confidence
+
+A simulation has **high confidence** when the population's grounded data strongly supports the decision per-agent — independent of whether the overall distribution converged.
+
+Confidence is computed as a function of:
+
+- Per-agent decision confidence (how strongly each agent committed)
+- Verbatim retrieval quality (how relevant the memory recalls were)
+- Population fidelity score (the baseline trust in the population)
+- Capture quality (real UI > text-only)
+
+### Reading confidence scores
+
+| Score | Reading |
+| --- | --- |
+| > 0.8 | High. The population had enough grounded data to reason confidently. |
+| 0.6–0.8 | Moderate. Directionally useful; verify key decisions with smaller targeted runs. |
+| < 0.6 | Low. Consider adding qualitative data, broadening the population, or improving inputs. |
+
+## The four combinations
+
+The two scores are independent, so four combinations exist. Each tells a different story.
+
+| Convergence | Confidence | Reading |
+| --- | --- | --- |
+| **High + High** | The classic "trust the number" case. Distribution stabilized and the population had the data to support it. |
+| **High + Low** | The agents agreed, but on a weakly-grounded answer. Add qualitative data; the agents are speculating. |
+| **Low + High** | The agents have strong opinions and they disagree. **This is signal**, not noise — read the Segments tab carefully. Often the most informative result type. |
+| **Low + Low** | Nothing useful here. Fix population, inputs, or both before re-running. |
+
+## Normalized accuracy
+
+Beyond per-run convergence/confidence, your workspace tracks **normalized accuracy** over time — predicted vs. actual outcomes weighted against natural human behavioral inconsistency (~81% test-retest).
+
+- **Normalized accuracy = 1.0** means "as accurate as humans predict their own behavior."
+- **> 0.85** is excellent and typical for workspaces with interview grounding and consistent calibration.
+- **< 0.70** suggests systematic gaps — usually missing qualitative grounding or stale population.
+
+See [Calibration → Accuracy](/calibration/accuracy) for how to read the long-term trend.
+
+## What "two consecutive waves" really means
+
+A common question: "Why two waves?"
+
+Because single waves can stabilize by chance. Imagine a 5-agent wave where 4 happened to pick the same option — divergence drops to near-zero. The next wave (with a different agent mix) might swing wildly.
+
+Requiring two consecutive stable waves means the result is robust to wave composition, not just to one lucky sample.
+
+For very tight convergence thresholds (< 0.90), Sentia auto-extends the rule to three consecutive waves to maintain robustness.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Modes" icon="gauge-high" href="/simulations/modes">
+    Pick Fast or Deep mode based on convergence needs.
+  </Card>
+  <Card title="Reading results" icon="chart-mixed" href="/simulations/results">
+    How to read completed reports.
+  </Card>
+</CardGroup>

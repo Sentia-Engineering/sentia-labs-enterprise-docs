@@ -1,97 +1,88 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: "Welcome to Sentia Labs Enterprise"
+description: "Import design work, build behavioral cohorts, and run synthetic user studies before you ship."
 ---
 
-## Setting up
+Sentia is a **design research simulation platform** for enterprise UX research, design, and product teams. Connect Figma, define a behavioral cohort, and run synthetic users through design decisions before you spend cycles building or shipping.
 
-Get your documentation site up and running in minutes.
-
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
-
-## Make it yours
-
-Design a docs site that looks great and empowers your users.
-
-<Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
+<CardGroup cols={2}>
+  <Card title="10-minute quickstart" icon="rocket" href="/quickstart">
+    Run your first simulation today. From signing in to results in under 10 minutes.
   </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
+  <Card title="Onboarding checklist" icon="list-check" href="/onboarding/checklist">
+    The complete first-week setup: SSO, integrations, first population, first simulation.
   </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
-  </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
-  </Card>
-</Columns>
+</CardGroup>
 
-## Create beautiful pages
+## What you can do with Sentia
 
-Everything you need to create world-class documentation.
+<CardGroup cols={2}>
+  <Card title="Iterate in Design Agent" icon="pen-ruler" href="/design-agent/overview">
+    Import Figma files, generate editable surfaces, create variants, and move the strongest options into simulation.
+  </Card>
+  <Card title="Simulate decisions" icon="flask" href="/simulations/overview">
+    Run behavioral cohorts through A/B preference, open-ended, or competitive studies. Get a report with findings, concerns, recommendations, and population lenses.
+  </Card>
+  <Card title="Build research cohorts" icon="users" href="/populations/overview">
+    Compose 10-100 synthetic users from a natural-language audience brief, demographics, behavior patterns, traits, and uploaded research.
+  </Card>
+  <Card title="Preserve evidence" icon="file-lines" href="/resource-library/overview">
+    Upload research inputs and save simulation or comparison reports in the Resource Library.
+  </Card>
+  <Card title="Configure workspace context" icon="sliders" href="/admin/design-system">
+    Add design system guidance, accessibility rules, custom traits, and team access controls.
+  </Card>
+</CardGroup>
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
+## How Sentia works
+
+Every agent in a simulation runs through a three-step reasoning chain:
+
+<Steps>
+  <Step title="Memory" icon="brain">
+    The agent recalls its demographic profile, behavioral traits, research memories, and relevant cohort context.
+  </Step>
+  <Step title="Reflection" icon="lightbulb">
+    The agent reasons about the scenario, weighing its history, preferences, and concerns.
+  </Step>
+  <Step title="Decision" icon="check">
+    The agent commits to a choice with a confidence score, rationale, concerns, and an NPS prediction.
+  </Step>
+</Steps>
+
+Results stream live, then compile into a decision report designed for critique, prioritization, and stakeholder review.
+
+## Who Sentia is for
+
+<Columns cols={3}>
+  <Card title="UX researchers" icon="magnifying-glass" href="/resource-library/research-artifacts">
+    Turn existing transcripts, surveys, and recordings into study context, then run structured "what if" research against defined cohorts.
   </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
+  <Card title="Designers" icon="palette" href="/design-agent/overview">
+    Generate and compare design variants, surface confusion and accessibility issues, and bring better questions into critique.
   </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
+  <Card title="Product partners" icon="briefcase" href="/simulations/overview">
+    Pressure-test roadmap, onboarding, pricing, and IA choices before committing roadmap or engineering time.
   </Card>
 </Columns>
 
-## Need inspiration?
+## Get started
 
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+<CardGroup cols={2}>
+  <Card title="Core concepts" icon="book-open" href="/concepts/overview">
+    Design Agent, simulations, populations, resource library, and decision lifecycle.
+  </Card>
+  <Card title="Connect your tools" icon="plug" href="/integrations/overview">
+    Figma-first setup, plus enterprise integrations for teams that need broader release-loop context.
+  </Card>
+  <Card title="API reference" icon="terminal" href="/api-reference/introduction">
+    REST API for programmatic access. WorkOS JWT auth, workspace-scoped, rate-limited.
+  </Card>
+  <Card title="Security & compliance" icon="shield-halved" href="/security/overview">
+    SOC 2 Type I posture, SSO/SCIM, per-tenant KMS, GDPR data residency.
+  </Card>
+</CardGroup>
+
+<Note>
+  **Need help?** Email [hello@sentialabs.io](mailto:hello@sentialabs.io) or check the [service status](/reference/status). Your customer success manager is on the Slack Connect channel set up at kickoff.
+</Note>

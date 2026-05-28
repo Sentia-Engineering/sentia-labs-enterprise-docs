@@ -1,0 +1,92 @@
+---
+title: "List integrations"
+api: "GET /integrations"
+description: "List all connected integrations in this workspace with their sync state and recent activity."
+---
+
+Returns all integrations connected to the workspace, including auth status, sync state, and recent activity.
+
+## Request
+
+```bash
+curl -X GET https://api.sentialabs.ai/integrations \
+  -H "Authorization: Bearer $SENTIA_TOKEN" \
+  -H "x-workspace-id: $WORKSPACE_ID"
+```
+
+## Query parameters
+
+| Parameter | Notes |
+| --- | --- |
+| `category` | Filter by category: `analytics`, `qualitative`, `workflow`, `documentation`, `experimentation`, `ship_detection` |
+| `status` | Filter by status: `connected`, `syncing`, `stale`, `error`, `disconnected` |
+
+## Response — 200 OK
+
+```json
+{
+  "integrations": [
+    {
+      "id": "int_amplitude_8f9a2b...",
+      "provider": "amplitude",
+      "category": "analytics",
+      "status": "connected",
+      "connectedAt": "2026-05-01T10:14:22Z",
+      "connectedBy": {
+        "userId": "usr_...",
+        "email": "ada@example.com"
+      },
+      "lastSyncAt": "2026-05-25T02:00:14Z",
+      "lastSyncStatus": "success",
+      "syncStats": {
+        "cohortsCount": 47,
+        "funnelsCount": 12,
+        "totalEvents30d": 1240000
+      },
+      "config": {
+        "region": "us",
+        "projectId": "12345"
+      }
+    },
+    {
+      "id": "int_dovetail_3b4c5d...",
+      "provider": "dovetail",
+      "category": "qualitative",
+      "status": "connected",
+      "...": "..."
+    }
+  ]
+}
+```
+
+## Provider list
+
+For the full list of supported providers, see [Integrations overview](/integrations/overview).
+
+## Sync state semantics
+
+| Status | Meaning |
+| --- | --- |
+| `connected` | Healthy; last sync succeeded recently |
+| `syncing` | Currently mid-sync (long-running first syncs especially) |
+| `stale` | Connected but last sync is older than 2× normal cadence |
+| `error` | Last 3 sync attempts failed; investigation needed |
+| `disconnected` | Credentials revoked or OAuth flow needs re-auth |
+
+## Errors
+
+| Status | Code | Cause |
+| --- | --- | --- |
+| 401 | `invalid_token` | Token missing or invalid |
+| 403 | `workspace_access_denied` | Token doesn't grant access to this workspace |
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Integrations overview" icon="plug" href="/integrations/overview">
+    All 15 supported integrations and their roles.
+  </Card>
+  <Card title="Per-category guides" icon="book-open" href="/integrations/analytics">
+    Setup instructions for each integration category.
+  </Card>
+</CardGroup>

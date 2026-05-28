@@ -1,0 +1,167 @@
+---
+title: "LLM safety"
+description: "Zero-retention DPAs, dual provider with failover, no training on customer data, and prompt-data separation."
+---
+
+Sentia uses LLMs from Anthropic (Claude) and Google (Gemini via Vertex). This page covers the safety and privacy posture for that traffic.
+
+## Zero-retention DPAs
+
+Sentia operates under zero-retention DPAs with both Anthropic and Google Vertex:
+
+- **No training on customer data** — your prompts and the LLM's completions are not used to train or fine-tune any model
+- **No persistent storage** — providers don't retain prompts or completions after the request completes (beyond ephemeral request-handling)
+- **No logging of content** — providers don't log prompt or completion text
+- **Audit terms** in the DPA give Sentia rights to verify compliance
+
+These DPAs are explicitly negotiated with provider account teams — they're not the default consumer-tier terms.
+
+## Dual provider with circuit breaker
+
+Sentia uses **Anthropic Claude as the primary provider** and **Google Gemini as fallback**:
+
+- All simulation calls route through a `ModelRouter`
+- If Anthropic returns errors or exceeds latency thresholds, the circuit breaker opens
+- New calls automatically route to Gemini
+- Half-open testing — the breaker periodically tries Anthropic; on success, it closes again
+
+Both providers operate under the same zero-retention terms. Failover preserves privacy guarantees.
+
+You'll see `usedFallback: true` in the simulation metadata when a run used Gemini instead of Claude. Quality degradation is monitored continuously; aggregate parity is < 10% across providers on identical prompts.
+
+## Prompt-data separation
+
+Sentia's prompts are designed so customer data is **injected at runtime**, never committed to source code or stored in prompt templates.
+
+```
+┌────────────────────────────────────────────────┐
+│  Prompt template (committed to git)            │
+│  ──────────────────────────────────────────────│
+│  "You are a behavioral simulation agent.       │
+│  Persona: {{persona}}                          │
+│  Scenario: {{scenario}}                        │
+│  Reasoning history: {{history}}                │
+│  ..."                                          │
+└────────────────────────────────────────────────┘
+                    │
+                    │  Runtime substitution
+                    ▼
+┌────────────────────────────────────────────────┐
+│  Rendered prompt (sent to LLM)                 │
+│  ──────────────────────────────────────────────│
+│  "You are a behavioral simulation agent.       │
+│  Persona: 34-year-old SMB owner, lapsed-trial  │
+│  user, location California ...                 │
+│  Scenario: Shorter free trial (14 → 7 days)... │
+│  Reasoning history: agent has expressed ..."   │
+└────────────────────────────────────────────────┘
+```
+
+Customer data only exists in the rendered prompt for the duration of one HTTP request to the LLM provider. It's not logged on the Sentia side, and not retained on the provider side.
+
+## What goes into prompts
+
+| Source | What ends up in the prompt |
+| --- | --- |
+| **Agent profile** | Demographic + behavioral attributes (synthetic; not your real users' PII) |
+| **Retrieved verbatims** | Real customer language from your qualitative sources — PII-redacted at integration boundary |
+| **Scenario captures** | Image inputs (Figma frames, UI captures) and accompanying text |
+| **Decision context** | The decision question, hypothesis, success criteria |
+
+The **only customer-originating data** in LLM prompts is the PII-redacted verbatim text and the scenario context (captures + decision text). Identity information about your actual customers never reaches the LLM provider.
+
+## What's NOT in prompts
+
+- Email addresses, phone numbers, full names (redacted at integration boundary)
+- API keys, OAuth tokens, secrets
+- Audit-log records or operational telemetry
+- Cross-workspace data of any kind
+- The behavioral validation experiments themselves (those run with abstract prompts)
+
+## Logging policy
+
+Sentia does **not log**:
+
+- Prompt content
+- Completion content
+- Tool-use call arguments or results
+
+Sentia **does log** (for operational reasons):
+
+- Token counts (prompt + completion)
+- Latency
+- Provider used (Anthropic / Gemini)
+- Whether fallback was used
+- Error codes if the request failed
+
+This logging supports billing, performance monitoring, and incident response. It contains no customer content.
+
+## Provider security posture
+
+Both providers are independently SOC 2 audited and have their own security postures. Their DPAs cover:
+
+- Sub-processor disclosures
+- Breach notification SLAs
+- Audit rights for Sentia
+- Cross-border transfer mechanisms
+
+Most current versions of provider security docs are referenced in the customer-facing DPA.
+
+## EU residency for LLM traffic
+
+EU-region workspaces use EU-resident LLM endpoints:
+
+- **Anthropic** — EU endpoint when available; routed through Vertex AI EU otherwise
+- **Vertex AI** — eu-west-1 / europe-west region endpoints
+
+Cross-region failover within EU only; never falls back to US endpoints for EU workspaces.
+
+## Quality safety
+
+LLMs occasionally produce wrong or weird outputs. Sentia mitigates with:
+
+- **Quality filtering per wave** — clone detection, confidence thresholds, hallucination heuristics
+- **Cross-provider parity testing** — weekly validation suite runs against both providers
+- **Convergence-based stopping** — divergent waves don't get aggregated into the final result
+- **Provider-attributed cost tracking** — easy to detect drift in one provider's quality
+
+If a provider's quality drops (e.g., post-model-update regression), the circuit breaker shifts traffic. Sentia's SRE team monitors continuously.
+
+## Customer-side safety controls
+
+Workspace owners can configure:
+
+- **Provider lock** — restrict to one provider (e.g., "Anthropic only", "Vertex only") for compliance reasons
+- **Region pin** — explicit pinning to US or EU endpoints
+- **Token budget caps** — hard limit per simulation, per day, per workspace
+- **Quality threshold** — minimum convergence/confidence before a run is auto-marked "valid for decision-making"
+
+Configurable in Admin → Settings → LLM safety.
+
+## Incident response
+
+LLM-related incidents:
+
+- **Provider outage** — circuit breaker fails over within seconds
+- **Provider quality regression** — manual override available; Sentia SRE issues advisory if widespread
+- **Suspected data leak from a provider** — Sentia notifies affected workspaces within 24 hours per DPA; full investigation per Sentia's incident response policy
+
+## Sub-processor specifics
+
+| Provider | Role | DPA terms |
+| --- | --- | --- |
+| Anthropic | Claude (primary) | Zero-retention, no training, audit rights |
+| Google Cloud (Vertex AI) | Gemini (fallback) | Same |
+| OpenAI (optional) | Specific design/embedding workloads | Same |
+| Cohere | Embedding + reranking | Zero-retention; data not retained after request |
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Data handling" icon="database" href="/security/data-handling">
+    What's stored, where, for how long.
+  </Card>
+  <Card title="GDPR" icon="user-shield" href="/security/gdpr">
+    Right to erasure, right to portability.
+  </Card>
+</CardGroup>

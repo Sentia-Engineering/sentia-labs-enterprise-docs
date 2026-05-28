@@ -1,0 +1,173 @@
+---
+title: "Support"
+description: "How to get help, report issues, and request features. SLAs and escalation paths."
+---
+
+Sentia is an enterprise platform with dedicated support. All email goes to a single inbox — [hello@sentialabs.io](mailto:hello@sentialabs.io) — and is routed internally by subject-line prefix. This page covers the channels, what they're for, and the response SLAs.
+
+## Channels — by intent
+
+### Day-to-day questions, onboarding, training
+
+**Your CSM (Customer Success Manager)**
+
+Your CSM is the primary channel for:
+
+- Onboarding help (week-one through year-one)
+- Best-practice questions
+- Population strategy
+- Calibration interpretation
+- Roadmap and feature requests
+- Contract and commercial questions
+
+Slack Connect channel set up at kickoff is the fastest path. Email backup: your CSM's direct email.
+
+### Technical issues, bugs, incidents
+
+Email [hello@sentialabs.io](mailto:hello@sentialabs.io) with subject prefix `[SUPPORT]`.
+
+For:
+
+- Bugs and unexpected behavior
+- Integration failures
+- SSO / SCIM issues
+- Performance degradation
+- Data sync problems
+- API errors
+
+Email creates a tracked ticket with our 24/7 engineering on-call rotation. Include:
+
+- Workspace slug
+- Time window (UTC)
+- Affected simulation/population/integration ID
+- Browser network trace or HAR file if applicable
+- What you were trying to do and what happened
+
+### Security incidents and vulnerability reports
+
+Email [hello@sentialabs.io](mailto:hello@sentialabs.io) with subject prefix `[SECURITY]`.
+
+For:
+
+- Suspected security incident in your workspace
+- Vulnerability report (responsible disclosure)
+- Compliance questions (SOC 2, GDPR, sub-processors)
+- DPA requests
+- Pen-test reports
+
+PGP key available on request. Response within 1 business day; immediate for critical reports.
+
+### Procurement, contracts, vendor management
+
+Email [hello@sentialabs.io](mailto:hello@sentialabs.io) with subject prefix `[PROCUREMENT]`.
+
+For:
+
+- Vendor onboarding paperwork
+- Insurance certificates
+- W-9 / W-8 / VAT registration
+- Renewal logistics
+- MSA / DPA negotiation
+
+### Privacy-specific requests
+
+Email [hello@sentialabs.io](mailto:hello@sentialabs.io) with subject prefix `[PRIVACY]`.
+
+For:
+
+- GDPR right-to-erasure requests
+- Right-to-portability data exports
+- Customer privacy-policy clarifications
+- Data subject access requests
+
+## Response SLAs
+
+| Request type | Initial response | Resolution target |
+| --- | --- | --- |
+| **CSM (Slack Connect)** | Same business day | Per request scope |
+| **`[SUPPORT]`** — SEV-1 (outage) | 15 min | < 4h, with hourly updates |
+| **`[SUPPORT]`** — SEV-2 (major degradation) | 30 min | < 8h |
+| **`[SUPPORT]`** — SEV-3 (single integration / minor) | 2 hours | < 2 business days |
+| **`[SUPPORT]`** — SEV-4 (non-urgent) | 1 business day | Per backlog priority |
+| **`[SECURITY]`** | 1 business day; immediate for critical | Per scope |
+| **`[PRIVACY]`** | 1 business day | GDPR SLAs |
+| **`[PROCUREMENT]`** | 1 business day | Per request |
+
+## Status & incident communication
+
+| Surface | What it covers |
+| --- | --- |
+| **[Service status](/reference/status)** | Current state of production services and where to report errors |
+| **Slack Connect channel** | Real-time updates for incidents affecting your workspace |
+| **In-app banner** | Workspace-affecting service degradations |
+| **Email** — for SEV-1 only | Customer-affecting outages > 30 min |
+
+For now, the Slack Connect channel and email are the primary notification surfaces; a subscribable real-time status dashboard is coming soon.
+
+## Office hours
+
+| Cadence | Audience | Format |
+| --- | --- | --- |
+| **Weekly customer office hours** | Open to all customers | 30-min open Q&A; Tue 11am PT / 8pm CET |
+| **Monthly product roadmap** | Customers + observers | 45-min preview of upcoming releases; first Tue of month |
+| **Quarterly business review (QBR)** | Per workspace | 90-min strategic review with your CSM |
+
+Office hours are recorded and shared in the Slack Connect channel.
+
+## Feature requests
+
+Three paths:
+
+1. **CSM-routed** — discuss with your CSM; high-impact requests get prioritized
+2. **In-app feedback** — `?` overlay → "Send feedback" — goes straight to product team
+3. **Customer advisory board** — quarterly invitation-only sessions for design partners
+
+The product roadmap is shared in monthly roadmap sessions. We don't publish dated commitments publicly.
+
+## Training & enablement
+
+- **Onboarding training** — included in kickoff; 2-hour live session for your first cohort
+- **Refresher training** — quarterly, opt-in; covers new features and best practices
+- **Custom training** — paid; deep-dive sessions for advanced topics (calibration strategy, integration architecture, etc.)
+
+Discuss training needs with your CSM.
+
+## Documentation feedback
+
+This documentation site is at [docs.sentialabs.ai](https://docs.sentialabs.ai). For:
+
+- Errors or typos
+- Missing topics
+- Unclear sections
+- Suggestions for new guides
+
+Use the "Was this page helpful?" feedback at the bottom of any page, or email [hello@sentialabs.io](mailto:hello@sentialabs.io) with subject prefix `[DOCS]`.
+
+## Severity definitions (for context)
+
+| Level | Definition | Response time |
+| --- | --- | --- |
+| **SEV-1** | Platform down, all simulations failing | 15 min |
+| **SEV-2** | Major feature degraded, > 10% error rate | 30 min |
+| **SEV-3** | Minor degradation, single integration down | 2 hours |
+| **SEV-4** | Non-urgent, no customer impact | Next business day |
+
+## Anti-patterns
+
+A few patterns we ask customers to avoid:
+
+- **Don't paste credentials into support emails.** Use the secure-share link Sentia ops sends instead.
+- **Don't share workspace export bundles outside your IT/security team.** They contain audit-loggable customer activity.
+- **Don't open multiple tickets for the same issue.** Reply to your existing thread; we route accordingly.
+- **For SEV-1, email [hello@sentialabs.io](mailto:hello@sentialabs.io) even if you also ping the CSM Slack channel.** Email triggers the on-call rotation; Slack alone might not.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Release notes" icon="newspaper" href="/reference/release-notes">
+    What changed and when.
+  </Card>
+  <Card title="Security" icon="shield-halved" href="/security/overview">
+    The security posture summary.
+  </Card>
+</CardGroup>

@@ -1,0 +1,105 @@
+---
+title: "The simulation wizard"
+description: "A walkthrough of the 3-step Decision -> Population -> Configure flow."
+---
+
+Every simulation can start from `/simulations/new`. Press `N` from anywhere to open it. Design Agent can also send selected surfaces into simulation directly.
+
+The wizard has three steps:
+
+```text
+Decision  ->  Population  ->  Configure
+```
+
+## Step 1 · Decision
+
+This step captures the study design: what you want agents to evaluate and what context they should see.
+
+### Scenario type
+
+| Type | Use it for |
+| --- | --- |
+| **A/B Test** | Compare two or more variants. Figma A/B/C variants can support up to 10 options. |
+| **Open-ended** | Ask agents to react, explain, or identify friction without forcing a choice. |
+| **Competitive** | Compare your concept against competitor or alternative descriptions. |
+
+### Context source
+
+| Source | Current use |
+| --- | --- |
+| **Plain text** | Early concepts, research prompts, and non-visual scenarios. |
+| **Figma** | Primary visual input for first-week onboarding and design studies. Requires Figma connected in Settings. |
+| **Design Agent artifacts** | Automatically attached when launched from selected Design Agent surfaces. |
+| **Coded prototype** | Reserved for prototype capture workflows when enabled for your workspace. |
+| **GitHub** | Reserved for repo and PR context when enabled for your workspace. |
+
+For a Figma study, paste the frame or file URL and wait for capture to finish before continuing. Sentia records selected frames, screenshots, text content, component names, hotspots, and design-token hints where available.
+
+### Framing fields
+
+Use the fields to make the study legible:
+
+| Field | Good example |
+| --- | --- |
+| **Question** | "Which onboarding variant helps first-time admins understand why Figma access is needed?" |
+| **Hypothesis** | "Explicit security language will reduce concern without lowering setup intent." |
+| **Success criteria** | "Agents can name the next step, express fewer security concerns, and prefer the variant for enterprise use." |
+
+Clear framing is passed into agent reasoning. Vague framing produces vague results.
+
+## Step 2 · Population
+
+Pick the cohort that should react to the scenario.
+
+The picker shows ready populations with usable agents. If you came from a population card, the wizard can open with that population preselected.
+
+Before launching, confirm:
+
+- The audience matches the research question.
+- The population is **Ready** and has agents.
+- The cohort size supports the agent count you plan to run.
+- Research artifacts and traits are adequate for the stakes of the decision.
+
+If the right audience does not exist yet, create it in [Populations](/populations/build) before launching.
+
+## Step 3 · Configure
+
+Configure the run:
+
+| Setting | Notes |
+| --- | --- |
+| **Mode** | Fast for setup validation and exploration; Deep for higher-stakes evidence. |
+| **Agent count** | Minimum 10 for practical first-week studies; cannot exceed available population agents in the UI. |
+| **Model tier** | Fast uses the cheaper/quick model path; Deep uses the stronger reasoning path. |
+| **Power preview** | Helps judge whether the run can support the comparison you want to make. |
+| **Deterministic seed** | Optional. Use when reproducibility matters. |
+| **Agent context** | Optional preamble such as "Right now you are evaluating a first-run onboarding flow." |
+
+The wizard also previews cost and estimated duration before launch.
+
+## Launch
+
+Click **Launch simulation**. You are redirected to the live run page, where you can watch completion count, preference split, simulated SUS, concerns, verbatims, and convergence. See [Simulation lifecycle](/concepts/lifecycle).
+
+## Launching from Design Agent
+
+When you launch from Design Agent:
+
+- Select 1-5 surfaces.
+- Use one evaluation prompt.
+- Sentia starts one independent simulation per surface.
+- Each run uses the workspace default population.
+- Results stream back into the Design Agent session and appear in Simulations.
+
+See [Send designs to simulation](/design-agent/simulation-handoff).
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Inputs" icon="image" href="/simulations/inputs">
+    Which context source to use and how to prepare it.
+  </Card>
+  <Card title="Reading results" icon="chart-mixed" href="/simulations/results">
+    How to read completed reports.
+  </Card>
+</CardGroup>

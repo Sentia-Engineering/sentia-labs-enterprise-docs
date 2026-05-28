@@ -1,0 +1,141 @@
+---
+title: "Experimentation integrations"
+description: "Statsig and Eppo. A/B test results are the highest-quality calibration ground truth — weighted 3× vs. observational signals."
+---
+
+If your team runs A/B tests, connecting your experimentation platform is the **fastest way to improve Sentia's calibration accuracy**. A/B test results provide clean causal ground truth — exactly what calibration needs.
+
+A/B test outcomes are weighted **3×** in calibration vs. observational analytics changes.
+
+## Statsig
+
+<Steps>
+  <Step title="Get a Console API Key">
+    Statsig Console → Settings → API Keys → **+ New Console API Key**. Scope: **Read-only**.
+    
+    (Console API keys are direct — Statsig is not in Nango. This is intentional; the read scopes are tightly bounded.)
+  </Step>
+  <Step title="Connect in Sentia">
+    Integrations → Statsig → **Connect**. Paste the Console API Key and your project ID.
+  </Step>
+  <Step title="Choose experiments to track">
+    Pick which experiments to include in calibration. Default: all active experiments + all completed experiments from the last 90 days.
+  </Step>
+  <Step title="Initial sync">
+    Pulls experiment definitions, variants, and results. ~5–10 minutes.
+  </Step>
+</Steps>
+
+**What's synced:**
+
+- Experiment definitions and hypotheses
+- Variant assignments
+- Primary and secondary metric results
+- Confidence intervals and p-values
+
+**Sync cadence:** 30 minutes.
+
+## Eppo
+
+<Steps>
+  <Step title="Get an API Key">
+    Eppo → Settings → API Keys → **+ Create API Key**. Scope: **Read**.
+  </Step>
+  <Step title="Connect in Sentia">
+    Integrations → Eppo → **Connect**. Paste the API Key.
+  </Step>
+  <Step title="Choose experiments">
+    Pick which experiments to track. Same default as Statsig.
+  </Step>
+  <Step title="Initial sync">
+    ~5–10 minutes.
+  </Step>
+</Steps>
+
+**Sync cadence:** 30 minutes.
+
+## How calibration ground truth works
+
+When a decision ships and Sentia detects the rollout, calibration begins:
+
+```
+Predicted distribution     ──┐
+                              ├──▶ Compare ──▶ Correction factors update
+Actual A/B test results    ──┘     (delta)
+(from Statsig/Eppo)
+```
+
+If the experiment runs against a representative sample of your users and reaches statistical significance, its result is the cleanest possible signal for what the predicted simulation got right or wrong.
+
+**Observational changes** (a metric moved in Amplitude after a launch) are weighted 1×. They're noisier — many things can move metrics in the same time window.
+
+**A/B test results** are weighted 3×. The randomization controls for confounders.
+
+## Matching simulations to experiments
+
+Sentia matches simulations to experiments by:
+
+1. **Decision ID linkage** — when you launch an experiment, paste the simulation ID into a Statsig/Eppo description field (`sentia_simulation_id: <uuid>`)
+2. **Time-window heuristic** — experiments that start within 14 days of a simulation against the same population are auto-linked
+3. **Manual link** — from the decision detail page in Sentia, click "Link experiment" and pick the matching experiment
+
+For the cleanest calibration loop, use the description-field linkage. It removes ambiguity.
+
+## What if you don't run A/B tests?
+
+You don't need to run A/B tests for Sentia to work — calibration falls back to observational ground truth from your analytics. But:
+
+- Accuracy improves slower (1× weight vs. 3×)
+- Drift detection is noisier (real metric changes can be hard to attribute)
+- Your normalized accuracy ceiling is lower (~78–82% vs. ~85%+)
+
+If you're considering investing in A/B testing infrastructure but haven't yet, your CSM can help cost-justify the ROI from a calibration-acceleration perspective.
+
+## Recommended workflow
+
+For teams using A/B testing:
+
+<Steps>
+  <Step title="Simulate before launching the experiment">
+    Run a Deep simulation predicting variant impact.
+  </Step>
+  <Step title="Link the simulation to the experiment">
+    Paste the simulation ID into the experiment description: `sentia_simulation_id: <uuid>`.
+  </Step>
+  <Step title="Run the experiment normally">
+    Statsig/Eppo runs as usual. Sentia waits.
+  </Step>
+  <Step title="When the experiment reaches significance">
+    Sentia auto-pulls the result and compares to the prediction. Calibration grade lands on the decision detail page.
+  </Step>
+</Steps>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Experiments not appearing after connect">
+    Check that the Console API key has read scope on the experiments collection. Statsig/Eppo permission models default to limited scopes.
+  </Accordion>
+
+  <Accordion title="Calibration not triggering after experiment completion">
+    The experiment must:
+    - Have reached statistical significance (or your configured significance threshold)
+    - Have a primary metric defined that Sentia's simulation predicted
+    - Be linked to a simulation (either via description field, time heuristic, or manual)
+  </Accordion>
+
+  <Accordion title="Two experiments linked to one simulation">
+    Sentia supports this. The simulation gets two calibration events. The decision detail page shows both side-by-side.
+  </Accordion>
+</AccordionGroup>
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Calibration" icon="rotate" href="/calibration/overview">
+    The full calibration flywheel.
+  </Card>
+  <Card title="Ship detection" icon="rocket" href="/integrations/ship-detection">
+    Detect rollouts to open the calibration window.
+  </Card>
+</CardGroup>

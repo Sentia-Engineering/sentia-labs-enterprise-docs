@@ -1,0 +1,77 @@
+---
+title: "Design Agent sources"
+description: "How Figma and optional GitHub context feed Design Agent."
+---
+
+Every Design Agent session needs a source. In the current enterprise rollout, the primary source is **Figma**. GitHub can be linked when your team wants generated surfaces to follow an indexed component library.
+
+## Connect Figma first
+
+Figma is configured in **Settings -> Integrations**. Sentia currently uses a workspace-saved Figma personal access token rather than OAuth.
+
+Required Figma scopes:
+
+| Scope | Why Sentia needs it |
+| --- | --- |
+| `current_user:read` | Confirms the token belongs to a valid Figma user. |
+| `file_content:read` | Reads file structure, frames, components, text, and layout metadata. |
+| `file_comments:write` | Posts Design Agent edit summaries back to Figma when you export. |
+
+Only Admins and Owners should manage the workspace token. Operators can use connected Figma sources after setup.
+
+## Import a Figma file
+
+<Steps>
+  <Step title="Open Design Agent">
+    Press `D`, then create a project or open an existing one.
+  </Step>
+  <Step title="Choose Figma file">
+    Paste a Figma design, file, or prototype URL. A bare Figma file key also works.
+  </Step>
+  <Step title="Optionally link a component repo">
+    If your CSM or admin has indexed a GitHub component library, link it so Sentia can map imported screens to production components.
+  </Step>
+  <Step title="Start indexing">
+    Sentia records the source, reads frames and components, captures thumbnails, and prepares editable surfaces.
+  </Step>
+</Steps>
+
+## What gets indexed
+
+Sentia uses the Figma source for:
+
+- Frame names, hierarchy, dimensions, and device class.
+- Text content and component names.
+- Rendered thumbnails for surface selection.
+- Design tokens where available.
+- Prototype hotspots and interaction hints where available.
+
+If a Figma source changes after import, refresh from Figma before continuing important work. When local edits diverge from the refreshed source, Sentia flags the conflict so you can accept the newer Figma state or keep the Sentia version.
+
+## Working without GitHub
+
+GitHub is optional. Without a linked repo, Sentia turns Figma screens into editable primitive state. That is the right first-week path for most UX research and design teams because it keeps focus on study design and variant quality.
+
+Use GitHub context later when:
+
+- You need generated surfaces to mirror production components.
+- The team will open a PR from the Design Agent session.
+- The design system is implemented as a component library and should constrain edits.
+
+## Source hygiene
+
+- Link directly to the file, page, section, or frame you want Sentia to read.
+- Name frames clearly before import. Frame names become labels in surface selection and simulation reports.
+- Remove stale exploratory frames if they should not influence generated variants.
+- Refresh the source after major Figma changes.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Design Agent overview" icon="pen-ruler" href="/design-agent/overview">
+    The full Design Agent workflow.
+  </Card>
+  <Card title="Send surfaces to simulation" icon="flask" href="/design-agent/simulation-handoff">
+    Turn selected variants into synthetic user studies.
+  </Card>
+</CardGroup>

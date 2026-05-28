@@ -1,0 +1,85 @@
+---
+title: "Sign in with SSO"
+description: "How SSO is configured for your workspace and what to do if sign-in fails."
+---
+
+Sentia uses **WorkOS AuthKit** for enterprise SSO. Every workspace is corporate-IdP-only — there are no password flows.
+
+## What your CSM configures at kickoff
+
+Your Customer Success Manager provisions SSO with your IT/SecOps team before your workspace goes live. They'll work with you to:
+
+1. **Choose your IdP** — SAML or OIDC. Tested with Okta, Microsoft Entra ID, Google Workspace, OneLogin, JumpCloud, Auth0, PingFederate, and any standards-compliant SAML 2.0 / OIDC provider.
+2. **Set up the connection** — WorkOS provides metadata URLs and ACS endpoints for your IT team to add as a SAML/OIDC app in your IdP.
+3. **Assign your initial admins** — typically 2–3 users with the `OWNER` role.
+4. **Test sign-in** — your CSM validates a sign-in from a test user before handing off.
+
+## Signing in
+
+<Steps>
+  <Step title="Visit the app">
+    Open [app.sentialabs.ai](https://app.sentialabs.ai). You'll see the "Sign in" page.
+  </Step>
+  <Step title="Enter your work email">
+    Sentia looks up your domain → resolves to your IdP connection → redirects you to your IdP for authentication.
+  </Step>
+  <Step title="Complete IdP auth">
+    Your IdP shows its normal sign-in screen (with MFA if enforced). On success, you're redirected back to Sentia.
+  </Step>
+  <Step title="Land in the app">
+    First-time users see a brief welcome flow. Returning users land on `/simulations`.
+  </Step>
+</Steps>
+
+<Tip>
+  **Sessions** are managed via httpOnly JWT cookies, server-side only. Sessions last 12 hours of inactivity; active use extends them automatically. Forced sign-out happens immediately if your IdP deprovisions you (via SCIM).
+</Tip>
+
+## Cookies & domains
+
+In production, auth cookies use `COOKIE_DOMAIN=.sentialabs.ai` so the app at `app.sentialabs.ai` and the API at `api.sentialabs.ai` share a session.
+
+- **App:** `https://app.sentialabs.ai`
+- **API:** `https://api.sentialabs.ai`
+- **Marketing:** `https://sentialabs.ai`
+
+## Common sign-in issues
+
+<AccordionGroup>
+  <Accordion title="My email isn't recognized">
+    Sentia maps your email domain to your IdP connection. If you're using a personal email or a domain not registered for your org, sign-in fails. Use your work email; if that still fails, your IT team may not have finished SSO setup.
+  </Accordion>
+
+  <Accordion title="IdP redirect loop">
+    Usually a misconfigured ACS URL or signing certificate mismatch. Your CSM and WorkOS support can fix it — share the browser network trace with [hello@sentialabs.io](mailto:hello@sentialabs.io).
+  </Accordion>
+
+  <Accordion title="I was just deprovisioned and need access">
+    SCIM deprovisioning is immediate. Re-enabling requires your IdP admin to re-assign you to the Sentia app. After re-assignment, sign in normally; new access is live in < 1 minute.
+  </Accordion>
+
+  <Accordion title="`/api/auth/callback` returns an error">
+    Most commonly: the WorkOS redirect URI doesn't match your domain. Workspace owners can check this in Settings → Workspace → Authentication. If you can't access settings, email support.
+  </Accordion>
+
+  <Accordion title="MFA prompt loop">
+    This is an IdP-side issue, not Sentia. Your IdP admin can investigate the MFA enrollment status of the affected user.
+  </Accordion>
+</AccordionGroup>
+
+## What SSO does NOT cover
+
+- **API access:** REST API uses JWTs issued by WorkOS but accessed via API keys created in the dashboard. See [API authentication](/api-reference/authentication).
+- **MCP server access:** If you've enabled the Sentia MCP server, it uses workspace-scoped service tokens, not user SSO.
+- **Webhook signatures:** Webhooks are HMAC-signed per integration; SSO is unrelated.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Set up SCIM" icon="users-gear" href="/admin/sso-scim">
+    Auto-provision and deprovision from your IdP. Recommended.
+  </Card>
+  <Card title="Invite your team" icon="user-plus" href="/onboarding/invite-team">
+    Manually invite users now; switch to SCIM when ready.
+  </Card>
+</CardGroup>

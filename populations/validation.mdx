@@ -1,0 +1,85 @@
+---
+title: "Validation"
+description: "How to judge whether a population is ready for a real study."
+---
+
+Population validation is the process of deciding whether a cohort behaves plausibly enough for the study you want to run. Some workspaces have access to a behavioral validation suite; every team should also do a practical research review before trusting a cohort.
+
+## Practical validation checklist
+
+Before using a population for an important simulation, review:
+
+| Check | Healthy signal |
+| --- | --- |
+| **Audience fit** | The description, traits, and sample personas match the people you mean to study. |
+| **Agent count** | The cohort has enough agents for the planned run. |
+| **Research coverage** | Attached artifacts match the audience and topic. |
+| **Demographic intent** | Location, age, education, occupation, and other filters are deliberate. |
+| **Voice quality** | Sample personas and later simulation voices sound specific, not generic. |
+| **Simulation history** | Prior runs did not reveal obvious audience mismatch. |
+
+If any check fails, revise the population before interpreting results.
+
+## Behavioral validation suite
+
+Where enabled, Sentia can run agents through canonical behavioral economics experiments:
+
+| Experiment | What it tests |
+| --- | --- |
+| **Dictator game** | Generosity and social norms. |
+| **Trust game** | Trust and reciprocity. |
+| **Public goods** | Cooperation under self-interest. |
+| **Prisoner's dilemma** | Strategic cooperation. |
+| **Ultimatum** | Fairness and rejection thresholds. |
+
+These tests help detect cohorts that behave implausibly in broad human decision contexts. Passing them does not prove the cohort is right for your product; it only improves confidence that the agents are not obviously broken.
+
+## Common failure patterns
+
+<AccordionGroup>
+  <Accordion title="The cohort sounds generic">
+    The audience brief is too broad or lacks evidence. Narrow the brief and attach more relevant research artifacts.
+  </Accordion>
+
+  <Accordion title="The cohort is too narrow">
+    The population may not have enough useful variance. Duplicate it and broaden one dimension, such as role, geography, or experience level.
+  </Accordion>
+
+  <Accordion title="Agents miss known objections">
+    The relevant research is absent or not attached. Add transcripts, survey responses, persona docs, or recordings that contain those objections.
+  </Accordion>
+
+  <Accordion title="The same design gets contradictory results">
+    Check whether the prompt changed, the cohort changed, or the design input changed. If the setup is stable, the study may be genuinely divided.
+  </Accordion>
+</AccordionGroup>
+
+## What validation cannot tell you
+
+- It cannot replace human research judgment.
+- It cannot make weak or stale research artifacts reliable.
+- It cannot validate a cohort outside its intended scope.
+- It cannot prove a design will perform the same way after launch.
+
+Treat validation as a readiness check, not a guarantee.
+
+## When to revisit a population
+
+Revisit or rebuild when:
+
+- The audience definition changes.
+- You upload better research.
+- A report's voices feel off-audience.
+- The cohort has been reused across too many different questions.
+- Your team needs a sharper segment comparison.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Build a population" icon="users-gear" href="/populations/build">
+    Revise or duplicate a cohort.
+  </Card>
+  <Card title="Research grounding" icon="microphone" href="/populations/interview-grounding">
+    Improve cohort memory with better artifacts.
+  </Card>
+</CardGroup>

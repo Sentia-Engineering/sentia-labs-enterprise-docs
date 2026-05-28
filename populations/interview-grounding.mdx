@@ -1,0 +1,76 @@
+---
+title: "Research grounding"
+description: "How uploaded research artifacts become cohort memory."
+---
+
+Research grounding is how Sentia moves beyond generic synthetic users. Uploaded artifacts give agents language, concerns, motivations, and context that resemble the people your team studies.
+
+## The pipeline
+
+```text
+Research artifacts -> parsing and summarization -> memory signals -> cohort agents
+```
+
+Artifacts can come from the [Resource Library](/resource-library/research-artifacts) or from inline attachments while building a population.
+
+## Good grounding sources
+
+| Source | Why it helps |
+| --- | --- |
+| **Interview transcripts** | Deep motivations, vocabulary, objections, and task context. |
+| **Survey CSVs** | Patterned responses, NPS comments, and structured feedback. |
+| **Persona documents** | Existing team knowledge about audience segments. |
+| **Audio/video recordings** | Usability sessions, calls, and research conversations after transcription. |
+| **A/B or conversion history** | Prior evidence that can inform calibration and expectation setting. |
+
+## What grounded memory changes
+
+Without grounding, an agent may say:
+
+> "I want the setup to be clear and efficient."
+
+With relevant research attached, the same type of agent can cite more specific context:
+
+> "I need to know exactly what Figma access is reading before I connect it, because our design files include roadmap-sensitive work."
+
+That specificity is what makes a simulation useful in critique.
+
+## How much research is enough?
+
+Start with quality, not volume:
+
+| Corpus | Good use |
+| --- | --- |
+| **3-5 strong artifacts** | First run or focused concept test. |
+| **10-20 artifacts** | Healthy first-week grounding for a cohort. |
+| **50+ artifacts** | Stronger recurring cohort or high-stakes study. |
+
+A small set of well-labeled, relevant interviews is usually better than a large dump of mixed, stale files.
+
+## Grounding hygiene
+
+- Attach artifacts that match the cohort, not the whole company archive.
+- Prefer recent research when product context has changed.
+- Include old research only when old expectations still matter.
+- Rename files with audience, date, and topic.
+- Re-parse files when metadata or classification was wrong.
+
+## Signs grounding is weak
+
+- Voices sound like generic product advice.
+- Agents miss known objections from your research.
+- The report focuses on irrelevant concerns.
+- Different cohorts sound indistinguishable.
+
+Fix weak grounding by narrowing the audience brief, attaching better artifacts, or creating a more specific custom trait.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Research artifacts" icon="upload" href="/resource-library/research-artifacts">
+    Supported files, upload flow, and parsing behavior.
+  </Card>
+  <Card title="Build a population" icon="users-gear" href="/populations/build">
+    Attach research while composing a cohort.
+  </Card>
+</CardGroup>

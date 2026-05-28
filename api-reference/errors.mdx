@@ -1,0 +1,180 @@
+---
+title: "Errors"
+description: "The error envelope, status codes, and how to debug common failures."
+---
+
+All Sentia API errors return JSON in a consistent envelope and follow standard HTTP semantics.
+
+## Error envelope
+
+```json
+{
+  "error": "machine_readable_code",
+  "message": "Human-readable description of what went wrong",
+  "request_id": "req_8f9a2b...",
+  "documentation_url": "https://docs.sentialabs.ai/api-reference/errors",
+  "details": {
+    "field": "specific to the error code"
+  }
+}
+```
+
+Always pass `request_id` when contacting support — it lets us trace the exact request through our logs.
+
+## Status codes
+
+| Code | Meaning |
+| --- | --- |
+| **200** | Success |
+| **201** | Created |
+| **202** | Accepted (async; the resource is queued, not yet complete) |
+| **204** | Success with no body |
+| **400** | Bad request — client-side error in the request |
+| **401** | Authentication required or invalid |
+| **403** | Authenticated but not authorized for this action |
+| **404** | Resource not found |
+| **409** | Conflict — resource state doesn't allow the action |
+| **422** | Validation error — request body is malformed or contains invalid values |
+| **429** | Rate limit exceeded |
+| **500** | Server error |
+| **503** | Service unavailable — temporary outage |
+
+## Common error codes
+
+### Authentication
+
+| Code | Status | Cause |
+| --- | --- | --- |
+| `missing_token` | 401 | No `Authorization` header |
+| `invalid_token` | 401 | Token is malformed |
+| `token_revoked` | 401 | Token was revoked |
+| `token_expired` | 401 | Session token expired |
+| `workspace_access_denied` | 403 | Token doesn't grant access to this workspace |
+| `role_insufficient` | 403 | Action requires higher role |
+
+### Workspace scoping
+
+| Code | Status | Cause |
+| --- | --- | --- |
+| `missing_workspace_header` | 400 | No `x-workspace-id` on a data endpoint |
+| `workspace_not_found` | 404 | Workspace ID doesn't exist |
+| `wrong_region` | 400 | EU workspace queried via US API or vice versa |
+
+### Validation
+
+| Code | Status | Cause |
+| --- | --- | --- |
+| `validation_failed` | 422 | One or more fields are invalid; `details` lists per-field errors |
+| `unsupported_combination` | 422 | Field values conflict (e.g., trying to connect a second analytics provider) |
+| `out_of_range` | 422 | Numeric field outside allowed range |
+| `unknown_field` | 422 | Request contains a field the API doesn't recognize |
+
+### Rate limiting
+
+| Code | Status | Cause |
+| --- | --- | --- |
+| `rate_limit_exceeded` | 429 | Bucket quota hit; `Retry-After` header tells when to retry |
+
+### Resources
+
+| Code | Status | Cause |
+| --- | --- | --- |
+| `resource_not_found` | 404 | The requested resource doesn't exist or you don't have access |
+| `resource_conflict` | 409 | State machine doesn't allow this transition (e.g., can't cancel a completed simulation) |
+| `resource_in_use` | 409 | Trying to delete something that's still referenced (e.g., a population with running simulations) |
+| `quota_exceeded` | 422 | Workspace contract quota exceeded; CSM can raise |
+
+### Provider / external
+
+| Code | Status | Cause |
+| --- | --- | --- |
+| `provider_unavailable` | 503 | Downstream LLM or integration provider is down; retry later |
+| `provider_auth_failed` | 502 | Integration credentials expired or revoked |
+| `webhook_signature_invalid` | 400 | Webhook payload signature didn't verify |
+
+## Validation error structure
+
+For `422 validation_failed`, the `details` object lists per-field errors:
+
+```json
+{
+  "error": "validation_failed",
+  "message": "Request body failed validation",
+  "request_id": "req_...",
+  "details": {
+    "fields": [
+      {
+        "field": "config.agentCount",
+        "error": "out_of_range",
+        "message": "Must be between 1 and 10000",
+        "received": 50000
+      },
+      {
+        "field": "populationId",
+        "error": "uuid_invalid",
+        "message": "Must be a valid UUID v4"
+      }
+    ]
+  }
+}
+```
+
+Use this structure to surface targeted error messages to your end users.
+
+## Idempotency
+
+For state-changing operations (POST/PUT/DELETE), include an `Idempotency-Key` header:
+
+```http
+Idempotency-Key: <uuid-or-deterministic-key>
+```
+
+Requests with the same key within 24 hours return the original response, avoiding duplicates if your client retries on network errors.
+
+Idempotency keys should be:
+
+- Unique per logical operation
+- Stable across retries
+- A UUID v4 if you don't have a natural deterministic key
+
+## Debugging an error
+
+<Steps>
+  <Step title="Capture the response">
+    Get the full body, including `request_id` and `details`.
+  </Step>
+  <Step title="Check status + code">
+    The code is more specific than the status. `404 resource_not_found` differs from `404 endpoint_not_found` — the second usually means a typo in the URL.
+  </Step>
+  <Step title="Read documentation_url">
+    Every error includes a link to the relevant docs page.
+  </Step>
+  <Step title="Search the dashboard audit log">
+    Your workspace's audit log shows the failed request. Useful for confirming the request actually arrived at Sentia.
+  </Step>
+  <Step title="Open a support ticket">
+    If still stuck: [hello@sentialabs.io](mailto:hello@sentialabs.io) with `[API]` prefix and the `request_id`.
+  </Step>
+</Steps>
+
+## Retryable vs. non-retryable
+
+| Status | Retry? |
+| --- | --- |
+| 5xx | Yes — exponential backoff starting 1s, max 60s |
+| 429 | Yes — honor `Retry-After` |
+| 408 (timeout) | Yes — same backoff as 5xx |
+| 4xx (other) | No — fix the request first |
+
+Idempotency keys make retries safe.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Webhooks" icon="bolt" href="/api-reference/webhooks">
+    Signature verification and retry behavior.
+  </Card>
+  <Card title="Authentication" icon="key" href="/api-reference/authentication">
+    Tokens, scopes, and revocation.
+  </Card>
+</CardGroup>

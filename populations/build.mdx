@@ -1,0 +1,107 @@
+---
+title: "Build a population"
+description: "Step-by-step: audience brief, cohort size, traits, demographics, research artifacts, and review."
+---
+
+Population creation happens in the behavioral cohort studio. For first-week onboarding, the goal is not a giant model of every user. The goal is one focused cohort that can answer a real design question.
+
+## Before you start
+
+Prepare:
+
+- The user group you want to simulate.
+- The design or product questions this cohort should answer.
+- Optional research artifacts in the [Resource Library](/resource-library/research-artifacts).
+- Optional custom traits if your workspace needs them.
+
+## Step 1 · Describe the audience
+
+Write a concise natural-language brief:
+
+```text
+First-time enterprise workspace admins who are responsible for connecting Figma,
+evaluating security implications, and proving value to a design leadership team.
+```
+
+The brief drives automatic suggestions for behavior patterns, psychological drivers, research contexts, and demographic filters.
+
+## Step 2 · Choose cohort size
+
+The UI supports **10-100 agents**.
+
+| Size | Use when |
+| --- | --- |
+| **10-20** | Smoke tests and very narrow exploratory checks. |
+| **30-50** | Recommended first-week range for design research. |
+| **75-100** | Higher-variance audiences or reports that need more stable slices. |
+
+Use more agents when you expect meaningful subgroup differences. Use fewer when you are testing setup quality or prompt clarity.
+
+## Step 3 · Tune behavior and psychology
+
+The composer can infer and let you adjust:
+
+| Category | Examples |
+| --- | --- |
+| **Behavior patterns** | First-run confusion, habitual workarounds, setup abandonment, power-use shortcuts, price checking, comparison shopping, support escalation, collaboration handoffs. |
+| **Psychological drivers** | Risk averse, novelty seeking, trust seeking, status conscious, control oriented, overwhelmed, skeptical of automation, privacy sensitive. |
+| **Research contexts** | Onboarding, pricing, feature discovery, workflow change, trust moment, retention risk, upgrade path, accessibility review. |
+
+Do not over-tag. Pick the patterns that explain the study, not every plausible user behavior.
+
+## Step 4 · Set demographics
+
+Available demographic grounding depends on geography:
+
+| Geography | Available grounding |
+| --- | --- |
+| **United States** | ACS PUMS records, including age, gender, education, occupation, state, and race/ethnicity where configured. |
+| **Global / non-US** | WorldPop and World Bank context with country, age, gender, education, and occupation fields. |
+
+Demographics should support the research question. They should not become a substitute for behavior, task, or product context.
+
+## Step 5 · Attach research artifacts
+
+Attach transcripts, survey CSVs, persona docs, recordings, or experiment history from the Resource Library. These artifacts help agents sound and reason closer to the people your team studies.
+
+Use artifacts when:
+
+- The study is high-stakes.
+- The cohort should reflect a specific audience's language.
+- You have known pain points or objections from prior research.
+- You want to avoid generic synthetic-user feedback.
+
+## Step 6 · Build and review
+
+Build the population, then open the detail page. Review:
+
+- Sample personas.
+- Behavior traits.
+- Demographic panels.
+- Qualitative coverage.
+- Health signals.
+- Any validation results available to the workspace.
+
+If it does not read like the audience, revise the brief or attached artifacts before running important simulations.
+
+## Updating an existing population
+
+Common actions:
+
+| Action | Use when |
+| --- | --- |
+| **Rename** | The use case becomes clearer after first runs. |
+| **Duplicate** | You need a related cohort with one key difference. |
+| **Archive** | The cohort should stay in history but not be reused. |
+| **Delete** | The cohort is unused and wrong. Deletion can be blocked when simulations depend on it. |
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Run your first simulation" icon="flask" href="/onboarding/first-simulation">
+    Use the cohort in a real study.
+  </Card>
+  <Card title="Research artifacts" icon="upload" href="/resource-library/research-artifacts">
+    Add transcripts, surveys, recordings, and persona docs.
+  </Card>
+</CardGroup>

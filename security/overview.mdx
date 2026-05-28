@@ -1,0 +1,147 @@
+---
+title: "Security overview"
+description: "SOC 2 Type I audit-ready posture: SSO/SCIM, tenant isolation, encryption, audit, LLM safety."
+---
+
+Sentia is built for enterprise security review. This page is the at-a-glance security posture — share it with your IT/SecOps team or vendor management process.
+
+## Architecture in one paragraph
+
+All data is workspace-scoped. PostgreSQL row-level security enforces complete isolation between tenants. Authentication is corporate-IdP-only (SAML/OIDC via WorkOS), with no password flows. Every credential is encrypted at rest with per-tenant KMS keys. Every mutation is audit-logged. LLM traffic uses zero-retention DPAs with both Anthropic and Google Vertex. EU customers get full eu-west-1 data residency.
+
+## Compliance posture
+
+| Standard | Status |
+| --- | --- |
+| **SOC 2 Type I** | Audit-ready; Type II audit in progress |
+| **GDPR** | Right to erasure, right to portability, EU data residency, sub-processor disclosure |
+| **CCPA** | Compliant; data deletion and access flows |
+| **HIPAA** | Not a covered platform; do not connect PHI sources |
+| **ISO 27001** | Not certified |
+| **FedRAMP** | Not in scope |
+
+For a current SOC 2 report, security questionnaire (CAIQ-Lite), or DPA, contact [hello@sentialabs.io](mailto:hello@sentialabs.io).
+
+## Authentication & access
+
+- **WorkOS SSO** — SAML 2.0 / OIDC via your corporate IdP
+- **SCIM** — real-time user provisioning and deprovisioning from your IdP
+- **No passwords** — Sentia stores zero password hashes
+- **RBAC** — 4 roles enforced at API middleware; every authorization check audit-logged
+- **Sessions** — httpOnly JWT cookies, 12h inactivity timeout, immediate revocation on SCIM deprovisioning
+- **API keys** — scoped to workspace, listed and revocable, every usage audit-logged
+
+See [SSO & SCIM](/admin/sso-scim).
+
+## Tenant isolation
+
+- **PostgreSQL row-level security (RLS)** — `FORCE ROW LEVEL SECURITY` applied on every tenant table
+- **API workspace scoping** — every request requires an `x-workspace-id` header that's cross-checked against the bearer JWT's allowed workspaces
+- **Vector store isolation** — Pinecone namespaces are workspace-scoped; cross-workspace retrieval is impossible
+- **Object storage isolation** — S3 prefixes per workspace with bucket policies; no cross-tenant access paths
+
+There's no admin path that operates across workspaces silently. Cross-workspace queries by Sentia staff require explicit support-mode access, which is itself audit-logged and time-limited.
+
+## Encryption
+
+| Where | How |
+| --- | --- |
+| **In transit** | TLS 1.3 everywhere. HTTPS-only. HSTS enabled. |
+| **At rest** | AES-256 across all data stores (PostgreSQL, MongoDB, Redis, Pinecone, S3) |
+| **Credentials** | Per-tenant KMS keys (AWS KMS) wrap integration credentials and API tokens |
+| **Secrets** | AWS Secrets Manager only. Never in env vars, code, or logs. |
+| **Backups** | Encrypted with KMS-managed CMKs; backup keys are separate from primary keys |
+
+Per-tenant KMS means: if a customer requests data destruction, deleting their KMS key cryptographically shreds their data — even backups become unreadable.
+
+## Network & infrastructure
+
+- **AWS-only** — EKS, Aurora PostgreSQL, ElastiCache Redis, Pinecone, MSK Kafka (Redpanda), KMS, GuardDuty
+- **Private subnets** — application services in private subnets; only the WAF + ALB are internet-facing
+- **VPC peering / PrivateLink** — available for integration endpoints on request
+- **DDoS protection** — AWS Shield Standard; Shield Advanced for enterprise tier
+- **WAF** — managed rules + custom rules for known abuse patterns
+- **SSRF protection** — request-handling code blocks private IPs, cloud metadata endpoints, IPv4-mapped IPv6
+- **Egress filtering** — only declared external services (LLM providers, integration APIs) are reachable from production workloads
+
+## Scanning & supply chain
+
+| Stage | Tools |
+| --- | --- |
+| **SAST** | Semgrep — runs on every PR |
+| **Dependency scanning** | Snyk — runs on every PR, blocks merges on critical CVEs |
+| **Container scanning** | Trivy — every image, every deploy |
+| **Secret scanning** | Gitleaks — pre-commit + CI; pre-receive on the central repo |
+| **DAST** | Periodic ZAP scans + annual third-party pen tests |
+| **SBOM** | CycloneDX SBOMs generated per release, archived for 7 years |
+
+Production-impacting CVEs are patched within SLAs:
+
+| Severity | Patch SLA |
+| --- | --- |
+| Critical | 24 hours |
+| High | 7 days |
+| Medium | 30 days |
+| Low | Next release cycle |
+
+## LLM safety
+
+- **Zero-retention DPAs** with Anthropic and Google Vertex — no training on customer data
+- **No customer data in committed prompts** — Sentia stores prompt templates in code; customer data is injected at runtime only
+- **No prompt content in logs** — prompts and completions are not logged; only token counts and aggregate metadata
+- **PII redaction** at the integration boundary before verbatims enter the embedding pipeline
+- **Dual provider** with circuit breaker — Anthropic primary, Google Vertex fallback; failover preserves privacy guarantees
+
+See [LLM safety](/security/llm-safety).
+
+## Auditing & monitoring
+
+- **Audit log** — every mutation, sign-in, integration action, admin operation. 90 days hot, 1 year warm, 7 years cold.
+- **Error monitoring** — Sentry with PII scrubbing
+- **Performance monitoring** — Web Vitals, server-side traces; no customer-data telemetry
+- **GuardDuty** — AWS-native threat detection on all production accounts
+- **Anomaly alerts** — failed-auth surges, unusual API patterns, sudden config changes
+
+See [Audit log](/admin/audit-log).
+
+## Incident response
+
+- **24/7 on-call** for SEV-1 (platform-down) and SEV-2 (major feature degraded)
+- **Documented incident playbooks** internally with severity-tiered response times
+- **Customer notification** — SEV-1 within 30 minutes via Slack Connect + status page; SEV-2 within 2 hours
+- **Postmortems** — published to customers within 5 business days for any customer-affecting incident
+
+Service status: [/reference/status](/reference/status).
+
+## Security review docs
+
+Available on request from [hello@sentialabs.io](mailto:hello@sentialabs.io):
+
+- SOC 2 Type I report (under NDA)
+- DPA / sub-processor list
+- CAIQ-Lite questionnaire (pre-filled)
+- Penetration test summary (most recent)
+- Architecture security review (high-level diagram + control narrative)
+
+## Reporting vulnerabilities
+
+Security researchers and customers can report vulnerabilities via [hello@sentialabs.io](mailto:hello@sentialabs.io). PGP key available on request.
+
+We respond to security reports within 1 business day. Critical reports get an immediate response.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Data handling" icon="database" href="/security/data-handling">
+    What's stored, where, for how long, and how it's protected.
+  </Card>
+  <Card title="GDPR" icon="user-shield" href="/security/gdpr">
+    Data deletion, export, EU residency.
+  </Card>
+  <Card title="LLM safety" icon="brain" href="/security/llm-safety">
+    Zero-retention DPAs, dual provider, prompt-data separation.
+  </Card>
+  <Card title="Sub-processors" icon="building" href="/security/sub-processors">
+    The current sub-processor list and our update policy.
+  </Card>
+</CardGroup>

@@ -1,0 +1,62 @@
+---
+title: "Limits & quotas"
+description: "Current platform limits for onboarding, simulation, populations, uploads, and reports."
+---
+
+Many limits can vary by contract or rollout stage. Ask your CSM if your workspace needs higher throughput or a connector that is not visible in Settings.
+
+## Simulation limits
+
+| Limit | Current behavior |
+| --- | --- |
+| **Agent count in wizard** | Cannot exceed the selected population's available agents. |
+| **Population-backed first-week range** | 10-100 agents. |
+| **API simulation cap** | Up to 10,000 agents for enterprise/API programs where supported. |
+| **Scenario choices** | A/B and competitive choices support up to 10 options; 2-3 is recommended for readable reports. |
+| **Design Agent handoff** | 1-5 selected surfaces per handoff. Each surface starts an independent run. |
+
+## Population limits
+
+| Limit | Current behavior |
+| --- | --- |
+| **Agents per UI population** | 10 minimum, 100 maximum, 50 default. |
+| **Active populations** | Contract-governed; use focused cohorts rather than one broad population. |
+| **Delete protection** | Delete can be blocked while building or when simulations depend on the population. |
+
+## Resource Library upload limits
+
+| File type | Extensions | Size limit |
+| --- | --- | --- |
+| **Documents and data** | CSV, TSV, DAT, TXT, PDF, DOCX | 25 MB per file |
+| **Audio** | MP3, WAV, M4A, FLAC, OGG | 200 MB per file |
+| **Video** | MP4, MOV, WEBM | 200 MB per file |
+
+## Design system limits
+
+| Resource | Limit |
+| --- | --- |
+| **Design document** | 50,000 characters. `.md` and `.txt` uploads are accepted. |
+| **Accessibility rule PDFs** | Up to 5 PDFs. |
+
+## Figma and Design Agent
+
+| Limit | Notes |
+| --- | --- |
+| **Figma token scopes** | `current_user:read`, `file_content:read`, `file_comments:write`. |
+| **Design Agent surface selection** | Multi-select up to 5 surfaces for simulation handoff. |
+| **Source refresh** | Refresh when the Figma file changes materially. |
+
+## API and enterprise connector limits
+
+API request limits, webhook delivery limits, provider-specific sync limits, and enterprise connector quotas are contract-dependent. See [API rate limits](/api-reference/rate-limits) for programmatic use and [Integrations overview](/integrations/overview) for connector rollout notes.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Billing & usage" icon="receipt" href="/admin/billing-and-usage">
+    Contract allocation and usage tracking.
+  </Card>
+  <Card title="Resource Library artifacts" icon="upload" href="/resource-library/research-artifacts">
+    Supported files and parsing behavior.
+  </Card>
+</CardGroup>

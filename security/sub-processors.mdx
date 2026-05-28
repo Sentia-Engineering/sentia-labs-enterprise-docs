@@ -1,0 +1,119 @@
+---
+title: "Sub-processors"
+description: "The current list of sub-processors Sentia uses to provide the platform, and our notification policy for changes."
+---
+
+A **sub-processor** is a third-party service that processes customer data on Sentia's behalf. Sentia maintains a current list and notifies customers 30 days in advance of any sub-processor changes.
+
+This list applies to both US and EU workspaces unless noted.
+
+## Current sub-processors
+
+### Infrastructure & hosting
+
+| Sub-processor | Service | Region | Data processed |
+| --- | --- | --- | --- |
+| **Amazon Web Services (AWS)** | Compute, storage, networking, KMS, Secrets Manager, GuardDuty | US workspaces: us-east-1, us-west-2. EU workspaces: eu-west-1, eu-central-1. | All categories — primary infrastructure |
+| **Render** | Production hosting for application services | US: Oregon. EU: Frankfurt. | Application logs (no customer content), environment configuration |
+| **Aiven** | Managed Kafka (Redpanda) for event streaming | Co-located with workspace region | Event payloads (ephemeral; ingest/normalizer streams only) |
+
+### LLM providers
+
+| Sub-processor | Service | Region | Data processed |
+| --- | --- | --- | --- |
+| **Anthropic** | Claude (primary LLM) | US workspaces: US. EU workspaces: EU (via Vertex routing if applicable). | Per-agent prompts at simulation time. Zero-retention DPA — no training, no logging beyond ephemeral request handling. |
+| **Google Cloud (Vertex AI)** | Gemini (fallback LLM) | Same residency as workspace | Same as Anthropic. Zero-retention DPA. |
+| **OpenAI** | Optional design/embedding workloads (only enabled per-workspace) | US | Same; zero-retention. |
+
+### Vector & embeddings
+
+| Sub-processor | Service | Region | Data processed |
+| --- | --- | --- | --- |
+| **Pinecone** | Vector store for verbatim embeddings + memory retrieval | US workspaces: us-east-1. EU workspaces: eu-west-1. | Embedded verbatim vectors + metadata (no raw text in Pinecone) |
+| **Cohere** | Embedding generation + reranking | US / EU per workspace | Verbatim text at embedding time only; not retained by Cohere |
+
+### Authentication & access
+
+| Sub-processor | Service | Region | Data processed |
+| --- | --- | --- | --- |
+| **WorkOS** | SSO (SAML/OIDC) + SCIM | Multi-region; US/EU residency honored | User identity attributes (name, email, role, group memberships) |
+| **OpenFGA (self-hosted)** | Fine-grained authorization | Co-located with workspace | Permission graph |
+
+### Integration brokerage
+
+| Sub-processor | Service | Region | Data processed |
+| --- | --- | --- | --- |
+| **Nango** | OAuth lifecycle and connector management for 11 integration providers | Co-located with workspace | OAuth tokens (passed through; not stored at rest by Nango), sync metadata |
+
+### Observability
+
+| Sub-processor | Service | Region | Data processed |
+| --- | --- | --- | --- |
+| **Sentry** | Error tracking + performance traces | US: us-1. EU: de-1. | Stack traces, error metadata (PII scrubbed at egress) |
+| **PostHog** | Product analytics for the Sentia dashboard | Self-hosted by Sentia per workspace region | Anonymized page views, Web Vitals (no customer-content telemetry) |
+| **Braintrust** | LLM eval and observability | US | Prompt/completion metadata for internal quality monitoring (opted in per workspace) |
+
+### Browser & content capture
+
+| Sub-processor | Service | Region | Data processed |
+| --- | --- | --- | --- |
+| **Firecrawl** | Headless browser + content scraping for captured URLs | Workspace region | URL captures, scraped text (ephemeral; result returned and stored by Sentia, not retained by Firecrawl) |
+| **Reducto** | Document parsing for uploaded PDFs and slides | US | Document content (ephemeral) |
+
+### Storage support
+
+| Sub-processor | Service | Region | Data processed |
+| --- | --- | --- | --- |
+| **MongoDB Atlas** | Document store for integration state and sync queues | US: us-east-1. EU: eu-west-1. | Integration sync metadata, document-shaped tenant data |
+| **AWS S3** | Object storage for captures, exports, audit cold storage | Workspace region | Captures, simulation artifacts, audit logs (cold) |
+
+### Email & notifications
+
+| Sub-processor | Service | Region | Data processed |
+| --- | --- | --- | --- |
+| **Resend** | Transactional email (invites, notifications, alerts) | US | User email addresses, message bodies |
+
+### Metering & billing
+
+| Sub-processor | Service | Region | Data processed |
+| --- | --- | --- | --- |
+| **OpenMeter** | Usage metering | US | Workspace usage events (aggregated; no customer content) |
+
+## EU data residency
+
+EU-region workspaces use only EU-resident sub-processors for primary data storage. The few US-only sub-processors above (OpenAI, Braintrust, Resend) are either:
+
+- **Optional / opt-in** — disabled for EU workspaces unless customer opts in
+- **PII-stripped** — only operational metadata flows; no customer content
+- **Bypassed** — alternate EU-resident services used (e.g., EU-resident transactional email)
+
+Contact [hello@sentialabs.io](mailto:hello@sentialabs.io) for the EU-specific sub-processor configuration.
+
+## Change notification policy
+
+When Sentia adds or replaces a sub-processor:
+
+- **30-day advance notice** to all workspace owners and the security contact on file
+- **Update to this page** with new entries highlighted for 60 days
+- **Customer objection window** — if a sub-processor change is incompatible with your compliance posture, contact your CSM within 30 days of notification
+
+Emergency changes (e.g., a sub-processor becoming unavailable) may use shorter notice with explanation.
+
+## DPA
+
+Sentia's standard Data Processing Agreement covers all sub-processors. For workspaces with custom contractual requirements, [hello@sentialabs.io](mailto:hello@sentialabs.io) can negotiate addendum language.
+
+## Removed sub-processors
+
+When a sub-processor is removed, customer data they held is deleted per contract within 30 days. Removal events are listed in your workspace's audit log.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Data handling" icon="database" href="/security/data-handling">
+    What's stored, where, for how long.
+  </Card>
+  <Card title="GDPR" icon="user-shield" href="/security/gdpr">
+    Right to erasure, right to portability, EU residency.
+  </Card>
+</CardGroup>

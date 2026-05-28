@@ -1,0 +1,38 @@
+---
+title: "Social dynamics"
+description: "Experimental setting for peer-influenced simulation waves."
+---
+
+Social dynamics is an experimental workspace setting for modeling peer influence. When enabled, later simulation waves can see sampled peer rationales from earlier waves.
+
+Use it only when social proof is part of the research question, such as:
+
+- Adoption that depends on peer confidence.
+- Collaboration workflows.
+- Community or marketplace behavior.
+- Enterprise rollouts where admins influence each other.
+
+## Settings
+
+| Setting | Meaning |
+| --- | --- |
+| **Enabled** | Turns peer-rationale exposure on for new runs. |
+| **Peer rationale count** | Number of prior rationales shown to later-wave agents. |
+| **Peer scope** | Whether peer examples come from the same cohort or broader workspace context. |
+
+Runs created while social dynamics is enabled are flagged so analysts know peer influence was part of the method.
+
+## Caution
+
+Most first-week onboarding should leave this setting off. Standard independent-agent runs are easier to explain, compare, and trust. Enable social dynamics only when the study question explicitly needs peer effects.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Simulation methodology" icon="flask" href="/simulations/results">
+    Review method details in completed reports.
+  </Card>
+  <Card title="Custom traits" icon="sliders" href="/admin/custom-traits">
+    Model audience dimensions that are stable across studies.
+  </Card>
+</CardGroup>

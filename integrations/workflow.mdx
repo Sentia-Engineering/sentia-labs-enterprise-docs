@@ -1,0 +1,171 @@
+---
+title: "Workflow integrations"
+description: "Figma for the current design workflow, plus Linear, Jira, and Slack for enterprise trigger programs."
+---
+
+Workflow integrations connect Sentia to where your team already designs, plans, and discusses product changes. In the current self-serve rollout, Figma is the primary visible workflow integration. Linear, Jira, and Slack may be enabled for enterprise trigger programs with your CSM.
+
+## Linear
+
+<Steps>
+  <Step title="OAuth via Nango">
+    Integrations → Linear → **Connect**. Grant Sentia read access to your team's workspace.
+  </Step>
+  <Step title="Choose teams/projects">
+    Pick which teams or projects to watch. Most workspaces include all product teams.
+  </Step>
+  <Step title="Configure the trigger">
+    Set the status that fires simulations (default: "In Review"). Set the default population for triggered runs.
+  </Step>
+  <Step title="Webhook setup">
+    Sentia auto-installs a Linear webhook for issue status changes. No manual configuration needed.
+  </Step>
+</Steps>
+
+**What's synced:** issues, descriptions, comments, attachments (including Figma URLs), status changes.
+
+**Sync cadence:** 15-minute polling + real-time webhooks.
+
+**Round-trip:** when a simulation completes, Sentia posts a summary back to the originating Linear issue with a link to the results. `⌘⇧L` from results pushes manual updates.
+
+**Label conventions:** see [Auto-triggers → Per-issue overrides](/simulations/triggers#per-issue-overrides-via-labels).
+
+## Jira
+
+Same role as Linear, on Atlassian Cloud or Jira Server.
+
+<Steps>
+  <Step title="OAuth via Nango">
+    Integrations → Jira → **Connect**. Authorize against your Atlassian Cloud workspace.
+  </Step>
+  <Step title="Choose projects">
+    Pick projects to watch. Sentia respects project-level permissions — you only see issues your service user can read.
+  </Step>
+  <Step title="Configure the trigger">
+    Set the trigger status (default: "In Review"). Map any non-standard statuses your team uses.
+  </Step>
+  <Step title="Webhook setup">
+    Sentia installs a Jira webhook for issue transitions. Auto-configured.
+  </Step>
+</Steps>
+
+**What's synced:** issues, descriptions, comments, custom field values (for context-attaching), attachments.
+
+**Sync cadence:** 15-minute polling + webhooks.
+
+**Jira Server (self-hosted):** supported. Provide the base URL and a service account. OAuth flow may require IT involvement.
+
+## Figma
+
+Figma powers the main design workflow: Design Agent imports and simulation wizard captures.
+
+<Steps>
+  <Step title="Save a personal access token">
+    Go to **Settings -> Integrations -> Figma**. Save a token with `current_user:read`, `file_content:read`, and `file_comments:write`.
+  </Step>
+  <Step title="Import into Design Agent">
+    Paste a Figma file URL in Design Agent to index frames and generate editable surfaces.
+  </Step>
+  <Step title="Capture in the wizard">
+    Paste Figma frame or file URLs in the Decision step to attach visuals to a simulation.
+  </Step>
+  <Step title="Post back to Figma">
+    Design Agent can post an edit summary as a Figma comment when you export from a session.
+  </Step>
+</Steps>
+
+**What's read:** frame images, file metadata, text content, component names, hotspots, and design-token hints where available.
+
+**Capture cadence:** on demand when you import a source, refresh a session, or capture frames in a simulation.
+
+**File access:** Sentia can read files available to the Figma account that created the token.
+
+## Slack
+
+The most-used workflow integration. Supports `:simulate:` triggers, slash commands, and completion notifications.
+
+<Steps>
+  <Step title="OAuth via Nango">
+    Integrations → Slack → **Connect**. Install the Sentia Slack app to your workspace.
+  </Step>
+  <Step title="Add the trigger emoji">
+    Sentia provides a `:simulate:` custom emoji bundle. Upload to your Slack workspace (or use any custom emoji you prefer — configurable).
+  </Step>
+  <Step title="Configure notification channel">
+    Pick the default channel for simulation completion notifications. Common pattern: `#product-simulations`.
+  </Step>
+  <Step title="(Optional) Restrict trigger permissions">
+    By default, anyone in the workspace can react with `:simulate:`. Restrict to a Slack user group if needed.
+  </Step>
+</Steps>
+
+### Slash commands
+
+| Command | Effect |
+| --- | --- |
+| `/simulate <decision>` | DM you a wizard with prefilled context |
+| `/shipped <decision-id-or-issue-id>` | Mark a decision shipped — triggers the 14-day calibration window |
+| `/sentia-status` | Show current state of recent simulations |
+| `/sentia-help` | Open a help DM with shortcuts and command list |
+
+### Webhook signatures
+
+Slack webhooks are HMAC-signed with `SLACK_SIGNING_SECRET`. Sentia rejects unsigned or invalid-signature payloads. No additional configuration needed on your end.
+
+## Multi-source trigger pipeline
+
+When any workflow integration fires a trigger, the same pipeline runs:
+
+```
+Source event ──▶ Dedup ──▶ Rate limit ──▶ Context enrich ──▶ Queue
+                (1hr TTL)  (20/day/ws)    (auto-attach     (Temporal)
+                                          Figma, PRDs,
+                                          Firecrawl URLs)
+```
+
+See [Auto-triggers](/simulations/triggers) for the full flow.
+
+## Connection health
+
+Each integration card shows:
+
+- **Status** — Connected, Syncing, Stale, Error, Disconnected
+- **Last sync** + **Last trigger fired**
+- **Webhook status** — Healthy / Failing
+- **Recent activity** — last 5 triggers / syncs
+
+When webhooks start failing (HMAC mismatches, 4xx responses), admins get a Slack notification.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Triggers fire but never produce simulations">
+    Most often: rate limit exceeded (20/day/workspace), or the resolved population is unhealthy (fidelity < 0.7). Check Integrations → integration card → **Recent triggers** for the per-trigger reason.
+  </Accordion>
+
+  <Accordion title="Figma captures look low-resolution">
+    Confirm you linked directly to the relevant frame or section and re-capture. If the issue continues, contact support with the Figma file and frame URL.
+  </Accordion>
+
+  <Accordion title="Slack `:simulate:` reaction does nothing">
+    Check that:
+    - The reactor has permission to trigger (if restricted)
+    - The Slack app is still installed (Settings → Integrations → Slack → Status: Connected)
+    - The dedup window hasn't suppressed it (same message reacted within 1hr → ignored)
+  </Accordion>
+
+  <Accordion title="Linear/Jira webhook stopped firing">
+    Re-authorize the integration. OAuth tokens can expire if your IT revokes scopes. Disconnect → reconnect resets the token.
+  </Accordion>
+</AccordionGroup>
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Auto-triggers" icon="bolt" href="/simulations/triggers">
+    Configure trigger conventions per integration.
+  </Card>
+  <Card title="Ship detection" icon="rocket" href="/integrations/ship-detection">
+    Close the loop after a feature ships.
+  </Card>
+</CardGroup>

@@ -1,0 +1,129 @@
+---
+title: "Members & roles"
+description: "Owner / Admin / Operator / Viewer — what each role can do."
+---
+
+Sentia uses four roles, enforced at the API middleware. Every mutation is audit-logged with actor, role, target, and timestamp.
+
+## The four roles
+
+| Role | Who typically holds it | What they can do |
+| --- | --- | --- |
+| **Owner** | Workspace founders, leadership | Full admin: settings, billing, integrations, SSO, data deletion, team. Cannot be removed except by another owner. |
+| **Admin** | Research/design ops, IT, security | Manages members, integrations, populations, simulations, design system context, and workspace settings. |
+| **Operator** | UX researchers, designers, PM partners | Creates Design Agent projects, runs simulations, builds populations, uploads research, and saves reports. Most active teammates land here. |
+| **Viewer** | Execs, observers, external stakeholders | Read-only. Sees simulations, results, populations. Cannot run simulations or modify config. |
+
+Roles can change. Demoting or promoting is immediate and audit-logged.
+
+## Capability matrix
+
+| Capability | Owner | Admin | Operator | Viewer |
+| --- | --- | --- | --- | --- |
+| View simulations & results | ✅ | ✅ | ✅ | ✅ |
+| Run simulations | ✅ | ✅ | ✅ | ❌ |
+| Build / edit populations | ✅ | ✅ | ✅ | ❌ |
+| Use Design Agent | ✅ | ✅ | ✅ | ❌ |
+| Upload research artifacts | ✅ | ✅ | ✅ | ❌ |
+| Save reports | ✅ | ✅ | ✅ | ❌ |
+| Connect integrations | ✅ | ✅ | ❌ | ❌ |
+| Manage workspace integrations | ✅ | ✅ | ❌ | ❌ |
+| Manage trigger configurations | ✅ | ✅ | ❌ | ❌ |
+| View audit log | ✅ | ✅ | ❌ | ❌ |
+| Invite & remove members | ✅ | ✅ | ❌ | ❌ |
+| Change member roles | ✅ | ✅ | ❌ | ❌ |
+| Workspace settings | ✅ | ✅ | ❌ | ❌ |
+| Billing & usage | ✅ | ❌ | ❌ | ❌ |
+| SSO/SCIM configuration | ✅ | ❌ | ❌ | ❌ |
+| GDPR data deletion / export | ✅ | ❌ | ❌ | ❌ |
+| Archive workspace | ✅ | ❌ | ❌ | ❌ |
+
+## How roles get assigned
+
+Three ways:
+
+| Path | When |
+| --- | --- |
+| **Manual invite** | Admin assigns when sending the invite. See [Invite your team](/onboarding/invite-team). |
+| **SCIM** | Mapped from your IdP's group/role attributes. See [SSO & SCIM](/admin/sso-scim). |
+| **API** (super-admin only) | Programmatic provisioning via SCIM API. See [API reference](/api-reference/endpoint/admin-scim). |
+
+The recommended pattern at scale: **SCIM with IdP group mapping**. Your IdP becomes the source of truth.
+
+### SCIM role mapping
+
+| IdP group | Sentia role |
+| --- | --- |
+| `sentia-owners` | Owner |
+| `sentia-admins` | Admin |
+| `sentia-operators` | Operator |
+| `sentia-viewers` | Viewer |
+
+Group names are configurable per workspace. Default to the convention above for simplicity.
+
+## Role transitions
+
+| Transition | Who can do it |
+| --- | --- |
+| Operator → Admin | Admin or Owner |
+| Admin → Owner | Owner |
+| Owner → Admin | Another Owner (cannot self-demote if last Owner) |
+| Any → Viewer (demotion) | Admin or Owner |
+| Remove member | Admin or Owner (cannot remove the last Owner) |
+
+Transitions are immediate; the affected user sees their new permissions next sign-in (or immediately if active).
+
+## Guest seats
+
+For external collaborators (agency partners, consultants, contract designers):
+
+- Request **Guest** seats from your CSM
+- Guests are scoped to specific projects, reports, or workspace areas you grant
+- Guests can't see workspace-wide settings, billing, or other populations
+- Guests auto-expire after 90 days unless renewed
+
+Guests don't count against your standard contract seat allocation; they're billed separately at a lower rate.
+
+## Service accounts
+
+For programmatic API access from CI, internal tooling, or scripts:
+
+- Create a **Service account** in Admin → API keys
+- Service accounts have their own role (typically Operator or Viewer)
+- They authenticate with workspace-scoped API keys, not SSO
+- All actions are audit-logged with the service account name
+
+See [API authentication](/api-reference/authentication).
+
+## Removing members
+
+When a member is removed (manually or via SCIM deprovisioning):
+
+- They lose access immediately
+- Their session is terminated
+- Their owned resources (populations they built, simulations they ran) remain in the workspace
+- Their name is preserved in audit logs (you can't audit if names disappear)
+
+Removal is reversible by re-inviting; they pick up where they left off.
+
+## Auditing role changes
+
+Every role change is audit-logged. Admin → Audit log shows:
+
+- Who changed whose role
+- From what to what
+- When
+- Whether via manual UI, SCIM, or API
+
+See [Audit log](/admin/audit-log).
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="SSO & SCIM" icon="key" href="/admin/sso-scim">
+    Auto-provisioning from your IdP.
+  </Card>
+  <Card title="Billing & usage" icon="receipt" href="/admin/billing-and-usage">
+    Contract allocation, seat tracking, simulation usage.
+  </Card>
+</CardGroup>

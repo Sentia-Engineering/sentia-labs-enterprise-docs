@@ -1,0 +1,85 @@
+---
+title: "Create population"
+api: "POST /api/populations"
+description: "Build a new 10-100 agent population cohort."
+---
+
+Creates a new population. Generation runs asynchronously — the request returns immediately with status `building`.
+
+## Request
+
+```bash
+curl -X POST https://api.sentialabs.ai/api/populations \
+  -H "Authorization: Bearer $SENTIA_TOKEN" \
+  -H "x-workspace-id: $WORKSPACE_ID" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "First-time enterprise admins — May 2026",
+    "description": "Admins evaluating Figma connection and onboarding clarity",
+    "agentCount": 50,
+    "cohort": {
+      "name": "Enterprise admins",
+      "folder": "Onboarding research"
+    },
+    "targetAudience": {
+      "ageMin": 28,
+      "ageMax": 60,
+      "locations": ["United States"],
+      "occupations": ["Design operations", "Product operations", "IT administration"],
+      "educationLevels": ["Bachelor's degree", "Master's degree"]
+    }
+  }'
+```
+
+## Body
+
+| Field | Type | Required | Notes |
+| --- | --- | --- | --- |
+| `name` | string | ✅ | Display name |
+| `description` | string | Optional | Internal documentation |
+| `agentCount` | int | ✅ | 10-100; 50 typical |
+| `targetAudience` | object | Optional | Demographic and audience filters used by the cohort studio. |
+| `cohort` | object | Optional | Cohort name/folder metadata. |
+
+## Response — 201 Created
+
+```json
+{
+  "id": "pop_8f9a2b...",
+  "name": "First-time enterprise admins — May 2026",
+  "status": "building",
+  "agentCount": 50,
+  "createdAt": "2026-05-25T14:32:17Z",
+  "targetAudience": { "...": "..." }
+}
+```
+
+After build completes, status transitions to `ready` (or `failed`). Subscribe to population webhooks where enabled.
+
+## Status lifecycle
+
+```
+draft → building → ready
+              ↘ failed
+```
+
+See [Populations overview](/populations/overview).
+
+## Errors
+
+| Status | Code | Cause |
+| --- | --- | --- |
+| 422 | `validation_failed` | Filter or grounding misconfiguration |
+| 422 | `unsupported_combination` | Invalid cohort or audience configuration |
+| 422 | `quota_exceeded` | Workspace population quota exceeded |
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Validate population" icon="check-double" href="/api-reference/endpoint/populations-validate">
+    Run the 5-experiment behavioral suite.
+  </Card>
+  <Card title="Build a population (dashboard)" icon="users-gear" href="/populations/build">
+    The wizard walkthrough.
+  </Card>
+</CardGroup>

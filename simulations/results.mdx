@@ -1,0 +1,108 @@
+---
+title: "Reading results"
+description: "How to read the completed simulation report and turn it into design evidence."
+---
+
+A completed simulation opens as a narrative report, not a tab tour. Read it like a research artifact: verify the inputs, understand the strongest patterns, inspect where the design failed, then decide what to do next.
+
+## Recommended reading order
+
+<Steps>
+  <Step title="1. Verify the setup">
+    Confirm the evaluated Figma frames, Design Agent surfaces, scenario type, population, agent count, and method match the study you intended to run.
+  </Step>
+  <Step title="2. Read the verdict">
+    Use the headline result as orientation, not the final answer. Preference share is useful only after you understand why agents reacted that way.
+  </Step>
+  <Step title="3. Inspect visual comparison">
+    For design inputs, compare screenshots or surfaces so you know exactly what agents saw.
+  </Step>
+  <Step title="4. Read findings">
+    Findings explain the behavioral pattern behind the result. Look for evidence-backed statements, not just recommendations.
+  </Step>
+  <Step title="5. Review concerns and hotspots">
+    This is usually the highest-value section for designers. Find the copy, layout, trust, accessibility, or comprehension issues that created hesitation.
+  </Step>
+  <Step title="6. Check the population lens">
+    Look for trait, demographic, and behavioral slices that reacted differently. A split result can still be actionable if the split maps to launch strategy.
+  </Step>
+  <Step title="7. Pull voices">
+    Use representative quotes for critique notes, stakeholder readouts, or follow-up research planning.
+  </Step>
+</Steps>
+
+## Report sections
+
+| Section | What it helps answer |
+| --- | --- |
+| **Hero / verdict** | What happened at the highest level? |
+| **Visual comparison** | What did agents evaluate? |
+| **Metrics strip** | How strong are the headline signals? |
+| **Findings** | What behavioral patterns explain the result? |
+| **Signals** | What excited or reassured agents? |
+| **Concern hotspots / concerns** | Where did the design create friction? |
+| **Recommendations** | What should the team try next? |
+| **Population analysis** | How did the cohort behave overall? |
+| **Population lens** | Which traits or audience slices matter? |
+| **Voices** | What quotes summarize agent reasoning? |
+| **Methodology** | How was the simulation run? |
+
+Some workspaces may also see a newer report view with sections such as **Recommended change**, **Friction map**, **Who reacted how**, **What they said**, **The panel**, and **Trustworthiness**.
+
+## Live run signals
+
+Before completion, the live view helps you catch setup problems:
+
+| Signal | Use |
+| --- | --- |
+| **Agents completed** | Confirms the run is progressing. |
+| **Preference split** | Shows early distribution for A/B and competitive studies. |
+| **Simulated SUS** | Gives a usability-style read when available. |
+| **Population behavior** | Shows emerging behavior patterns. |
+| **Concerns per agent** | Flags friction density. |
+| **Live verbatims** | Lets you sanity-check whether agents understand the task. |
+| **Convergence** | Shows whether additional agents are still changing the distribution. |
+
+## Comparison reports
+
+From the Simulations list, select 2-3 completed runs and compare them. Comparison is useful when:
+
+- Design Agent produced several variants.
+- You ran Fast then Deep and want to compare stability.
+- You tested the same design against different cohorts.
+- You need a concise side-by-side artifact for critique.
+
+Comparison PDFs can be saved to the [Resource Library](/resource-library/reports).
+
+## Exporting and saving
+
+Use the report actions to:
+
+- Export a PDF.
+- Save the report to the Resource Library.
+- Schedule a recurring run when the study should repeat.
+- Push to Linear when that integration is enabled.
+- Open Ask AI for follow-up analysis.
+
+Save reports that influenced a decision. Do not save every exploratory run unless your team explicitly wants that archive.
+
+## How to use the answer
+
+| Result | What to do |
+| --- | --- |
+| Clear preference, low concern density | Use as support for moving the design forward. |
+| Clear preference, high concern density | Keep the direction but address hotspots before shipping or testing. |
+| Split preference by cohort slice | Segment the launch, messaging, or follow-up research. |
+| Low confidence or generic voices | Improve the cohort, attach better research, or sharpen the prompt. |
+| Surprising contradiction | Read voices and concerns before rerunning; the contradiction is often the useful signal. |
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Resource Library reports" icon="file-lines" href="/resource-library/reports">
+    Save and share durable evidence.
+  </Card>
+  <Card title="Best practices" icon="trophy" href="/simulations/best-practices">
+    Patterns that make reports more reliable.
+  </Card>
+</CardGroup>

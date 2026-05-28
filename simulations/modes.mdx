@@ -1,0 +1,59 @@
+---
+title: "Fast vs. Deep mode"
+description: "Choose the right run mode for exploratory design reads and higher-stakes studies."
+---
+
+Sentia exposes two practical modes in the simulation wizard: **Fast** and **Deep**. Pick based on how much evidence the decision needs.
+
+## Fast mode
+
+Use Fast for:
+
+- First-pass validation that the prompt, cohort, and visuals are set up correctly.
+- Early design comparison.
+- Exploring whether there is any signal before spending more time.
+- Iterating on Design Agent variants.
+
+For first-week cohorts, Fast runs often use 10-50 agents depending on population size.
+
+## Deep mode
+
+Use Deep for:
+
+- Higher-stakes design decisions.
+- Reports that will be shared with stakeholders.
+- Variant comparisons where small differences matter.
+- Accessibility, trust, pricing, or onboarding flows where the team needs stronger evidence.
+
+Deep uses the stronger model path and should be reserved for questions where the team will read the full report, not only the headline.
+
+## A useful pattern
+
+For important studies, run:
+
+<Steps>
+  <Step title="Fast run">
+    Validate that the cohort understands the task and that the design input is correct.
+  </Step>
+  <Step title="Revise setup if needed">
+    Fix wrong frames, vague prompts, or a mismatched population before spending more.
+  </Step>
+  <Step title="Deep run">
+    Run the sharper setup and save the report when it influences the decision.
+  </Step>
+</Steps>
+
+## When not to go deeper
+
+Do not rerun in Deep just because the answer is surprising. First read the voices, concern hotspots, and population lens. The surprising pattern may be the useful finding.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Convergence" icon="bullseye" href="/simulations/convergence">
+    How to read stability while a run is in progress.
+  </Card>
+  <Card title="Reading results" icon="chart-mixed" href="/simulations/results">
+    How to turn completed reports into decisions.
+  </Card>
+</CardGroup>

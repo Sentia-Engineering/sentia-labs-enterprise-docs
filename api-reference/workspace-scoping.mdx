@@ -1,0 +1,151 @@
+---
+title: "Workspace scoping"
+description: "Why every data endpoint requires x-workspace-id and how multi-workspace access works."
+---
+
+Sentia is multi-tenant by design. Every API resource is scoped to a workspace. The API enforces this via two mechanisms.
+
+## The `x-workspace-id` header
+
+Every data endpoint requires:
+
+```http
+x-workspace-id: <workspace-uuid>
+```
+
+Endpoints that don't require it: `/health`, `/ready`, `/auth/*`, `/admin/workspaces` (lists across workspaces a super-admin can see).
+
+If you omit the header on a data endpoint:
+
+```http
+HTTP/1.1 400 Bad Request
+Content-Type: application/json
+
+{
+  "error": "missing_workspace_header",
+  "message": "All data endpoints require x-workspace-id header",
+  "documentation_url": "https://docs.sentialabs.ai/api-reference/workspace-scoping"
+}
+```
+
+## Cross-check against your token
+
+The API validates that the `x-workspace-id` matches a workspace the bearer token is authorized for:
+
+- **User API keys** — authorized only for workspaces the user is a member of
+- **Service account keys** — authorized only for the workspace they were issued in
+- **Super-admin tokens** — authorized for all workspaces (very rare; only Sentia operations)
+
+Mismatch returns `403 workspace_access_denied`. The token is valid, but not for this workspace.
+
+## Multi-workspace users
+
+A single user can be a member of multiple workspaces with potentially different roles per workspace.
+
+When using their personal API key, they explicitly pick which workspace to operate against via the header. The token itself doesn't pin a workspace — the header does.
+
+## Single-workspace service accounts
+
+Service accounts are pinned to one workspace at creation. They can't operate across workspaces, even if the same person creates service accounts in multiple workspaces.
+
+For cross-workspace automation, create separate service accounts in each.
+
+## Row-level security backstop
+
+Beyond the API check, PostgreSQL row-level security (RLS) is enforced on every tenant table. Even if an internal bug bypassed the API check, the database would refuse to return rows from the wrong workspace.
+
+`FORCE ROW LEVEL SECURITY` is applied — there's no privileged role that can bypass RLS without explicit support-mode access (which is itself audit-logged and time-limited).
+
+## Workspace switching in the dashboard
+
+The dashboard injects the right `x-workspace-id` per workspace switcher selection. Browser sessions are workspace-aware:
+
+- URL contains the workspace slug: `app.sentialabs.ai/{slug}/simulations`
+- All client-side API calls include the matching `x-workspace-id`
+- Switching workspaces is a route change, not a re-auth
+
+## Listing your workspaces
+
+To know which workspaces you can access:
+
+```bash
+curl -X GET https://api.sentialabs.ai/auth/workspaces \
+  -H "Authorization: Bearer <token>"
+```
+
+Returns:
+
+```json
+{
+  "workspaces": [
+    {
+      "id": "8f9a2b-...",
+      "slug": "acme-product",
+      "name": "Acme — Product",
+      "role": "Admin",
+      "region": "us"
+    },
+    {
+      "id": "3b4c5d-...",
+      "slug": "acme-eu",
+      "name": "Acme — EU (BERLIN)",
+      "role": "Operator",
+      "region": "eu"
+    }
+  ]
+}
+```
+
+This endpoint doesn't require `x-workspace-id` — it returns workspaces the token can act on.
+
+## Region routing
+
+When using multi-region workspaces:
+
+- **US workspaces** use `https://api.sentialabs.ai`
+- **EU workspaces** use `https://api.eu.sentialabs.ai`
+
+Sending an `x-workspace-id` for an EU workspace to the US API returns `400 wrong_region` with a redirect URL. Client libraries should respect the region; for raw curl callers, you'll get a clear error.
+
+## Examples
+
+### Authenticated request to list simulations
+
+```bash
+curl -X GET 'https://api.sentialabs.ai/api/simulations?status=running' \
+  -H "Authorization: Bearer eyJhbGciOi..." \
+  -H "x-workspace-id: 8f9a2b-..."
+```
+
+### Same request, EU workspace
+
+```bash
+curl -X GET 'https://api.eu.sentialabs.ai/api/simulations?status=running' \
+  -H "Authorization: Bearer eyJhbGciOi..." \
+  -H "x-workspace-id: 3b4c5d-..."
+```
+
+### Forgot the header (intentional, to show the error)
+
+```bash
+curl -X GET 'https://api.sentialabs.ai/api/simulations' \
+  -H "Authorization: Bearer eyJhbGciOi..."
+
+# Response:
+HTTP/1.1 400 Bad Request
+{
+  "error": "missing_workspace_header",
+  "message": "All data endpoints require x-workspace-id header"
+}
+```
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Rate limits" icon="gauge-high" href="/api-reference/rate-limits">
+    Per-workspace rate-limit enforcement.
+  </Card>
+  <Card title="Errors" icon="circle-exclamation" href="/api-reference/errors">
+    The error envelope and common cases.
+  </Card>
+</CardGroup>

@@ -1,0 +1,135 @@
+---
+title: "Drift"
+description: "What it means when Sentia's predictions systematically diverge from actuals — and how to fix it."
+---
+
+**Drift** is a pattern where actuals systematically diverge from predictions over time. It's the early-warning signal that something in your workspace's simulation accuracy is degrading.
+
+## How drift is detected
+
+Sentia uses **CUSUM (cumulative sum)** monitoring on the calibration accuracy series.
+
+- After each calibration event, the per-segment error is computed
+- Errors accumulate in a cumulative sum
+- When the cumulative sum exceeds a threshold (configurable; default tuned per workspace), a drift alert fires
+
+CUSUM catches gradual drift that wouldn't trigger any single-event threshold. It's the standard tool for detecting slow shifts in time series.
+
+## Two flavors of drift
+
+### Population drift
+
+Your user base evolved. The population is no longer representative.
+
+**Signals:**
+
+- Population demographic mix shifts > 10% from baseline (Sentia auto-flags)
+- Multiple segments simultaneously drift in the same direction
+- New cohorts in your analytics don't match population segments
+
+**Fix:** rebuild the affected populations. Takes < 10 minutes.
+
+### Model drift
+
+The base behavioral priors don't match your user base — but the population mix is fine.
+
+**Signals:**
+
+- One specific segment drifts while others stay accurate
+- Drift correlates with a specific product change (a new persona started using your product)
+- Population validation still passes but calibration accuracy degrades
+
+**Fix:** add or refresh qualitative grounding. Connect new interview sources or expand the existing corpus.
+
+## Drift alerts in the dashboard
+
+When CUSUM threshold is exceeded:
+
+- An amber banner appears on the Calibration dashboard
+- Admins get a Slack notification
+- Affected populations show a "Drift detected" badge
+- The decision detail pages of recent calibrated decisions show context
+
+Drift alerts are advisory — they don't pause anything. You can keep running simulations, but accuracy in affected areas will be degraded until you act.
+
+## The drift response playbook
+
+When you see a drift alert:
+
+<Steps>
+  <Step title="Identify scope">
+    Check the Calibration dashboard's segment heatmap. Is drift concentrated in one segment or spread across many?
+  </Step>
+  <Step title="Check DPD">
+    The DPD report (Admin → Calibration → DPD) flags demographic bias. If DPD has shifted, your population mix is off.
+  </Step>
+  <Step title="Check population drift">
+    Populations dashboard shows demographic-mix drift per population. Anything > 10%?
+  </Step>
+  <Step title="Decide the action">
+    Based on findings:
+    - Population drift > 10% → **rebuild the population**
+    - DPD shift → **rebuild with broader demographic targeting**
+    - Single segment drifting → **add qualitative grounding for that segment**
+    - Multiple metrics drifting → **full analytics re-sync + population rebuild**
+  </Step>
+  <Step title="Re-validate">
+    After action: run the behavioral validation suite on the updated population. Confirm fidelity ≥ 0.7.
+  </Step>
+  <Step title="Re-simulate any in-flight decisions">
+    Pending simulations using the affected population should be re-run.
+  </Step>
+</Steps>
+
+## CUSUM thresholds
+
+Default thresholds are tuned to balance false positives vs. miss rate:
+
+| Drift severity | Threshold | Action |
+| --- | --- | --- |
+| **Yellow** | Cumulative error > 0.15 | Advisory; review during next calibration check-in |
+| **Amber** | Cumulative error > 0.25 | Investigate within 1 week |
+| **Red** | Cumulative error > 0.40 | Investigate immediately; pause high-stakes simulations |
+
+Your CSM can adjust thresholds for your workspace.
+
+## Drift prevention
+
+Three habits reduce drift:
+
+1. **Rebuild populations quarterly**, even if no drift is flagged. Takes 10 minutes, prevents stealth degradation.
+2. **Connect a new qualitative source when you launch in a new segment** (new geography, new persona, new pricing tier).
+3. **Mark every ship**. Sparse calibration data makes drift harder to detect early.
+
+## When drift is "real" vs. "spurious"
+
+Some drift signals reflect real product changes, not problems:
+
+- **You launched in a new region** — naturally shifts demographic mix; rebuild and move on
+- **A major product change reshuffled your user base** — expected; rebuild populations to reflect new reality
+- **A competitor disruption changed user expectations** — your qualitative corpus is now outdated; refresh it
+
+These aren't model failures; they're the model correctly noticing that the world changed.
+
+## Drift in audit log
+
+Every drift alert is audit-logged with:
+
+- Trigger timestamp
+- Severity level
+- Affected segments and populations
+- Cumulative error value
+- Recommended action
+
+Useful for retrospectives and quarterly accuracy reviews.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Accuracy" icon="bullseye" href="/calibration/accuracy">
+    Reading the normalized accuracy dashboard.
+  </Card>
+  <Card title="Validation" icon="check-double" href="/populations/validation">
+    Behavioral validation suite for populations after drift fixes.
+  </Card>
+</CardGroup>

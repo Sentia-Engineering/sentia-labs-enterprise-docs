@@ -1,0 +1,120 @@
+---
+title: "Get simulation"
+api: "GET /api/simulations/{simulationId}"
+description: "Get current status, partial results, or final results of a simulation."
+---
+
+Returns the current state of a simulation. Use for polling, status display, or fetching final results.
+
+## Request
+
+```bash
+curl -X GET https://api.sentialabs.ai/api/simulations/sim_8f9a2b... \
+  -H "Authorization: Bearer $SENTIA_TOKEN" \
+  -H "x-workspace-id: $WORKSPACE_ID"
+```
+
+## Path parameters
+
+| Parameter | Type | Notes |
+| --- | --- | --- |
+| `simulationId` | UUID | The simulation to retrieve |
+
+## Response — 200 OK
+
+While running:
+
+```json
+{
+  "id": "sim_8f9a2b...",
+  "status": "running",
+  "createdAt": "2026-05-25T14:32:17Z",
+  "startedAt": "2026-05-25T14:32:19Z",
+  "config": { "...": "..." },
+  "progress": {
+    "agentsCompleted": 850,
+    "agentsTotal": 2000,
+    "wavesCompleted": 3,
+    "currentDistribution": {
+      "adopt": 0.61,
+      "reject": 0.23,
+      "upgrade": 0.16
+    },
+    "convergenceScore": 0.87
+  }
+}
+```
+
+After completion:
+
+```json
+{
+  "id": "sim_8f9a2b...",
+  "status": "completed",
+  "createdAt": "2026-05-25T14:32:17Z",
+  "startedAt": "2026-05-25T14:32:19Z",
+  "completedAt": "2026-05-25T14:47:38Z",
+  "config": { "...": "..." },
+  "finalDistribution": {
+    "adopt": 0.62,
+    "reject": 0.22,
+    "upgrade": 0.16
+  },
+  "confidenceScore": 0.87,
+  "convergenceScore": 0.96,
+  "npsPredicted": -4,
+  "agentsRun": 1800,
+  "wavesRun": 6,
+  "results": {
+    "segmentBreakdownUrl": "https://api.sentialabs.ai/api/simulations/sim_.../results/segments",
+    "objectionsUrl": "...",
+    "agentsUrl": "...",
+    "transcriptsUrl": "...",
+    "cascadeUrl": "...",
+    "calibrationUrl": "..."
+  },
+  "metadata": {
+    "providerUsed": "anthropic",
+    "usedFallback": false,
+    "llmCallsActual": 5430
+  }
+}
+```
+
+## Polling guidance
+
+For real-time UI: poll every 5 seconds while `status` is `queued`, `running`, or `converging`. Stop polling on terminal states (`completed`, `failed`, `cancelled`).
+
+Better: subscribe to webhooks instead of polling. See [Webhooks](/api-reference/webhooks).
+
+## Fetching sub-results
+
+The `results.*Url` fields point to result-specific endpoints. Each follows the same auth pattern. Some return paginated data:
+
+| Result | Format | Pagination |
+| --- | --- | --- |
+| `segmentBreakdown` | JSON | Single response |
+| `objections` | JSON | Single response |
+| `agents` | JSON array | Cursor-paginated (default 100/page) |
+| `transcripts` | JSON | Per-agent fetch |
+| `cascade` | JSON | Single response |
+| `calibration` | JSON | Updates over the 14-day window |
+
+## Errors
+
+| Status | Code | Cause |
+| --- | --- | --- |
+| 401 | `invalid_token` | Token missing or invalid |
+| 403 | `workspace_access_denied` | Token doesn't grant access to this workspace |
+| 404 | `resource_not_found` | Simulation ID doesn't exist or isn't in this workspace |
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Create simulation" icon="plus" href="/api-reference/endpoint/simulations-create">
+    Queue a new run.
+  </Card>
+  <Card title="Reading results (dashboard)" icon="chart-mixed" href="/simulations/results">
+    How to read completed reports.
+  </Card>
+</CardGroup>

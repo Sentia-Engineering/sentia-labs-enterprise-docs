@@ -1,0 +1,113 @@
+---
+title: "Simulations overview"
+description: "Anatomy of a simulation, when to use it, and what to expect from results."
+---
+
+A **simulation** is one synthetic user study: a defined cohort reacts to a specific design, product, or research scenario. It produces live signals while running and a completed report with findings, concerns, recommendations, population lenses, representative voices, and methodology.
+
+## When to run a simulation
+
+<CardGroup cols={2}>
+  <Card title="Design variant comparison" icon="pen-ruler" href="/design-agent/simulation-handoff">
+    Compare Figma or Design Agent variants when the team disagrees about user reaction.
+  </Card>
+  <Card title="Pre-launch validation" icon="rocket" href="/simulations/wizard">
+    Check a non-trivial change before it reaches engineering or rollout.
+  </Card>
+  <Card title="Risk surfacing" icon="triangle-exclamation" href="/simulations/results">
+    Find comprehension, trust, accessibility, or expectation issues before a formal study.
+  </Card>
+  <Card title="Roadmap prioritization" icon="list-ol" href="/simulations/best-practices">
+    Run candidate concepts against the same cohort and compare the evidence.
+  </Card>
+</CardGroup>
+
+Bad fits: bug fixes, isolated copy tweaks, and internal tooling your cohort would not use.
+
+## The three setup steps
+
+A simulation wizard has three steps:
+
+```text
+Decision + context  ->  Population  ->  Configure
+```
+
+| Part | What it is |
+| --- | --- |
+| **Decision** | Study type, research question, hypothesis, scenario context, and design source. |
+| **Population** | The cohort reacting to the scenario. Only ready populations with usable agents can launch. |
+| **Configure** | Fast or Deep mode, agent count, seed/context controls, power preview, and launch details. |
+
+You configure these in the [wizard](/simulations/wizard), or launch selected Design Agent surfaces through [simulation handoff](/design-agent/simulation-handoff).
+
+## What you get back
+
+During the run, the live page shows:
+
+<CardGroup cols={2}>
+  <Card title="Agents completed" icon="users" href="/simulations/results">
+    Completion against target agent count.
+  </Card>
+  <Card title="Preference split" icon="chart-bar" href="/simulations/results">
+    Live choice distribution for A/B and competitive studies.
+  </Card>
+  <Card title="Simulated SUS" icon="gauge" href="/simulations/results">
+    Usability-style signal when the run collects enough structured data.
+  </Card>
+  <Card title="Concerns and verbatims" icon="message" href="/simulations/results">
+    Emerging concerns, live quotes, and convergence signals.
+  </Card>
+</CardGroup>
+
+After completion, the report includes:
+
+<CardGroup cols={2}>
+  <Card title="Verdict and visuals" icon="image" href="/simulations/results">
+    Headline outcome plus visual comparison for Figma and Design Agent inputs.
+  </Card>
+  <Card title="Findings and signals" icon="chart-mixed" href="/simulations/results">
+    Evidence-backed findings, excitement signals, and concern density.
+  </Card>
+  <Card title="Concern hotspots" icon="message-exclamation" href="/simulations/results">
+    Where the design caused confusion, friction, or accessibility risk.
+  </Card>
+  <Card title="Population lens" icon="users" href="/simulations/results">
+    Which traits, demographics, or cohort slices reacted differently.
+  </Card>
+</CardGroup>
+
+## How long it takes
+
+| Mode | Good for | Agent count |
+| --- | --- | --- |
+| **Fast** | Setup validation, exploratory design reads, first-pass variant checks | 10-50 for first-week cohorts |
+| **Deep** | Higher-stakes study questions and stronger evidence | As many agents as the selected population supports |
+
+Population size currently caps at 100 agents in the app. API simulation requests can accept larger counts for enterprise programs, but the UI path is cohort-first.
+
+## Simulation list and comparison
+
+The Simulations page supports search, status filters, project filters, tags, saved views, duplicate/rerun actions, and comparison mode. Select 2-3 completed runs to create a comparison report, then save the PDF to the Resource Library when it becomes decision evidence.
+
+## Where to go from here
+
+<CardGroup cols={2}>
+  <Card title="The wizard" icon="wand-magic-sparkles" href="/simulations/wizard">
+    Walk through the 3-step setup in detail.
+  </Card>
+  <Card title="Inputs" icon="image" href="/simulations/inputs">
+    Figma, Design Agent surfaces, text, and other inputs.
+  </Card>
+  <Card title="Fast vs. Deep" icon="gauge-high" href="/simulations/modes">
+    When to pick each mode.
+  </Card>
+  <Card title="Reading results" icon="chart-mixed" href="/simulations/results">
+    How to read completed reports.
+  </Card>
+  <Card title="Design Agent handoff" icon="pen-ruler" href="/design-agent/simulation-handoff">
+    Send 1-5 selected surfaces into simulation.
+  </Card>
+  <Card title="Best practices" icon="trophy" href="/simulations/best-practices">
+    Cohort fit, input quality, disagreement, and reruns.
+  </Card>
+</CardGroup>

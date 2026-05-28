@@ -1,0 +1,154 @@
+---
+title: "Data handling"
+description: "What's stored, where, for how long, and how it's protected."
+---
+
+This page is the reference for what customer data Sentia stores, how it flows, and how it's secured at each stage.
+
+## Data categories
+
+| Category | Examples | Where stored |
+| --- | --- | --- |
+| **Identity** | User profile, email, role | PostgreSQL (Aurora) |
+| **Workspace config** | Settings, integration configs | PostgreSQL (Aurora) |
+| **Integration credentials** | OAuth tokens, API keys | AWS Secrets Manager + KMS |
+| **Synced data (structured)** | Cohorts, funnels, issues, conversations | PostgreSQL + MongoDB |
+| **Synced data (text/qualitative)** | Verbatim text, interview transcripts | MongoDB + Pinecone embeddings |
+| **Captures** | UI screenshots, Figma renders | S3 (per-workspace prefix) |
+| **Simulation artifacts** | Agent decisions, distributions, results | PostgreSQL + S3 |
+| **Audit log** | Action records | PostgreSQL (hot) + S3 (cold, Object Lock) |
+| **Operational telemetry** | Sentry errors, Web Vitals | Sentry + PostHog (no PII) |
+
+## Encryption
+
+| Layer | Mechanism |
+| --- | --- |
+| **In transit (all)** | TLS 1.3 |
+| **At rest — PostgreSQL** | Aurora storage encryption with KMS CMK |
+| **At rest — MongoDB** | At-rest encryption with KMS |
+| **At rest — Redis** | Encryption at rest enabled; in-memory only ephemeral data |
+| **At rest — Pinecone** | Vendor-managed encryption at rest |
+| **At rest — S3** | SSE-KMS with per-tenant CMKs |
+| **At rest — Backups** | Encrypted with separate backup CMKs |
+| **Integration credentials** | Wrapped with per-tenant KMS keys before storage |
+| **Secrets** | AWS Secrets Manager (KMS-encrypted) |
+
+## Per-tenant KMS keys
+
+Each workspace has its own KMS Customer Master Key (CMK). All workspace credentials and S3 objects are wrapped with this key.
+
+**Why it matters:** if a customer requests permanent data destruction, Sentia revokes the KMS key. Without the key, even backups become cryptographically unreadable. This is faster and more thorough than row-by-row deletion.
+
+## Retention
+
+| Data | Default retention |
+| --- | --- |
+| **Active simulations / populations / decisions** | Forever (until customer deletes or archives) |
+| **Audit log — hot** | 90 days |
+| **Audit log — warm** | 1 year |
+| **Audit log — cold (S3 Object Lock)** | 7 years |
+| **Synced analytics data** | Rolling 90 days (configurable) |
+| **Synced qualitative data** | Rolling 90 days (configurable) |
+| **Captures** | 365 days; auto-archive after |
+| **Webhook deliveries (raw)** | 30 days |
+| **Operational telemetry (Sentry)** | 90 days |
+| **Backups** | 35 days point-in-time + 12-month monthly snapshots |
+| **Deleted workspaces** | 30-day soft-delete, then permanent |
+
+Custom retention extensions available per contract.
+
+## Data flow boundaries
+
+```
+┌─────────────────┐
+│   Customer      │
+│   tools         │  Amplitude, Mixpanel, PostHog, Dovetail, Intercom,
+│ (your stack)    │  Zendesk, Linear, Jira, Figma, Slack, ...
+└────────┬────────┘
+         │
+         ▼  OAuth via Nango / API keys
+┌─────────────────┐
+│  Integration    │  → PII redaction
+│  boundary       │  → SSRF protection
+│  (Sentia API)   │  → Audit logged
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  Sentia data    │  PostgreSQL (RLS) + MongoDB + Pinecone + S3
+│  stores         │  All per-tenant encrypted
+└────────┬────────┘
+         │
+         ▼  LLM call (zero-retention DPA)
+┌─────────────────┐
+│  Anthropic /    │  Customer data injected at runtime only
+│  Google Vertex  │  No training on customer data
+└─────────────────┘
+```
+
+## What we don't store
+
+- **Password hashes** — there are no passwords; SSO only
+- **LLM prompt content in logs** — only token counts and aggregate timing
+- **LLM completion content in logs** — only metadata
+- **Customer PII in operational telemetry** — Sentry/PostHog scrub on egress
+- **Captured UI imagery beyond retention period** — auto-purged
+- **Cross-workspace anything** — strict workspace scoping
+
+## PII redaction at integration boundary
+
+Verbatim data going through the qualitative pipeline (Dovetail, Intercom, Zendesk) is auto-redacted before storage:
+
+| Pattern | Replaced with |
+| --- | --- |
+| Email addresses | `[EMAIL]` |
+| Phone numbers | `[PHONE]` |
+| Full names (tagged in source) | `[NAME]` |
+| Credit card patterns | `[REDACTED]` |
+| Custom regex (configurable) | `[REDACTED]` |
+
+Redaction happens before the verbatim enters MongoDB or Pinecone. Original integration data (in your Dovetail/Intercom/Zendesk) is untouched.
+
+## Backups
+
+- **PostgreSQL** — Aurora continuous backup with 35-day PITR; monthly snapshots retained 12 months
+- **MongoDB** — daily snapshots, 35 days retained
+- **S3** — versioning enabled with 90-day version retention; cross-region replication for production
+- **Pinecone** — vendor-managed backups
+- **Backups encryption** — separate KMS keys from primary storage
+
+Backup restoration is tested quarterly via automated chaos drills. Restoration RTO < 4 hours; RPO < 5 minutes (PG continuous archiving).
+
+## Cross-region replication
+
+- **US workspaces** — replicated within US (us-east-1 ↔ us-west-2)
+- **EU workspaces** — replicated within EU (eu-west-1 ↔ eu-central-1)
+- **No cross-region** for EU workspaces (data residency)
+
+## Data export
+
+Customers can export all workspace data:
+
+- **Self-service** — Admin → Export workspace; CSV + JSON bundle delivered via signed S3 URL within 24 hours
+- **API** — `POST /admin/data-export-request` (see [API reference](/api-reference/endpoint/admin-data-export))
+
+Exports include simulations, populations, decisions, integration configs (without credentials), and audit log slice. Captures are included as raw binaries.
+
+## Data deletion
+
+See [GDPR](/security/gdpr) for full deletion semantics and KMS-revocation flow.
+
+## Sub-processors
+
+The current sub-processor list is maintained at [Sub-processors](/security/sub-processors). Sub-processor changes are notified to customers 30 days before becoming active.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Sub-processors" icon="building" href="/security/sub-processors">
+    Current sub-processor list.
+  </Card>
+  <Card title="GDPR" icon="user-shield" href="/security/gdpr">
+    Right to erasure, right to portability, EU residency.
+  </Card>
+</CardGroup>

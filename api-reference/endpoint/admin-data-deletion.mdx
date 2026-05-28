@@ -1,0 +1,113 @@
+---
+title: "GDPR data deletion"
+api: "DELETE /admin/data-deletion-request"
+description: "Permanent workspace data deletion via the GDPR right to erasure. Requires Owner role and explicit confirmation."
+---
+
+Initiates **permanent deletion** of all workspace data across PostgreSQL, MongoDB, S3, Pinecone, OpenSearch, and backups (via KMS key revocation). Requires Owner role and the explicit confirmation phrase.
+
+For workspace archival (reversible, non-destructive), use [`POST /admin/workspaces/{id}/archive`](/api-reference/endpoint/admin-workspaces) instead.
+
+For the dashboard flow and conceptual details, see [GDPR](/security/gdpr).
+
+## Request
+
+```bash
+curl -X DELETE https://api.sentialabs.ai/admin/data-deletion-request \
+  -H "Authorization: Bearer $SENTIA_TOKEN" \
+  -H "x-workspace-id: $WORKSPACE_ID" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "workspaceId": "ws_8f9a2b...",
+    "reason": "Annual GDPR audit cleanup of historical workspace",
+    "confirmation": "DELETE ALL DATA"
+  }'
+```
+
+## Body
+
+| Field | Type | Required | Notes |
+| --- | --- | --- | --- |
+| `workspaceId` | UUID | ✅ | Must match `x-workspace-id` header (extra confirmation) |
+| `reason` | string | ✅ | Free-text reason; logged in audit |
+| `confirmation` | string | ✅ | Must be exactly `"DELETE ALL DATA"` |
+| `notifyEmail` | string | Optional | Email to notify when deletion completes |
+
+## Response — 200 OK
+
+```json
+{
+  "deletionRequestId": "del_8f9a2b...",
+  "workspaceId": "ws_8f9a2b...",
+  "status": "scheduled",
+  "scheduledFor": "2026-06-24T14:32:17Z",
+  "softDeleteWindow": "PT720H",
+  "notifyEmail": "owner@example.com"
+}
+```
+
+## What happens
+
+<Steps>
+  <Step title="Acknowledgment (immediate)">
+    Request is logged. Workspace transitions to soft-deleted state — UI access is revoked, API tokens return `403`, integrations are paused.
+  </Step>
+  <Step title="Soft-delete window (30 days)">
+    Existence-preserving for recovery in case of accident. Workspace data is still on disk but inaccessible.
+  </Step>
+  <Step title="Hard deletion (after 30 days)">
+    - PostgreSQL: cascade delete via FK constraints
+    - MongoDB: delete by `workspace_id`
+    - S3: list+delete under `s3://.../workspaces/{id}/*`
+    - Pinecone: delete-by-namespace
+    - OpenSearch: delete-by-index-pattern
+    - KMS: revoke per-tenant CMK → makes any residual backup data cryptographically unrecoverable
+  </Step>
+  <Step title="Certification (within 30 days post-hard-delete)">
+    A signed deletion certificate is delivered to `notifyEmail` (and the audit log of the parent system).
+  </Step>
+</Steps>
+
+## Cancelling
+
+During the 30-day soft-delete window:
+
+```bash
+DELETE /admin/data-deletion-request/del_8f9a2b...
+```
+
+Returns the workspace to active state. Integrations resume on their next sync schedule.
+
+After hard-delete (30 days), cancellation is impossible. Data is unrecoverable.
+
+## Errors
+
+| Status | Code | Cause |
+| --- | --- | --- |
+| 403 | `role_insufficient` | Requires Owner role |
+| 422 | `confirmation_mismatch` | `confirmation` not exactly `"DELETE ALL DATA"` |
+| 409 | `already_scheduled` | Workspace already has a pending deletion request |
+
+## Audit logging
+
+The deletion request and its eventual completion are logged in the **parent audit log** (not the workspace's, which gets deleted). Retained 7 years per compliance.
+
+Includes:
+
+- Actor (the Owner who initiated)
+- Reason
+- Scheduled date
+- Cancellation events
+- Hard-delete completion
+- Certificate delivery
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="GDPR (dashboard)" icon="user-shield" href="/security/gdpr">
+    Conceptual overview of the deletion cascade.
+  </Card>
+  <Card title="Data export" icon="download" href="/api-reference/endpoint/admin-data-export">
+    Export workspace data before deleting (recommended).
+  </Card>
+</CardGroup>

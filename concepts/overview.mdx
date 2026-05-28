@@ -1,0 +1,78 @@
+---
+title: "Core concepts"
+description: "The current Sentia mental model for research and design teams."
+---
+
+Sentia is organized around five concepts: **Design Agent**, **Simulations**, **Populations**, **Resource Library**, and the **Decision Lifecycle**.
+
+<CardGroup cols={2}>
+  <Card title="Design Agent" icon="pen-ruler" href="/design-agent/overview">
+    Import Figma files, generate editable surfaces, create variants, and hand selected designs to simulation.
+  </Card>
+  <Card title="Simulation" icon="flask" href="/simulations/overview">
+    A synthetic user study against one scenario and one population.
+  </Card>
+  <Card title="Population" icon="users" href="/populations/overview">
+    A reusable 10-100 agent cohort grounded in an audience brief, demographics, behavior traits, and research artifacts.
+  </Card>
+  <Card title="Resource Library" icon="file-lines" href="/resource-library/overview">
+    Research uploads and saved simulation or comparison reports.
+  </Card>
+  <Card title="Decision Lifecycle" icon="rotate" href="/decisions/lifecycle">
+    The longer loop for teams that connect simulations to shipping, calibration, and release evidence.
+  </Card>
+</CardGroup>
+
+## How they relate
+
+```text
+Research artifacts  ->  Population
+Figma / Design Agent -> Simulation -> Report -> Resource Library
+Report evidence      -> Design critique, product decision, or follow-up study
+```
+
+## Walking through a real flow
+
+<Steps>
+  <Step title="Upload context">
+    A researcher adds onboarding interview transcripts and survey comments to the Resource Library.
+  </Step>
+  <Step title="Build a cohort">
+    The team creates "first-time enterprise admins connecting Figma" as a 50-agent population.
+  </Step>
+  <Step title="Prepare surfaces">
+    A designer imports the onboarding Figma file into Design Agent and creates a security-forward variant.
+  </Step>
+  <Step title="Run a simulation">
+    The team sends both surfaces to simulation with the same prompt and population.
+  </Step>
+  <Step title="Read the report">
+    The report shows that the security-forward variant reduces access concerns but adds setup friction.
+  </Step>
+  <Step title="Save evidence">
+    The team saves the comparison report to the Resource Library and uses it in critique.
+  </Step>
+</Steps>
+
+## What grounds the agents
+
+Agents are not generic personas. They draw from:
+
+| Source | What it contributes |
+| --- | --- |
+| **Audience brief** | Who the cohort should represent and what context matters. |
+| **Demographic grounding** | Country, region, age, education, occupation, and related context. |
+| **Behavioral library** | Patterns such as setup abandonment, price checking, trust seeking, and privacy sensitivity. |
+| **Research artifacts** | Real language and concerns from transcripts, surveys, recordings, and persona docs. |
+| **Custom traits** | Workspace-specific dimensions such as AI literacy or security sensitivity. |
+
+## Where to go next
+
+<CardGroup cols={2}>
+  <Card title="Workspace tour" icon="map" href="/onboarding/workspace-tour">
+    Learn the dashboard areas and shortcuts.
+  </Card>
+  <Card title="Glossary" icon="book" href="/concepts/glossary">
+    Definitions in one place.
+  </Card>
+</CardGroup>

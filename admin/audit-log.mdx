@@ -1,0 +1,168 @@
+---
+title: "Audit log"
+description: "Every mutation, sign-in, API call, and admin action — fully auditable, exportable, tamper-evident."
+---
+
+Sentia logs every meaningful action with full attribution. The audit log lives at `/admin/audit` and supports filter/search/export for SOC 2, security investigations, and operational forensics.
+
+## What gets logged
+
+Everything that changes state or accesses sensitive data:
+
+### Authentication
+- Sign-ins (successful and failed)
+- SAML assertion failures
+- SCIM provisioning events (create/update/delete)
+- Session terminations
+- API key creations and usages
+
+### Workspace administration
+- Member added / removed
+- Role changes
+- Integration connections / disconnections
+- Workspace settings changes
+- Configuration changes (triggers, defaults, alerts)
+- Billing actions
+
+### Data operations
+- Simulation runs (with cost)
+- Population builds and edits
+- Decision state transitions
+- Calibration events
+- Capture uploads
+- Trigger firings (including dedup'd / rate-limited)
+
+### Compliance operations
+- GDPR data deletion requests
+- GDPR data export requests
+- Sub-processor changes
+- Audit-log exports
+
+### Security events
+- Failed authorization (403)
+- SSRF attempts
+- Rate-limit hits
+- Suspicious patterns (multiple failed sign-ins from one IP)
+- Webhook signature failures
+
+## What's in each entry
+
+```json
+{
+  "timestamp": "2026-05-25T14:32:17.041Z",
+  "actor": {
+    "type": "user",
+    "id": "usr_7c4e2a...",
+    "email": "ada@example.com",
+    "role": "Admin"
+  },
+  "action": "integration.connect",
+  "target": {
+    "type": "integration",
+    "id": "int_amplitude_8f9a2b...",
+    "provider": "amplitude"
+  },
+  "context": {
+    "ip": "192.0.2.42",
+    "user_agent": "Mozilla/5.0 ...",
+    "session_id": "ses_..."
+  },
+  "outcome": "success",
+  "metadata": {
+    "amplitude_project_id": "12345"
+  }
+}
+```
+
+PII is preserved for audit fidelity but is workspace-scoped and access-controlled.
+
+## Reading the log
+
+The dashboard view supports:
+
+| Filter | Examples |
+| --- | --- |
+| **Time window** | Last 24h / 7d / 30d / 90d / custom |
+| **Actor type** | User / Service account / System / Integration webhook |
+| **Action** | All `simulation.*`, all `integration.*`, etc. |
+| **Outcome** | Success / Failure / Blocked |
+| **Target type** | Population / Simulation / Decision / Integration / Member |
+| **Search** | Full-text across action, target, and metadata |
+
+Each row expands to show full JSON. Click an actor/target link to navigate to the affected resource.
+
+## Exporting
+
+| Format | Use |
+| --- | --- |
+| **CSV** | Spreadsheet analysis, sharing with auditors |
+| **JSON** | Piping into SIEM (Splunk, Datadog, etc.) |
+| **API** | Programmatic — `GET /admin/audit-events` |
+
+Exports are themselves audit-logged.
+
+## Retention
+
+| Tier | Retention period |
+| --- | --- |
+| **Hot storage** (queryable in dashboard) | 90 days |
+| **Warm storage** (queryable via API) | 1 year |
+| **Cold storage** (S3 export) | 7 years |
+
+Cold-storage logs are immutable (S3 Object Lock) for SOC 2 and regulatory requirements.
+
+Custom retention extensions available for regulated industries — contact your CSM.
+
+## Tamper-evidence
+
+Audit log entries are:
+
+- **Append-only** at the application level — there's no UI or API to edit/delete entries
+- **Hash-chained** — each entry's hash includes the previous entry's hash; tampering is detectable
+- **Encrypted at rest** with per-tenant KMS keys
+- **Streamed to immutable cold storage** daily
+
+For high-assurance contexts, request the chained-hash export from your CSM — auditors can independently verify the integrity of the log.
+
+## SIEM integration
+
+For workspaces with SIEM requirements:
+
+- **Webhook stream** — Sentia POSTs each audit event to your webhook URL in near-real-time
+- **API polling** — pull events on your cadence
+- **S3 bucket replication** — Sentia writes the cold-storage exports to your S3 bucket via cross-account role
+
+Setup is coordinated through your CSM. Most common SIEMs (Splunk, Datadog, Sumo Logic, Elastic) have one-click integrations via webhook.
+
+## Privacy considerations
+
+The audit log contains workspace-internal activity only. It does **not** contain:
+
+- LLM prompt content
+- Captured UI / Figma frame imagery (only metadata)
+- Verbatim text (only counts and timestamps)
+- Customer PII beyond what's needed for actor attribution
+
+GDPR data deletion requests cascade through the audit log — when a user is fully erased, their entries are redacted to `[REDACTED-USER]` while preserving the event records.
+
+## Useful audit queries
+
+| Question | Filter |
+| --- | --- |
+| Who connected integrations this week? | `action = integration.connect`, time = 7d |
+| Were there any failed sign-ins this month? | `action = auth.signin`, `outcome = failure`, time = 30d |
+| Who changed Owner roles? | `action = member.role_change`, `target.new_role = Owner` |
+| Did anyone export data? | `action = audit.export` OR `action = gdpr.export` |
+| What did this user do today? | `actor.email = <email>`, time = 24h |
+| Which simulations did this team run? | `action = simulation.run`, `actor.team = product-team` |
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Security overview" icon="shield-halved" href="/security/overview">
+    The full security posture.
+  </Card>
+  <Card title="GDPR" icon="user-shield" href="/security/gdpr">
+    Data deletion, export, and right-to-erasure handling.
+  </Card>
+</CardGroup>

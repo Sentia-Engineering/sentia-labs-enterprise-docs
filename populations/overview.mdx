@@ -1,0 +1,86 @@
+---
+title: "Populations overview"
+description: "What a population is, how cohorts are built, and why they determine simulation quality."
+---
+
+A **population** is a reusable cohort of synthetic users. Every simulation runs against one population, so cohort fit is the strongest determinant of whether a report reads like useful research or generic feedback.
+
+In the current app, populations are built as **10-100 agent behavioral cohorts**. Use multiple focused cohorts rather than one broad "all users" population.
+
+## What a population contains
+
+```text
+Population
+├── Agents (10-100 in the UI path)
+│   ├── Demographic profile
+│   ├── Behavioral patterns
+│   ├── Psychological drivers
+│   ├── Research memories from attached artifacts
+│   └── Optional custom trait scores
+├── Cohort description and target audience
+├── Health and qualitative coverage signals
+└── Simulation history
+```
+
+## Where grounding comes from
+
+| Layer | Source | What it contributes |
+| --- | --- | --- |
+| **Audience brief** | Your natural-language description | The main steering input for who agents should represent. |
+| **Demographics** | ACS PUMS for US cohorts; WorldPop and World Bank for global cohorts | Age, gender, education, occupation, location, and region-specific context. |
+| **Behavior patterns** | Population Composer selections and inference | Workarounds, setup abandonment, comparison shopping, support escalation, and similar patterns. |
+| **Psychological drivers** | Trait presets and optional custom traits | Risk aversion, novelty seeking, trust seeking, privacy sensitivity, automation skepticism, and more. |
+| **Research artifacts** | Resource Library uploads | Interview language, survey responses, persona context, recordings, and prior experiment evidence. |
+
+## What makes a good cohort
+
+Good cohorts are:
+
+- **Specific** enough that agents share a meaningful context.
+- **Research-backed** enough that voices do not feel generic.
+- **Reusable** across several related studies.
+- **Small enough** to understand and iterate quickly.
+
+Examples:
+
+- "First-time enterprise admins connecting Figma during onboarding."
+- "Procurement-sensitive design leaders evaluating pricing-page trust."
+- "Accessibility-reliant users completing a setup flow."
+- "Power users comparing workflow shortcuts."
+
+## Population lifecycle
+
+```text
+Draft -> Building -> Ready -> Used in simulations -> Refined or duplicated
+```
+
+You can rename, duplicate, archive, and delete populations. Deletion can be blocked while a population is building or when simulations depend on it.
+
+## What to review before using a population
+
+Open the population detail and check:
+
+- Agent count and status.
+- Sample personas.
+- Demographic panels.
+- Behavior trait radar.
+- Adoption or readiness profile.
+- Qualitative coverage.
+- Validation or health signals when available.
+- Simulation history.
+
+If a population looks wrong, fix it before interpreting simulation results.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Build a population" icon="users-gear" href="/populations/build">
+    Step-by-step cohort creation.
+  </Card>
+  <Card title="Research artifacts" icon="upload" href="/resource-library/research-artifacts">
+    Upload the evidence that grounds cohorts.
+  </Card>
+  <Card title="Custom traits" icon="sliders" href="/admin/custom-traits">
+    Add audience dimensions specific to your workspace.
+  </Card>
+</CardGroup>

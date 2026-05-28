@@ -1,0 +1,100 @@
+---
+title: "Usage analytics"
+api: "GET /admin/usage"
+description: "Programmatic access to workspace usage data for FinOps and budget tracking."
+---
+
+Returns per-period usage data for the workspace. Useful for piping into internal FinOps dashboards, billing systems, or alerting.
+
+## Request
+
+```bash
+curl -X GET 'https://api.sentialabs.ai/admin/usage?startDate=2026-05-01&endDate=2026-05-31&granularity=day' \
+  -H "Authorization: Bearer $SENTIA_TOKEN" \
+  -H "x-workspace-id: $WORKSPACE_ID"
+```
+
+## Query parameters
+
+| Parameter | Required | Notes |
+| --- | --- | --- |
+| `startDate` | ✅ | ISO date (`YYYY-MM-DD`) |
+| `endDate` | ✅ | ISO date; inclusive |
+| `granularity` | Optional | `day` (default), `week`, `month` |
+| `breakdown` | Optional | Add a breakdown dimension: `user`, `population`, `mode`, `decisionTag`, `integration` |
+
+## Response — 200 OK
+
+```json
+{
+  "workspaceId": "ws_8f9a2b...",
+  "period": {
+    "start": "2026-05-01",
+    "end": "2026-05-31",
+    "granularity": "day"
+  },
+  "totals": {
+    "llmCalls": 478320,
+    "simulationsRun": 142,
+    "populationsBuilt": 6,
+    "capturesCreated": 89,
+    "activeSeats": 24
+  },
+  "allocation": {
+    "llmCallsMonthly": 1000000,
+    "remaining": 521680,
+    "burnRatePerDay": 15430,
+    "projectedEndOfCycle": 956330
+  },
+  "series": [
+    {
+      "date": "2026-05-01",
+      "llmCalls": 12420,
+      "simulationsRun": 4,
+      "populationsBuilt": 0
+    },
+    "..."
+  ],
+  "breakdown": {
+    "byUser": [
+      { "userId": "usr_...", "email": "ada@example.com", "llmCalls": 82340 },
+      "..."
+    ]
+  }
+}
+```
+
+## Granularity behavior
+
+- `day` — one bucket per UTC day
+- `week` — one bucket per ISO week (Monday start)
+- `month` — one bucket per calendar month
+
+Date ranges are clamped to billing cycle boundaries when relevant.
+
+## Use cases
+
+| Use case | Approach |
+| --- | --- |
+| FinOps dashboard | Daily granularity, `breakdown=user` |
+| Budget alert pipeline | Daily granularity, monitor `burnRatePerDay` |
+| Cost attribution to projects | `breakdown=decisionTag` (requires tagging discipline) |
+| Identify high-consumption populations | `breakdown=population` |
+
+## Errors
+
+| Status | Code | Cause |
+| --- | --- | --- |
+| 400 | `invalid_date_range` | `startDate` > `endDate` or range exceeds 366 days |
+| 403 | `role_insufficient` | Requires Owner role for full workspace usage |
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Billing & usage (dashboard)" icon="receipt" href="/admin/billing-and-usage">
+    Reading the usage dashboard.
+  </Card>
+  <Card title="Limits & quotas" icon="gauge" href="/reference/limits-and-quotas">
+    Default platform limits.
+  </Card>
+</CardGroup>

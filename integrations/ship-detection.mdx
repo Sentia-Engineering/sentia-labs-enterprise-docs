@@ -1,0 +1,181 @@
+---
+title: "Ship detection"
+description: "LaunchDarkly, GitHub, Segment, and Slack — the four ways Sentia detects when you've shipped a feature."
+---
+
+The calibration loop only fires when Sentia knows a feature has shipped. Four detection paths, ranked by accuracy:
+
+| Source | Reliability | Best for |
+| --- | --- | --- |
+| **LaunchDarkly** | Highest | Workspaces using feature flags |
+| **Statsig / Eppo** (via [Experimentation](/integrations/experimentation)) | Highest | A/B-tested launches |
+| **GitHub PR + label** | High | Engineering-led workspaces |
+| **Slack `/shipped`** | Medium (manual) | Any team — fallback |
+| **Dashboard manual** | Medium (manual) | Same |
+
+Connect as many as apply. Sentia de-duplicates ship events.
+
+## LaunchDarkly
+
+The most accurate detection mechanism. Fires automatically when a flag crosses a configurable rollout threshold.
+
+<Steps>
+  <Step title="Get your SDK key + webhook secret">
+    LaunchDarkly → Account settings → Authorization → **Access tokens** → create a token with read scope on flags and projects.
+    
+    Account settings → Webhooks → **Add webhook**. Use the URL Sentia provides; copy the webhook secret.
+  </Step>
+  <Step title="Connect in Sentia">
+    Integrations → LaunchDarkly → **Connect**. Paste:
+    - **SDK key** (for read access to flag state)
+    - **Webhook secret** (for signed webhook verification)
+    - **Project key** (which LD project to watch)
+  </Step>
+  <Step title="Configure rollout threshold">
+    Default: 50% rollout = shipped. Configurable per workspace.
+  </Step>
+  <Step title="Link flags to decisions">
+    In the LaunchDarkly flag description, add: `sentia_decision_id: <uuid>`. Sentia auto-links the flag to the decision.
+  </Step>
+</Steps>
+
+**How it works:** when a flag's rollout crosses the threshold, LaunchDarkly fires a webhook. Sentia verifies the HMAC signature, matches the flag to a decision (via description field linkage or workspace heuristics), and opens the 14-day measurement window.
+
+**Webhook signature:** HMAC-SHA256 with the secret you provided. Sentia rejects unsigned or invalid-signature payloads.
+
+## GitHub
+
+Detection via merged PRs with specific labels.
+
+<Steps>
+  <Step title="OAuth via Nango">
+    Integrations → GitHub → **Connect**. Authorize the Sentia GitHub App against your org.
+  </Step>
+  <Step title="Choose repositories">
+    Pick which repos to watch. Most workspaces include all product repos.
+  </Step>
+  <Step title="Configure the ship label">
+    Default: `shipped`. Configurable per workspace.
+  </Step>
+  <Step title="Link PRs to decisions">
+    PR description should include: `sentia_decision_id: <uuid>` (or use the Sentia GitHub Action to auto-comment the link).
+  </Step>
+</Steps>
+
+**Auto-linking:** if no `sentia_decision_id` is present, Sentia tries to auto-link by:
+
+- Linear/Jira issue key in the PR title or branch name
+- Matching the PR title to recent decision questions (fuzzy match)
+
+If no match, the merge is logged but no calibration triggers.
+
+**Sync cadence:** 15-minute polling of merge events.
+
+## Slack `/shipped`
+
+Manual fallback for teams without LaunchDarkly or label discipline.
+
+```
+/shipped <decision-id-or-linear-issue-key>
+```
+
+Examples:
+
+```
+/shipped 7c4e2a-1d8b-4f3c-...
+/shipped ENG-1234
+```
+
+Sentia confirms in-channel and opens the calibration window. Audit-logged with the Slack actor.
+
+## Dashboard manual
+
+From any decision detail page in the dashboard, click **Mark as shipped**. Same effect as `/shipped`.
+
+Useful when:
+
+- Your shipping process doesn't involve flags, GitHub labels, or Slack
+- You're back-filling historical decisions to build calibration history
+- You're shipping a non-software change (pricing change in the billing platform, content change in a CMS)
+
+## Segment (CDP)
+
+Segment isn't a ship detection source per se — it's a CDP that feeds Sentia user traits and event schemas. Useful when:
+
+- Your event backbone is Segment, and analytics flows through it
+- You want a unified source of truth across multiple destinations
+
+<Steps>
+  <Step title="Get a Public API key">
+    Segment → Settings → Access Management → **+ Add token**. Scope: **Read**.
+  </Step>
+  <Step title="Connect in Sentia">
+    Integrations → Segment → **Connect**.
+  </Step>
+  <Step title="Configure sources to track">
+    Pick which Segment sources Sentia should ingest user-trait updates from.
+  </Step>
+</Steps>
+
+**Sync cadence:** 24 hours for traits and schemas.
+
+## Ship detection precedence
+
+If multiple sources detect the same ship within 1 hour, Sentia applies precedence:
+
+1. LaunchDarkly (webhook-driven, real-time)
+2. Statsig/Eppo experiment activation
+3. GitHub PR merge with label
+4. Slack `/shipped`
+5. Dashboard manual
+
+Only the first detection counts. The others are logged for audit but don't duplicate the calibration event.
+
+## What happens at ship detection
+
+```
+Ship detected ──▶ Decision state: Shipped
+                  │
+                  ├──▶ 14-day measurement window opens
+                  │
+                  ├──▶ Sentia begins polling actuals from:
+                  │     - Your analytics provider
+                  │     - Your support providers (NPS impact)
+                  │     - Your experimentation platform (if linked)
+                  │
+                  ├──▶ Slack notification to the configured channel
+                  │
+                  └──▶ Audit log entry
+```
+
+After 14 days, Sentia compares predicted vs. actual and records the calibration grade. See [Calibration](/calibration/overview).
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="LaunchDarkly webhook arrives but doesn't trigger calibration">
+    Likely: no decision linked to the flag. Add `sentia_decision_id: <uuid>` to the flag description in LaunchDarkly. Sentia syncs flag metadata every 30 minutes, so the next webhook after that will trigger correctly.
+  </Accordion>
+
+  <Accordion title="GitHub PR merges but no calibration starts">
+    Check:
+    - The PR has the configured ship label
+    - The PR description includes `sentia_decision_id: <uuid>` or the branch/title matches a Linear/Jira issue
+    - The repo is in the configured watch list
+  </Accordion>
+
+  <Accordion title="Want to retroactively calibrate a past shipped decision">
+    From the decision detail page, click **Backfill calibration**. Sentia pulls the relevant 14-day window from your analytics retroactively. Works for ships up to 90 days old.
+  </Accordion>
+</AccordionGroup>
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Calibration" icon="rotate" href="/calibration/overview">
+    What happens during the 14-day measurement window.
+  </Card>
+  <Card title="Decision lifecycle" icon="diagram-project" href="/decisions/lifecycle">
+    All five states and how transitions work.
+  </Card>
+</CardGroup>

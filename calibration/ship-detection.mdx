@@ -1,0 +1,136 @@
+---
+title: "Ship detection"
+description: "How Sentia knows a feature has shipped — four sources, ranked by accuracy."
+---
+
+Calibration only fires when Sentia detects that a decision has shipped. Four sources are supported. Connect as many as fit your workflow; Sentia de-duplicates.
+
+For per-integration setup, see [Integrations → Ship detection](/integrations/ship-detection). This page focuses on the *concepts* and *trade-offs*.
+
+## The four sources
+
+| Source | Type | Latency | Reliability |
+| --- | --- | --- | --- |
+| **LaunchDarkly** | Webhook | Real-time | Highest |
+| **GitHub PR + label** | Polling | ~15 min | High |
+| **Slack `/shipped`** | Slash command | Real-time | Medium (manual) |
+| **Dashboard manual** | UI action | Real-time | Medium (manual) |
+
+Plus, **Statsig** and **Eppo** experiment activations also count as ship signals (see [Experimentation](/integrations/experimentation)).
+
+## What "shipped" means precisely
+
+A decision is considered shipped when **the change is reaching a measurable fraction of users for a sustained period.**
+
+| Source | Trigger condition |
+| --- | --- |
+| LaunchDarkly | Flag rollout crosses configured threshold (default 50%) and stays there for ≥ 1 hour |
+| GitHub | PR merges with the configured ship label |
+| Slack `/shipped` | Command invoked manually |
+| Dashboard | "Mark as shipped" clicked |
+| Statsig/Eppo | Experiment reaches significance + variant promoted |
+
+The 1-hour stickiness on LaunchDarkly prevents accidental rollback/forward toggling from causing spurious calibration events.
+
+## Linking ship events to decisions
+
+For automated sources, Sentia matches by:
+
+1. **Explicit linkage** (preferred): `sentia_decision_id: <uuid>` in the flag description, PR description, or experiment description
+2. **Issue key match**: PR title or branch name contains a Linear/Jira issue key linked to a decision
+3. **Fuzzy match**: PR/flag name closely matches a decision question (probabilistic)
+4. **No match**: ship event is logged but no calibration triggers
+
+**Best practice:** always use explicit linkage. It removes ambiguity and audit ambiguity.
+
+## What happens at ship detection
+
+```
+Ship event arrives
+   │
+   ├──▶ Verify signature (LaunchDarkly webhook HMAC, GitHub OAuth, etc.)
+   │
+   ├──▶ De-duplicate (1-hour TTL by decision ID)
+   │
+   ├──▶ Resolve to decision (explicit / issue / fuzzy)
+   │
+   ├──▶ Transition decision state: Simulated → Shipped
+   │
+   ├──▶ Open 14-day measurement window
+   │
+   ├──▶ Slack notification + audit log entry
+   │
+   └──▶ Begin polling actuals from analytics + support providers
+```
+
+## The 14-day measurement window
+
+During the window:
+
+- **Daily polling** pulls fresh metric snapshots from your analytics provider
+- **Daily NPS check** pulls support-rated conversations
+- **Day 14 finalization** compares predicted vs. actual, records calibration event, updates correction factors
+
+You can monitor the window in the decision lifecycle and any calibration-enabled report surfaces for that workspace.
+
+## Special cases
+
+### Revert during the window
+
+If LaunchDarkly drops the flag below 5%, or a `/reverted` command runs, or a PR with `reverted` label merges:
+
+- Decision transitions to **Reverted**
+- Partial calibration data is retained
+- A truncated calibration event is recorded with the window's actual length
+- The correction factor weight is reduced proportionally (e.g., a 5-day window contributes ~36% of normal weight)
+
+### Late-arriving ship events
+
+If a ship event arrives > 7 days after a decision was simulated, Sentia logs a warning. The simulation's predictions may be stale relative to the actual shipped scope. You can:
+
+- Proceed with calibration anyway (sometimes accurate enough)
+- Re-simulate the decision against the *current* shipped scope and use that as the calibration baseline
+- Discard the calibration event
+
+### Multiple ships per decision
+
+A decision can ship multiple times (e.g., progressive rollouts, region expansions, A/B test then full launch). Each ship event creates a new calibration cycle. The decision's calibration grade is a weighted average across cycles.
+
+## Detection coverage
+
+You'll see your workspace's detection coverage on the Calibration dashboard:
+
+| Coverage | Reading |
+| --- | --- |
+| > 90% of shipped decisions detected | Healthy |
+| 70–90% | Add a secondary detection source |
+| < 70% | Detection is the limiting factor for calibration improvement |
+
+Coverage gaps are usually because:
+
+- Some teams ship without LaunchDarkly flags (mobile releases, content changes)
+- Some PRs lack the ship label
+- Some shipped changes don't have a linked decision
+
+The fix: agree on team conventions (every shippable change has either a flag, a labeled PR, or a `/shipped` Slack command).
+
+## Backfilling
+
+For workspaces just starting calibration, you can retroactively trigger calibration on past shipped decisions:
+
+- From the decision detail page, click **Backfill calibration**
+- Sentia pulls the relevant 14-day window from your analytics retroactively
+- Works for ships up to 90 days old
+
+Backfilling rapidly builds your calibration history. Use it to seed the model with recent launches.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Accuracy" icon="bullseye" href="/calibration/accuracy">
+    Reading the long-term accuracy trend.
+  </Card>
+  <Card title="Drift" icon="wave-square" href="/calibration/drift">
+    What to do when predictions systematically diverge.
+  </Card>
+</CardGroup>

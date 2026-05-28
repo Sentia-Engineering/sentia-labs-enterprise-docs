@@ -1,11 +1,12 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "Sentia Labs Enterprise",
+  "description": "Enterprise design research simulation platform. Import Figma work, build behavioral cohorts, and run synthetic user studies before shipping.",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#0066FF",
+    "light": "#3B82F6",
+    "dark": "#0A0A0A"
   },
   "favicon": "/favicon.svg",
   "navigation": {
@@ -14,35 +15,119 @@
         "tab": "Guides",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Welcome",
             "pages": [
               "index",
               "quickstart",
-              "development"
+              "concepts/overview",
+              "concepts/lifecycle",
+              "concepts/glossary"
             ]
           },
           {
-            "group": "Customization",
+            "group": "Onboarding",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
+              "onboarding/checklist",
+              "onboarding/workspace-tour",
+              "onboarding/sso-setup",
+              "onboarding/invite-team",
+              "onboarding/first-population",
+              "onboarding/first-simulation"
             ]
           },
           {
-            "group": "Writing content",
+            "group": "Design Agent",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
+              "design-agent/overview",
+              "design-agent/sources",
+              "design-agent/simulation-handoff"
             ]
           },
           {
-            "group": "AI tools",
+            "group": "Resource Library",
             "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "resource-library/overview",
+              "resource-library/research-artifacts",
+              "resource-library/reports"
+            ]
+          },
+          {
+            "group": "Populations",
+            "pages": [
+              "populations/overview",
+              "populations/build",
+              "populations/interview-grounding",
+              "populations/validation"
+            ]
+          },
+          {
+            "group": "Simulations",
+            "pages": [
+              "simulations/overview",
+              "simulations/wizard",
+              "simulations/inputs",
+              "simulations/modes",
+              "simulations/convergence",
+              "simulations/results",
+              "simulations/triggers",
+              "simulations/best-practices"
+            ]
+          },
+          {
+            "group": "Integrations",
+            "pages": [
+              "integrations/overview",
+              "integrations/analytics",
+              "integrations/qualitative",
+              "integrations/workflow",
+              "integrations/documentation",
+              "integrations/experimentation",
+              "integrations/ship-detection"
+            ]
+          },
+          {
+            "group": "Decision Lifecycle",
+            "pages": [
+              "decisions/log",
+              "decisions/lifecycle",
+              "calibration/overview",
+              "calibration/ship-detection",
+              "calibration/accuracy",
+              "calibration/drift"
+            ]
+          },
+          {
+            "group": "Administration",
+            "pages": [
+              "admin/workspaces",
+              "admin/members-and-roles",
+              "admin/sso-scim",
+              "admin/design-system",
+              "admin/custom-traits",
+              "admin/simulation-schedules",
+              "admin/social-dynamics",
+              "admin/billing-and-usage",
+              "admin/audit-log"
+            ]
+          },
+          {
+            "group": "Security & Compliance",
+            "pages": [
+              "security/overview",
+              "security/data-handling",
+              "security/sub-processors",
+              "security/gdpr",
+              "security/llm-safety"
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "reference/keyboard-shortcuts",
+              "reference/limits-and-quotas",
+              "reference/release-notes",
+              "reference/support",
+              "reference/status"
             ]
           }
         ]
@@ -51,18 +136,56 @@
         "tab": "API reference",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Getting started",
             "pages": [
-              "api-reference/introduction"
+              "api-reference/introduction",
+              "api-reference/authentication",
+              "api-reference/workspace-scoping",
+              "api-reference/rate-limits",
+              "api-reference/errors",
+              "api-reference/webhooks"
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "Simulations",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "api-reference/endpoint/simulations-create",
+              "api-reference/endpoint/simulations-get"
+            ]
+          },
+          {
+            "group": "Populations",
+            "pages": [
+              "api-reference/endpoint/populations-create",
+              "api-reference/endpoint/populations-validate"
+            ]
+          },
+          {
+            "group": "Captures",
+            "pages": [
+              "api-reference/endpoint/captures-url"
+            ]
+          },
+          {
+            "group": "Integrations",
+            "pages": [
+              "api-reference/endpoint/integrations-list"
+            ]
+          },
+          {
+            "group": "Admin & GDPR",
+            "pages": [
+              "api-reference/endpoint/admin-workspaces",
+              "api-reference/endpoint/admin-scim",
+              "api-reference/endpoint/admin-usage",
+              "api-reference/endpoint/admin-data-deletion",
+              "api-reference/endpoint/admin-data-export"
+            ]
+          },
+          {
+            "group": "Health",
+            "pages": [
+              "api-reference/endpoint/health"
             ]
           }
         ]
@@ -71,14 +194,19 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
+          "anchor": "Dashboard",
+          "href": "https://app.sentialabs.ai",
+          "icon": "browser"
         },
         {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
+          "anchor": "Status",
+          "href": "/reference/status",
+          "icon": "signal-bars"
+        },
+        {
+          "anchor": "Support",
+          "href": "mailto:hello@sentialabs.io",
+          "icon": "life-ring"
         }
       ]
     }
@@ -90,33 +218,52 @@
   "navbar": {
     "links": [
       {
+        "label": "Status",
+        "href": "/reference/status"
+      },
+      {
         "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "href": "mailto:hello@sentialabs.io"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "label": "Open Dashboard",
+      "href": "https://app.sentialabs.ai"
     }
   },
   "contextual": {
     "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
-    }
+      "x": "https://x.com/sentialabs",
+      "linkedin": "https://linkedin.com/company/sentialabs"
+    },
+    "links": [
+      {
+        "header": "Product",
+        "items": [
+          { "label": "Dashboard", "href": "https://app.sentialabs.ai" },
+          { "label": "Status", "href": "/reference/status" }
+        ]
+      },
+      {
+        "header": "Company",
+        "items": [
+          { "label": "Marketing site", "href": "https://sentialabs.ai" },
+          { "label": "Contact", "href": "mailto:hello@sentialabs.io" }
+        ]
+      }
+    ]
   }
 }

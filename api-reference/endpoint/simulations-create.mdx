@@ -1,0 +1,105 @@
+---
+title: "Create simulation"
+api: "POST /api/simulations"
+description: "Queue a new simulation run. Returns 202 with the simulation ID; results stream in via webhooks or polling."
+---
+
+Creates a new simulation against a population and scenario. The request returns immediately with status `queued`; the simulation runs asynchronously.
+
+To get notified when it completes, subscribe to the `simulation.completed` [webhook event](/api-reference/webhooks). Alternatively, poll `GET /api/simulations/{id}` (see [Get simulation](/api-reference/endpoint/simulations-get)).
+
+## Request
+
+```bash
+curl -X POST https://api.sentialabs.ai/api/simulations \
+  -H "Authorization: Bearer $SENTIA_TOKEN" \
+  -H "x-workspace-id: $WORKSPACE_ID" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "populationId": "pop_8f9a2b...",
+    "scenarioId": "scn_3b4c5d...",
+    "config": {
+      "mode": "deep",
+      "agentCount": 2000,
+      "maxDurationMs": 1800000,
+      "convergenceThreshold": 0.95
+    }
+  }'
+```
+
+## Headers
+
+| Header | Required | Notes |
+| --- | --- | --- |
+| `Authorization: Bearer <token>` | ✅ | WorkOS JWT |
+| `x-workspace-id` | ✅ | Target workspace |
+| `Content-Type: application/json` | ✅ | |
+| `Idempotency-Key` | Optional | UUID to dedup retries within 24h |
+
+## Body
+
+| Field | Type | Required | Notes |
+| --- | --- | --- | --- |
+| `populationId` | UUID | ✅ | Must be a Ready-state population |
+| `scenarioId` | UUID | ✅ | Created beforehand via the Scenarios endpoint (or auto-created in the wizard) |
+| `config.mode` | enum | ✅ | `"fast"` or `"deep"` |
+| `config.agentCount` | int | ✅ | UI runs cannot exceed the selected population; API programs can support up to 10,000 where enabled |
+| `config.maxDurationMs` | int | ✅ | Hard timeout in milliseconds |
+| `config.convergenceThreshold` | float | Optional | 0.50–0.99, default 0.95 |
+
+See [Modes](/simulations/modes) and [Convergence](/simulations/convergence) for guidance.
+
+## Response — 202 Accepted
+
+```json
+{
+  "id": "sim_8f9a2b...",
+  "status": "queued",
+  "createdAt": "2026-05-25T14:32:17Z",
+  "populationId": "pop_8f9a2b...",
+  "scenarioId": "scn_3b4c5d...",
+  "config": {
+    "mode": "deep",
+    "agentCount": 2000,
+    "maxDurationMs": 1800000,
+    "convergenceThreshold": 0.95
+  },
+  "estimatedDurationMs": 600000,
+  "estimatedLlmCalls": 6000
+}
+```
+
+## Status transitions
+
+After creation, the simulation moves through:
+
+```
+queued → running → converging → completed
+                              ↘ failed
+```
+
+See [Simulation lifecycle](/concepts/lifecycle).
+
+## Errors
+
+| Status | Code | Cause |
+| --- | --- | --- |
+| 400 | `missing_workspace_header` | Missing `x-workspace-id` |
+| 401 | `invalid_token` | Token missing or invalid |
+| 403 | `role_insufficient` | Viewer role can't create simulations |
+| 422 | `validation_failed` | Body validation failed; see `details` |
+| 422 | `population_not_ready` | Population is still building or validating |
+| 429 | `rate_limit_exceeded` | More than 10 creates per minute |
+
+See [Errors](/api-reference/errors).
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Get simulation" icon="magnifying-glass" href="/api-reference/endpoint/simulations-get">
+    Poll status or get final results.
+  </Card>
+  <Card title="Webhooks" icon="bolt" href="/api-reference/webhooks">
+    Subscribe to `simulation.completed`.
+  </Card>
+</CardGroup>

@@ -1,0 +1,58 @@
+---
+title: "Simulation lifecycle"
+description: "What happens between launch and the completed report."
+---
+
+A simulation moves through a small set of stages. Knowing them helps you catch setup problems while a run is live and understand what appears in the completed report.
+
+## Stages
+
+<Steps>
+  <Step title="Queued">
+    The run is accepted, configuration is validated, and work is assigned.
+  </Step>
+  <Step title="Running">
+    Agents evaluate the scenario in waves. The live page updates completion count, preference split, concerns, verbatims, and other metrics.
+  </Step>
+  <Step title="Converging">
+    Sentia checks whether additional agents are still changing the answer. Divisive studies may stay less stable because audience slices genuinely disagree.
+  </Step>
+  <Step title="Completed">
+    Final aggregation creates findings, concerns, recommendations, population analysis, voices, and methodology.
+  </Step>
+  <Step title="Failed or canceled">
+    The run stops before completion. Inspect the failure reason, fix the setup if needed, and rerun.
+  </Step>
+</Steps>
+
+## What to monitor live
+
+| Live signal | Why it matters |
+| --- | --- |
+| **Agents completed** | Confirms the run is moving. |
+| **Preference split** | Shows early choice distribution for A/B and competitive studies. |
+| **Concerns per agent** | Indicates friction density. |
+| **Live verbatims** | Helps confirm agents understand the prompt and audience. |
+| **Convergence** | Shows whether the distribution is stabilizing. |
+
+## Confidence vs. convergence
+
+These are different:
+
+| Metric | Meaning |
+| --- | --- |
+| **Convergence** | Whether adding agents is still changing the distribution. |
+| **Confidence** | How strongly supported the result appears, given the responses and cohort context. |
+
+A study can converge to a split result. That is not a failure; it often means the design works for one slice of the cohort and not another.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Reading results" icon="chart-mixed" href="/simulations/results">
+    Turn the completed report into design evidence.
+  </Card>
+  <Card title="Convergence" icon="bullseye" href="/simulations/convergence">
+    Read stability signals in more detail.
+  </Card>
+</CardGroup>

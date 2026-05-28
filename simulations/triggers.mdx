@@ -1,0 +1,154 @@
+---
+title: "Auto-triggers"
+description: "Enterprise automation for launching simulations from workflow tools."
+---
+
+Auto-triggers are an enterprise automation layer for teams running many simulations per week. They are not part of the first-week Figma onboarding path; use the manual wizard or Design Agent handoff first, then enable triggers when the team has stable conventions.
+
+## The four built-in triggers
+
+| Source | Condition | Best for |
+| --- | --- | --- |
+| **Linear** | Issue status → "In Review" | Engineering-led teams who use Linear as their decision system |
+| **Jira** | Issue status → "In Review" | Same, on Jira |
+| **Figma** | Frame named `simulate`, or any frame on a `Testing` page | Design-led teams who validate designs before handoff |
+| **Slack** | `:simulate:` emoji reaction on a message | Ad-hoc cross-functional teams |
+
+You configure these per integration. See [Workflow integrations](/integrations/workflow).
+
+## How a trigger flows
+
+When a trigger fires, the simulation moves through a deterministic pipeline:
+
+<Steps>
+  <Step title="Dedup">
+    Same trigger source + entity ID within 1 hour → ignored. (Redis-backed; 1-hour TTL.) Prevents accidental double-runs when issues flip statuses repeatedly.
+  </Step>
+  <Step title="Rate limit">
+    Per-workspace: 20 simulations / day from auto-triggers. Per-source sub-limits prevent runaway loops (e.g., max 10/day from Slack reactions).
+  </Step>
+  <Step title="Context enrichment">
+    Sentia automatically pulls:
+    - Issue title, description, and comments (Linear/Jira)
+    - Linked Figma frames
+    - Linked Notion/Confluence pages
+    - Slack thread + reacted message
+    
+    Plus Firecrawl-scrapes any external URLs found in the issue/message.
+  </Step>
+  <Step title="Population resolution">
+    Each integration has a default population set at configuration time. The trigger uses that population unless the issue specifies a label override (e.g., `population:smb-trial-users`).
+  </Step>
+  <Step title="Queue">
+    The simulation queues into the same Temporal workflow as a manually-launched run. Results land at the usual `/simulations/[id]` URL, plus a notification to the configured Slack channel.
+  </Step>
+</Steps>
+
+## Setting up Linear / Jira triggers
+
+<Steps>
+  <Step title="Connect Linear or Jira">
+    See [Workflow integrations](/integrations/workflow). OAuth via Nango — your CSM or a workspace owner does this once.
+  </Step>
+  <Step title="Configure the trigger">
+    Settings → Integrations → Linear (or Jira) → **Triggers**.
+    
+    - **Trigger status:** typically "In Review" — Sentia listens for status changes to this state.
+    - **Project filter:** which projects/teams to watch.
+    - **Default population:** which population to use when no label override is present.
+    - **Notification channel:** Slack channel for completion alerts.
+  </Step>
+  <Step title="Issue conventions">
+    For richer auto-context, encourage teammates to attach Figma URLs and link related PRDs in issue descriptions. Sentia auto-detects and includes them.
+  </Step>
+</Steps>
+
+### Per-issue overrides via labels
+
+| Label | Effect |
+| --- | --- |
+| `sentia:skip` | Don't simulate when this issue hits the trigger status |
+| `sentia:fast` | Use Fast mode instead of the integration default |
+| `sentia:deep` | Use Deep mode |
+| `population:<slug>` | Override the population — e.g., `population:enterprise-admins` |
+| `mode:custom` | Use a custom config the issue's reporter has pre-saved |
+
+## Setting up Figma triggers
+
+<Steps>
+  <Step title="Connect Figma">
+    See [Workflow integrations](/integrations/workflow#figma).
+  </Step>
+  <Step title="Choose your trigger convention">
+    Two options:
+    
+    - **Frame naming:** any frame whose name starts with `simulate` (case-insensitive) triggers when modified
+    - **Page naming:** every frame on a page named `Testing` triggers when modified
+    
+    Most teams pick one convention and stick with it.
+  </Step>
+  <Step title="Set a default population + scenario">
+    Figma triggers can't infer a population from the design. Set a workspace default + per-file-name overrides if needed.
+  </Step>
+</Steps>
+
+## Setting up Slack triggers
+
+<Steps>
+  <Step title="Connect Slack">
+    See [Workflow integrations](/integrations/workflow#slack). Includes the `:simulate:` custom emoji bundle.
+  </Step>
+  <Step title="Configure the trigger emoji">
+    Defaults to `:simulate:`. Workspaces can rename to a custom emoji (some teams prefer `:sentia:`).
+  </Step>
+  <Step title="Set permission scope">
+    By default, anyone in the workspace can trigger via emoji. You can restrict to specific Slack user groups (e.g., `@product-team`).
+  </Step>
+</Steps>
+
+### What gets captured from Slack
+
+When `:simulate:` is reacted to a message, Sentia captures:
+
+- The reacted message content
+- The 5 messages before and 5 after (thread context)
+- Any image attachments
+- Any URL previews — Firecrawl-scraped for content
+
+## Slash commands
+
+The Slack integration also adds two slash commands:
+
+| Command | Effect |
+| --- | --- |
+| `/simulate <decision>` | Launch a simulation from chat. Sentia DMs you the wizard with prefilled context. |
+| `/shipped <issue-id-or-decision-id>` | Mark a decision as shipped — kicks off the 14-day calibration window. |
+
+## Disabling triggers temporarily
+
+Settings → Integrations → **Pause all triggers**. Useful during launch crunches when you don't want incidental issue movements to spawn simulations.
+
+You can pause per-source or globally. Manual launches continue to work.
+
+## Audit trail
+
+Every triggered simulation is audit-logged with:
+
+- Source (Linear / Jira / Figma / Slack)
+- Triggering entity (issue ID, frame ID, message TS)
+- Triggering user (the person who moved the status / reacted)
+- Resolved population
+- Auto-attached context
+
+Visible in Admin → Audit log and in the simulation detail page metadata.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Integrations overview" icon="plug" href="/integrations/overview">
+    Current Figma setup and enterprise connector categories.
+  </Card>
+  <Card title="Best practices" icon="trophy" href="/simulations/best-practices">
+    Maximizing accuracy across populations and inputs.
+  </Card>
+</CardGroup>

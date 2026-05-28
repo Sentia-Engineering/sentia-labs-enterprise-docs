@@ -1,0 +1,87 @@
+---
+title: "Inputs & context"
+description: "What agents see: Figma frames, Design Agent surfaces, text prompts, and enterprise capture paths."
+---
+
+Agents react to the context you give them. For UX research and design work, visual fidelity matters: a concrete Figma frame or Design Agent surface usually produces more useful feedback than a short text description.
+
+## Current input options
+
+| Input | Best for | Notes |
+| --- | --- | --- |
+| **Design Agent surface** | Comparing generated or edited variants | Launch from Design Agent; selected surfaces are attached automatically. |
+| **Figma frame or file** | Design-phase research | Primary visual path. Requires Figma connected in Settings. |
+| **Plain text** | Early concepts, hypotheses, and non-visual scenarios | Works well when the question is conceptual and visuals would be premature. |
+| **Competitive alternatives** | Market or positioning comparisons | Add competitor names and descriptions in Competitive studies. |
+| **Coded prototype / GitHub** | Prototype and repo-backed workflows | Available only when enabled for your workspace. |
+
+## Figma input
+
+Figma is the default first-week visual input.
+
+<Steps>
+  <Step title="Connect Figma">
+    Save the workspace Figma token in **Settings -> Integrations**. See [Design Agent sources](/design-agent/sources).
+  </Step>
+  <Step title="Paste the URL">
+    In the Decision step, choose Figma and paste a file, page, section, or frame URL.
+  </Step>
+  <Step title="Wait for capture">
+    Sentia fetches frames, screenshots, text content, component names, hotspots, and design-token hints where available.
+  </Step>
+  <Step title="Select frames">
+    For A/B work, add links for each variant and make sure each selected frame has a persisted screenshot before launch.
+  </Step>
+</Steps>
+
+### A/B variants
+
+For A/B studies, label variants clearly in Figma before capture. The wizard can support multiple variants, but most first studies should compare two or three options so the report stays readable.
+
+## Design Agent surfaces
+
+When you send designs from Design Agent:
+
+- Select 1-5 surfaces.
+- Write one evaluation prompt.
+- Each surface becomes an independent simulation run.
+- Results stream back into the Design Agent session.
+
+This is the best path when the work started as "generate a stronger variant" or "compare these design directions." See [Send designs to simulation](/design-agent/simulation-handoff).
+
+## Plain-text context
+
+Text is useful when the team is still shaping the idea.
+
+Good text input:
+
+> "We are replacing a generic Figma connection screen with a security-forward variant. The user is a first-time enterprise admin. They need to understand why file access is required, what Sentia reads, and what happens after connecting."
+
+Weak text input:
+
+> "Make onboarding better."
+
+Specificity matters. Include the audience, task, change, and known risks.
+
+## Competitive context
+
+Competitive studies compare your concept against named alternatives. Add concise competitor descriptions and keep the evaluation criterion explicit. For example: "Which option feels most trustworthy for an enterprise design leader approving Figma access?"
+
+## Input hygiene
+
+- Use real frames for decisions that will affect the product experience.
+- Name Figma frames and Design Agent surfaces clearly.
+- Remove stale or throwaway frames from the source when they should not be evaluated.
+- Keep the prompt focused on one user task.
+- Attach research context through the population or Resource Library rather than overloading the scenario field.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="The wizard" icon="wand-magic-sparkles" href="/simulations/wizard">
+    Combine input, population, and configuration.
+  </Card>
+  <Card title="Design Agent handoff" icon="pen-ruler" href="/design-agent/simulation-handoff">
+    Send selected surfaces directly to simulation.
+  </Card>
+</CardGroup>

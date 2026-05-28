@@ -1,0 +1,108 @@
+---
+title: "Health & readiness"
+api: "GET /health"
+description: "Liveness and readiness probes. No authentication required."
+---
+
+Two unauthenticated endpoints for monitoring and orchestration. Useful for status pages, uptime checks, and load-balancer probes.
+
+## `GET /health` — Liveness
+
+```bash
+curl https://api.sentialabs.ai/health
+```
+
+Returns `200 OK` if the API process is alive. Doesn't check downstream dependencies; just confirms the HTTP server is accepting connections.
+
+```json
+{
+  "status": "ok",
+  "version": "1.4.7",
+  "timestamp": "2026-05-25T14:32:17Z"
+}
+```
+
+Used for:
+
+- Kubernetes liveness probes (would kill the pod if failing)
+- External uptime monitors that just need to know the surface is up
+- Quick CDN cache validation
+
+## `GET /ready` — Readiness
+
+```bash
+curl https://api.sentialabs.ai/ready
+```
+
+Returns `200 OK` only if the API is **ready to serve real traffic** — all critical dependencies are reachable. Returns `503` if any are unhealthy.
+
+```json
+{
+  "status": "ready",
+  "checks": {
+    "postgresql": "ok",
+    "redis": "ok",
+    "kafka": "ok",
+    "temporal": "ok",
+    "pinecone": "ok",
+    "workos": "ok"
+  },
+  "timestamp": "2026-05-25T14:32:17Z"
+}
+```
+
+On failure:
+
+```json
+{
+  "status": "degraded",
+  "checks": {
+    "postgresql": "ok",
+    "redis": "ok",
+    "kafka": "FAIL: connection refused",
+    "...": "..."
+  }
+}
+```
+
+Used for:
+
+- Kubernetes readiness probes (would remove the pod from the load balancer)
+- Production-only infrastructure checks — if managed Kafka isn't ready, this returns 503 instead of pretending to be healthy
+
+## Both endpoints
+
+| Property | Value |
+| --- | --- |
+| **Authentication** | None |
+| **Rate limit** | None |
+| **CORS** | `*` |
+| **Cache** | `no-store` |
+
+## Production status
+
+For customer-facing service status (incidents, planned maintenance), use the service status page:
+
+[Service status](/reference/status)
+
+The service status page is independent of the API health endpoints — it reflects customer-visible incidents declared by Sentia operations, not raw service health.
+
+## Errors
+
+These endpoints don't typically return application errors. If you see:
+
+| Status | Cause |
+| --- | --- |
+| 502 / 503 / 504 | Load-balancer-level issue or backend down |
+| 200 with `"status": "degraded"` (on `/ready`) | One or more dependencies unhealthy |
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Service status" icon="signal-bars" href="/reference/status">
+    Current state of production services.
+  </Card>
+  <Card title="Errors" icon="circle-exclamation" href="/api-reference/errors">
+    Standard error envelope for authenticated endpoints.
+  </Card>
+</CardGroup>

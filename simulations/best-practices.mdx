@@ -1,0 +1,95 @@
+---
+title: "Best practices"
+description: "Patterns that produce useful, decision-grade simulation reports."
+---
+
+## Start with the research question
+
+A good simulation starts with a clear question:
+
+- "Which variant makes the next step clearer for first-time admins?"
+- "Where does this pricing page create trust concerns?"
+- "What would make this workflow feel risky to a security-sensitive buyer?"
+
+Avoid prompts that ask Sentia to generally "review" or "improve" a design. General prompts produce general feedback.
+
+## Match cohort to question
+
+The cohort should represent the people who would actually react to the design. If the study is about enterprise admin onboarding, do not use a broad customer cohort.
+
+Strong cohort signals:
+
+- Specific audience brief.
+- Relevant behavior patterns and psychological drivers.
+- Research artifacts that match the audience.
+- Sample personas that sound like people your team recognizes.
+
+## Use visuals for design decisions
+
+Use Figma or Design Agent surfaces whenever the question is about a real interface. Plain text is fine for early concepts, but visual studies reveal layout, hierarchy, trust, and accessibility issues that text cannot.
+
+## Read beyond the headline
+
+Use this order:
+
+1. Verify setup and visuals.
+2. Read findings.
+3. Inspect concern hotspots.
+4. Check population lens.
+5. Pull representative voices.
+6. Then decide what to do with the headline.
+
+## Compare carefully
+
+When comparing variants:
+
+- Keep the same cohort.
+- Keep the same prompt.
+- Label frames and surfaces clearly.
+- Compare 2-3 completed runs rather than many tiny variants.
+- Save only the comparison reports that matter.
+
+## Common anti-patterns
+
+<AccordionGroup>
+  <Accordion title="Using a broad cohort for a narrow design question">
+    Broad cohorts blur the result. Build or duplicate a more specific population.
+  </Accordion>
+
+  <Accordion title="Treating recommendations as design instructions">
+    Recommendations are critique inputs. Your team still owns product and design judgment.
+  </Accordion>
+
+  <Accordion title="Skipping visual verification">
+    Always confirm the report evaluated the intended frames or surfaces before sharing it.
+  </Accordion>
+
+  <Accordion title="Rerunning because the answer was unexpected">
+    Read the evidence first. Unexpected reactions are often the point of the simulation.
+  </Accordion>
+
+  <Accordion title="Saving every exploratory report">
+    The Resource Library is most useful when saved reports represent evidence the team may return to.
+  </Accordion>
+</AccordionGroup>
+
+## When to rerun
+
+| Signal | Action |
+| --- | --- |
+| Wrong frame or stale surface | Fix input and rerun. |
+| Prompt was vague | Rewrite the question and rerun. |
+| Voices sound generic | Improve the population or attach better research. |
+| Split result maps to useful segments | Do not just rerun; plan the segmented implication. |
+| High-stakes decision after a Fast run | Rerun in Deep with the corrected setup. |
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Inputs" icon="image" href="/simulations/inputs">
+    Prepare Figma, Design Agent, and text context.
+  </Card>
+  <Card title="Reports" icon="file-lines" href="/resource-library/reports">
+    Save the evidence that matters.
+  </Card>
+</CardGroup>

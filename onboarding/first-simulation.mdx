@@ -1,0 +1,129 @@
+---
+title: "Run your first real simulation"
+description: "Pick a real design question, use your first cohort, and read the report honestly."
+---
+
+This walkthrough assumes you have connected Figma and built a first cohort. The goal is a real design research run: a question your team actually needs to answer.
+
+## Pick a question worth simulating
+
+Good first candidates:
+
+- An **onboarding redesign** - new first-run flow, removed steps, or setup sequence.
+- A **trust moment** - permissions, security language, pricing, billing, or data access.
+- A **navigation or IA change** - moving major sections, renaming, consolidation.
+- A **variant comparison** - two or three designs with no team consensus.
+- An **accessibility-sensitive flow** - places where comprehension or control matters.
+
+Poor first candidates:
+
+- Tiny copy tweaks disconnected from a real task.
+- Bug fixes or parity work.
+- Internal tooling your cohort would not use.
+- Half-built concepts that do not represent a realistic user experience.
+
+## Set up the simulation
+
+<Steps>
+  <Step title="Open the wizard">
+    Press `N`. The 3-step wizard opens.
+  </Step>
+
+  <Step title="Step 1 — Decision">
+    Choose **A/B Test**, **Open-ended**, or **Competitive**.
+
+    Fill in a concrete question and hypothesis. Example:
+
+    - **Question:** "Which onboarding variant better helps first-time admins understand why Figma access is needed?"
+    - **Hypothesis:** "The variant with explicit security language will reduce concern without lowering completion intent."
+    - **Success criteria:** "Agents understand the next action, cite fewer security concerns, and prefer the variant for enterprise use."
+  </Step>
+
+  <Step title="Add context and visuals">
+    Use Figma frames when you have them. For early concept work, plain text is acceptable, but concrete visuals produce better design feedback. If you launched from Design Agent, selected surfaces appear as design artifacts automatically.
+  </Step>
+
+  <Step title="Step 2 — Population">
+    Select the population you built in [Build your first population](/onboarding/first-population). Confirm the audience matches the design question.
+  </Step>
+
+  <Step title="Step 3 — Configure">
+    Start with **Fast** and a modest agent count for a first pass. Use **Deep** when the design decision is high-stakes or needs stronger evidence. Click **Launch simulation**.
+  </Step>
+</Steps>
+
+## Watch it run
+
+Open the live run view. Useful things to do while it runs:
+
+- **Read live verbatims** to confirm agents understand the task.
+- **Watch preference split** for A/B and competitive runs.
+- **Watch concerns per agent** to see whether the design is creating friction.
+- **Stop only if setup is wrong**. If the result is merely surprising, let it finish.
+
+## Read results honestly
+
+Completed runs open as a narrative report. For design research, read in this order:
+
+<Steps>
+  <Step title="1. Visual comparison">
+    Confirm the correct Figma frames or Design Agent surfaces were evaluated. Do not analyze a report if the input is wrong.
+  </Step>
+  <Step title="2. Findings">
+    Read the headline findings and what evidence supports them.
+  </Step>
+  <Step title="3. Concern hotspots">
+    Look for confusion, trust concerns, accessibility issues, and places where users hesitate.
+  </Step>
+  <Step title="4. Population lens">
+    Check whether reactions differ by trait, behavior pattern, demographic slice, or cohort subgroup.
+  </Step>
+  <Step title="5. Voices">
+    Read representative quotes. If they sound generic or off-audience, improve the cohort before making a decision.
+  </Step>
+  <Step title="6. Recommendations">
+    Treat recommendations as critique inputs, not automatic design instructions.
+  </Step>
+</Steps>
+
+## Share the result
+
+Export or save the report. The PDF includes:
+
+- Study question, hypothesis, and configuration.
+- Evaluated surfaces or screenshots.
+- Findings, concerns, recommendations, and voices.
+- Population and methodology details.
+- Accessibility audit details when available.
+
+Save important reports to the [Resource Library](/resource-library/reports) so the team can revisit the evidence.
+
+## What to do with the answer
+
+Three honest scenarios:
+
+| Result | Action |
+| --- | --- |
+| Sentia confirms what you already believed | Use the report as one input in critique or planning. Keep the evidence, but do not skip human research judgment. |
+| Sentia contradicts team consensus | Read concerns and voices carefully. Decide whether to revise, test with users, or run a sharper cohort. |
+| Sentia is split or low confidence | Treat the design as contested. Look for segment patterns and consider a smaller human study or another variant. |
+
+## Follow-up loop
+
+After the first run:
+
+- Revise the surface in Design Agent or Figma.
+- Duplicate or rerun the simulation with a stronger prompt.
+- Compare 2-3 completed runs from the Simulations list.
+- Save the comparison report if it changes the decision.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Design Agent handoff" icon="pen-ruler" href="/design-agent/simulation-handoff">
+    Send selected surfaces to simulation directly from Design Agent.
+  </Card>
+  <Card title="Best practices" icon="trophy" href="/simulations/best-practices">
+    Input quality, cohort fit, when to rerun, and how to read disagreement.
+  </Card>
+</CardGroup>

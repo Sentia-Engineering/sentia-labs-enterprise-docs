@@ -1,0 +1,99 @@
+---
+title: "Build your first population"
+description: "Create a focused behavioral cohort for the first design study."
+---
+
+A population is a reusable cohort of synthetic users. For first-week onboarding, keep it small and specific: one audience, one research purpose, and enough context that designers recognize the reactions.
+
+## Before you start
+
+Helpful inputs:
+
+- A clear audience brief.
+- Figma connected if the cohort will evaluate design work.
+- Optional research artifacts in the [Resource Library](/resource-library/research-artifacts).
+- Optional design system guidance in [Settings -> Design system](/admin/design-system).
+
+You can build the first cohort without uploaded research. Add artifacts as soon as you have them; they make the cohort easier to trust.
+
+## Pick your scope
+
+Start narrow. The instinct to model "everyone" produces blurry cohorts that read flat. Good first-population scopes:
+
+- **"First-time enterprise admins connecting Figma during onboarding"**
+- **"UX researchers evaluating whether a prototype is ready for stakeholder review"**
+- **"Procurement-sensitive buyers comparing pricing-page trust signals"**
+- **"Accessibility-reliant users working through a setup flow"**
+
+Each scope is specific enough for meaningful design feedback and broad enough to reuse across several simulations.
+
+## Build it
+
+<Steps>
+  <Step title="Open Populations → New">
+    Press `P`, then create a new population.
+  </Step>
+
+  <Step title="Write the audience brief">
+    Name the cohort and describe who the agents represent, what they are trying to do, and what context they bring. Example: "First-time enterprise admins responsible for connecting Figma and proving value to design leadership."
+  </Step>
+
+  <Step title="Choose size">
+    Pick **10-100 agents**. Start with **50** unless you have a reason to go smaller or larger.
+  </Step>
+
+  <Step title="Tune the cohort">
+    Add behavior patterns, psychological drivers, research contexts, and demographic filters. For US cohorts, state and race/ethnicity filters are available; global cohorts support age, gender, education, occupation, and country context.
+  </Step>
+
+  <Step title="Attach research">
+    Add relevant transcripts, surveys, persona docs, recordings, or experiment history. Sentia uses these artifacts to seed the cohort's memories and language.
+  </Step>
+
+  <Step title="Build">
+    Start the build. Generation runs in the background and the population becomes selectable for simulations when it reaches **Ready**.
+  </Step>
+</Steps>
+
+## Review the cohort
+
+Open the population detail before using it for a high-stakes study. Look for:
+
+- **Sample personas** that sound like the audience.
+- **Behavior trait radar** that matches the study purpose.
+- **Demographic mix** that is intentional, not accidental.
+- **Qualitative coverage** showing which artifacts contributed.
+- **Health signals** that indicate the population has usable agents.
+
+<Tip>
+  If the cohort reads generic, narrow the audience brief before adding more knobs. The brief is the strongest steering input.
+</Tip>
+
+## A common first-week pattern
+
+Many new workspaces build two cohorts in week one:
+
+1. A broad-enough "target users for onboarding" cohort (50 agents).
+2. A narrower "enterprise admins with security concerns" or "new designers evaluating setup" cohort (30-50 agents).
+
+You can keep multiple populations active. Simulations bind to one population each, so pick the cohort that best matches the design question.
+
+## Maintenance
+
+Maintain populations when:
+
+- The target audience changes.
+- You upload better research artifacts.
+- The cohort has been reused for several decisions and the team has learned its blind spots.
+- A simulation report shows generic or implausible reasoning.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Run your first simulation" icon="flask" href="/onboarding/first-simulation">
+    Use the population you just built.
+  </Card>
+  <Card title="Deeper: building populations" icon="users-gear" href="/populations/build">
+    Advanced filters, sub-population sampling, and segment customization.
+  </Card>
+</CardGroup>

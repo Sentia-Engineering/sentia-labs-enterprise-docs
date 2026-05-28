@@ -1,0 +1,67 @@
+---
+title: "Integrations overview"
+description: "Figma-first setup, plus enterprise connectors for broader release-loop programs."
+---
+
+The current self-serve onboarding path is **Figma-first**. Connect Figma, build a cohort, and run the first design simulation. Other integrations are available for enterprise programs where Sentia is connected to analytics, workflow, documentation, experimentation, or ship-detection systems.
+
+## Current first-week integration
+
+| Provider | Where | Purpose |
+| --- | --- | --- |
+| **Figma** | Settings -> Integrations | Import frames into the simulation wizard and Design Agent. Post Design Agent summaries back to Figma comments. |
+
+Figma uses a workspace-saved personal access token in the current rollout. Required scopes are `current_user:read`, `file_content:read`, and `file_comments:write`.
+
+## Enterprise connector categories
+
+These categories may be enabled with your CSM depending on contract, workspace readiness, and rollout stage:
+
+| Category | Providers | Role |
+| --- | --- | --- |
+| **Analytics** | Amplitude, Mixpanel, PostHog | Usage cohorts, funnels, events, and release measurement. |
+| **Qualitative** | Dovetail, Intercom, Zendesk | Interviews, support conversations, tickets, and customer language. |
+| **Workflow** | Linear, Jira, Slack, GitHub | Issue context, handoffs, notifications, and release signals. |
+| **Documentation** | Notion, Confluence | PRDs, design docs, and background context. |
+| **Experimentation** | Statsig, Eppo | A/B test results and calibration evidence. |
+| **Ship detection** | LaunchDarkly, GitHub, Segment | Rollout detection for decision lifecycle workflows. |
+
+## What to connect first
+
+For researchers and designers:
+
+1. **Figma** - required for the main design workflow.
+2. **Resource Library uploads** - no external connector required; upload research artifacts directly.
+3. **Documentation or qualitative sources** - useful after the first week if your team wants automatic ingestion.
+4. **Analytics and experimentation** - useful when connecting simulation evidence to shipped outcomes.
+
+## Auth and security
+
+Credentials are stored encrypted and workspace-scoped. Admins should own connection setup and periodically review which integrations are active.
+
+See [Data handling](/security/data-handling) for storage, redaction, and tenant-isolation details.
+
+## Per-category guides
+
+Some category pages describe enterprise connectors that may not be visible in your current self-serve catalog. If a provider is not shown in Settings, ask your CSM before attempting setup.
+
+<CardGroup cols={2}>
+  <Card title="Workflow" icon="bolt" href="/integrations/workflow">
+    Figma, Linear, Jira, Slack, and related workflow context.
+  </Card>
+  <Card title="Analytics" icon="chart-mixed" href="/integrations/analytics">
+    Amplitude, Mixpanel, and PostHog for enterprise release loops.
+  </Card>
+  <Card title="Qualitative" icon="microphone" href="/integrations/qualitative">
+    Dovetail, Intercom, and Zendesk for automatic customer-language ingestion.
+  </Card>
+  <Card title="Documentation" icon="file-lines" href="/integrations/documentation">
+    Notion and Confluence context for mature workflows.
+  </Card>
+  <Card title="Experimentation" icon="flask" href="/integrations/experimentation">
+    Statsig and Eppo for calibration programs.
+  </Card>
+  <Card title="Ship detection" icon="rocket" href="/integrations/ship-detection">
+    LaunchDarkly, GitHub, and Segment for shipped-decision detection.
+  </Card>
+</CardGroup>

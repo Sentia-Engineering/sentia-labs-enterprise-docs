@@ -1,0 +1,412 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Sentia Platform — OpenAPI 3.1 Specification (Phase 3.3)
+# Rendered via Redoc: npx @redocly/cli preview-docs docs/api-reference.yaml
+# ─────────────────────────────────────────────────────────────────────────────
+
+openapi: 3.1.0
+info:
+  title: Sentia Platform API
+  version: 1.0.0
+  description: |
+    Behavioral product simulation platform for enterprise product teams.
+    Run thousands of AI agents through decision scenarios to predict how
+    user segments will respond before shipping.
+
+    ## Authentication
+    All API requests require a WorkOS-issued JWT in the `Authorization` header.
+    Corporate IdP only (SAML/OIDC). No password flows.
+
+    ## Workspace Scoping
+    All data operations require the `x-workspace-id` header.
+    Row-level security ensures complete data isolation between workspaces.
+
+    ## Rate Limiting
+    - 100 requests/minute per workspace (general)
+    - 10 simulation requests/minute per workspace
+    - 1,000 webhook deliveries/minute per provider
+
+  contact:
+    name: Sentia Engineering
+    email: engineering@sentia.dev
+  license:
+    name: Proprietary
+
+servers:
+  - url: https://api.sentia.dev
+    description: Production (US)
+  - url: https://api.eu.sentia.dev
+    description: Production (EU — GDPR data residency)
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Simulations
+    description: Create and manage behavioral simulations
+  - name: Populations
+    description: Manage synthetic agent populations
+  - name: Integrations
+    description: Connect external tools (Amplitude, Figma, Linear, etc.)
+  - name: Calibration
+    description: Prediction accuracy tracking and adjustment
+  - name: Captures
+    description: URL and localhost capture for simulation input
+  - name: Admin
+    description: Workspace management, SCIM, billing, GDPR
+  - name: Health
+    description: Service health and readiness checks
+
+paths:
+  /api/simulations:
+    post:
+      tags: [Simulations]
+      summary: Create simulation
+      operationId: createSimulation
+      parameters:
+        - $ref: '#/components/parameters/WorkspaceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSimulationRequest'
+      responses:
+        '202':
+          description: Simulation queued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimulationResponse'
+
+  /api/simulations/{simulationId}:
+    get:
+      tags: [Simulations]
+      summary: Get simulation status and results
+      operationId: getSimulation
+      parameters:
+        - $ref: '#/components/parameters/WorkspaceId'
+        - name: simulationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Simulation details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimulationResponse'
+
+  /api/populations:
+    post:
+      tags: [Populations]
+      summary: Create population
+      operationId: createPopulation
+      parameters:
+        - $ref: '#/components/parameters/WorkspaceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePopulationRequest'
+      responses:
+        '201':
+          description: Population created
+
+  /api/populations/{populationId}/validate:
+    post:
+      tags: [Populations]
+      summary: Run behavioral validation suite
+      description: |
+        Runs 5 canonical behavioral economics experiments (dictator game,
+        trust game, public goods, prisoner's dilemma, ultimatum) against
+        a sample of agents to validate behavioral fidelity.
+      operationId: validatePopulation
+      parameters:
+        - $ref: '#/components/parameters/WorkspaceId'
+        - name: populationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Validation report
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PopulationValidationReport'
+
+  /api/captures/url:
+    post:
+      tags: [Captures]
+      summary: Capture URL content
+      operationId: captureUrl
+      parameters:
+        - $ref: '#/components/parameters/WorkspaceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [url]
+              properties:
+                url:
+                  type: string
+                  format: uri
+                waitForSelector:
+                  type: string
+      responses:
+        '200':
+          description: Capture completed
+
+  /integrations:
+    get:
+      tags: [Integrations]
+      summary: List all integration connections
+      operationId: listIntegrations
+      parameters:
+        - $ref: '#/components/parameters/WorkspaceId'
+      responses:
+        '200':
+          description: Integration connections list
+
+  /admin/data-deletion-request:
+    delete:
+      tags: [Admin]
+      summary: GDPR data deletion (Right to Erasure)
+      description: |
+        Deletes ALL workspace data across PostgreSQL, MongoDB, S3,
+        Pinecone, and OpenSearch. Requires ADMIN role and explicit
+        confirmation phrase "DELETE ALL DATA".
+      operationId: requestDataDeletion
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataDeletionRequest'
+      responses:
+        '200':
+          description: Deletion completed
+
+  /admin/data-export-request:
+    post:
+      tags: [Admin]
+      summary: GDPR data export (Right to Portability)
+      operationId: requestDataExport
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataExportRequest'
+      responses:
+        '202':
+          description: Export job queued
+
+  /admin/workspaces:
+    get:
+      tags: [Admin]
+      summary: List workspaces
+      operationId: listWorkspaces
+      responses:
+        '200':
+          description: Workspace list
+
+    post:
+      tags: [Admin]
+      summary: Create workspace
+      operationId: createWorkspace
+      responses:
+        '201':
+          description: Workspace created
+
+  /admin/scim/v2/Users:
+    get:
+      tags: [Admin]
+      summary: SCIM list users
+      operationId: scimListUsers
+      responses:
+        '200':
+          description: SCIM user list
+
+    post:
+      tags: [Admin]
+      summary: SCIM provision user
+      operationId: scimCreateUser
+      responses:
+        '201':
+          description: User provisioned
+
+  /admin/usage:
+    get:
+      tags: [Admin]
+      summary: Usage analytics
+      operationId: getUsage
+      parameters:
+        - name: startDate
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: endDate
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: granularity
+          in: query
+          schema:
+            type: string
+            enum: [day, week, month]
+            default: day
+      responses:
+        '200':
+          description: Usage analytics
+
+  /admin/billing:
+    get:
+      tags: [Admin]
+      summary: Billing summary
+      operationId: getBilling
+      responses:
+        '200':
+          description: Billing details
+
+  /health:
+    get:
+      tags: [Health]
+      summary: Liveness probe
+      security: []
+      responses:
+        '200':
+          description: Service is alive
+
+  /ready:
+    get:
+      tags: [Health]
+      summary: Readiness probe
+      security: []
+      responses:
+        '200':
+          description: Service is ready
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: WorkOS-issued JWT (SAML/OIDC)
+
+  parameters:
+    WorkspaceId:
+      name: x-workspace-id
+      in: header
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Workspace ID for data scoping
+
+  schemas:
+    CreateSimulationRequest:
+      type: object
+      required: [populationId, scenarioId, config]
+      properties:
+        populationId:
+          type: string
+          format: uuid
+        scenarioId:
+          type: string
+          format: uuid
+        config:
+          type: object
+          required: [mode, agentCount, maxDurationMs]
+          properties:
+            mode:
+              type: string
+              enum: [fast, deep]
+            agentCount:
+              type: integer
+              minimum: 1
+              maximum: 10000
+            maxDurationMs:
+              type: integer
+            convergenceThreshold:
+              type: number
+              default: 0.95
+
+    SimulationResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [queued, running, converging, completed, failed]
+        finalDistribution:
+          type: object
+          additionalProperties:
+            type: number
+        confidenceScore:
+          type: number
+        convergenceScore:
+          type: number
+
+    CreatePopulationRequest:
+      type: object
+      required: [name, agentCount]
+      properties:
+        name:
+          type: string
+        agentCount:
+          type: integer
+          minimum: 1
+          maximum: 100000
+
+    PopulationValidationReport:
+      type: object
+      properties:
+        passRate:
+          type: number
+        overallFidelityScore:
+          type: number
+        experiments:
+          type: array
+          items:
+            type: object
+
+    DataDeletionRequest:
+      type: object
+      required: [workspaceId, reason, confirmation]
+      properties:
+        workspaceId:
+          type: string
+          format: uuid
+        reason:
+          type: string
+        confirmation:
+          type: string
+          enum: ['DELETE ALL DATA']
+
+    DataExportRequest:
+      type: object
+      required: [workspaceId]
+      properties:
+        workspaceId:
+          type: string
+          format: uuid
+        format:
+          type: string
+          enum: [json, csv]
+          default: json

@@ -1,0 +1,103 @@
+---
+title: "Capture URL"
+api: "POST /api/captures/url"
+description: "Capture a URL via headless browser. Returns a capture ID you reference in scenario creation."
+---
+
+Renders a URL with a managed headless browser and stores the screenshot + cleaned content as a capture. Use the returned capture ID in simulation scenarios.
+
+## Request
+
+```bash
+curl -X POST https://api.sentialabs.ai/api/captures/url \
+  -H "Authorization: Bearer $SENTIA_TOKEN" \
+  -H "x-workspace-id: $WORKSPACE_ID" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://staging.example.com/onboarding",
+    "waitForSelector": "[data-testid=onboarding-loaded]",
+    "viewport": { "width": 1440, "height": 900 },
+    "label": "Onboarding — 7-day trial variant"
+  }'
+```
+
+## Body
+
+| Field | Type | Required | Notes |
+| --- | --- | --- | --- |
+| `url` | string (URI) | ✅ | HTTPS only; SSRF-filtered |
+| `waitForSelector` | string | Optional | CSS selector to wait for before capturing |
+| `waitForTimeoutMs` | int | Optional | Default 5,000ms |
+| `viewport` | object | Optional | Default 1440×900 |
+| `label` | string | Optional | Display name in the dashboard |
+| `cookies` | array | Optional | For authenticated pages — see below |
+
+## Authenticated pages
+
+For pages behind login, pass session cookies:
+
+```json
+"cookies": [
+  { "name": "session", "value": "encrypted-value", "domain": ".example.com" }
+]
+```
+
+Cookies are encrypted in transit (TLS) and stored encrypted at rest with the workspace's per-tenant KMS key. They're used only for the capture and not retained for future captures.
+
+## Response — 200 OK
+
+```json
+{
+  "id": "cap_8f9a2b...",
+  "url": "https://staging.example.com/onboarding",
+  "label": "Onboarding — 7-day trial variant",
+  "capturedAt": "2026-05-25T14:32:17Z",
+  "viewport": { "width": 1440, "height": 900 },
+  "screenshot": {
+    "url": "https://s3.us-east-1.amazonaws.com/...",
+    "expiresAt": "2026-05-25T15:32:17Z"
+  },
+  "content": {
+    "title": "Welcome — Get started in minutes",
+    "metaDescription": "Try the new shorter free trial",
+    "textLength": 4892,
+    "url": "https://s3.us-east-1.amazonaws.com/..."
+  },
+  "metadata": {
+    "loadTimeMs": 1240,
+    "finalUrl": "https://staging.example.com/onboarding"
+  }
+}
+```
+
+Screenshot and content S3 URLs are signed and expire after 1 hour. Re-fetch the capture to get fresh URLs.
+
+## SSRF protection
+
+The API rejects URLs that resolve to:
+
+- Private IP ranges (10.x.x.x, 192.168.x.x, 172.16.x.x–172.31.x.x, fd00::/8, fe80::/10)
+- Cloud metadata endpoints (169.254.169.254, etc.)
+- IPv4-mapped IPv6 addresses for private ranges
+- Localhost (127.x.x.x, ::1)
+
+Returns `400 invalid_url` with the reason.
+
+## Errors
+
+| Status | Code | Cause |
+| --- | --- | --- |
+| 400 | `invalid_url` | URL is private, malformed, or SSRF-filtered |
+| 408 | `capture_timeout` | Page didn't load within the timeout |
+| 502 | `provider_unavailable` | Headless browser pool unavailable; retry |
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Inputs (dashboard)" icon="image" href="/simulations/inputs">
+    Dashboard context sources and when to use them.
+  </Card>
+  <Card title="Support" icon="life-ring" href="/reference/support">
+    Ask support if prototype capture should be enabled for your workspace.
+  </Card>
+</CardGroup>

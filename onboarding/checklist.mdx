@@ -1,0 +1,119 @@
+---
+title: "Week-one checklist"
+description: "A practical first-week rollout for enterprise research and design teams."
+---
+
+This checklist takes a new workspace from empty to credible first studies. It is written for UX research and design teams: connect Figma, bring in research context, define a focused cohort, run a design study, and save the evidence.
+
+## Day 1 — Workspace setup (Admin, ~45 min)
+
+<Steps>
+  <Step title="Confirm SSO is configured">
+    Your workspace ships with WorkOS SSO already wired up at kickoff. Test it by signing in at [app.sentialabs.ai](https://app.sentialabs.ai). If anything fails, see [SSO setup](/onboarding/sso-setup).
+  </Step>
+  <Step title="Set up SCIM provisioning (recommended)">
+    SCIM auto-provisions and deprovisions users from your IdP (Okta, Entra ID, OneLogin, Google Workspace). Strongly recommended for enterprise workspaces. See [SSO & SCIM](/admin/sso-scim).
+  </Step>
+  <Step title="Invite the first cohort">
+    Add 3-5 power users: a UX research lead, design lead, product partner, and workspace admin. See [Invite your team](/onboarding/invite-team).
+  </Step>
+  <Step title="Add design context">
+    In **Settings -> Design system**, add the team's design guidance and any accessibility rule PDFs that should inform generated surfaces and audits. See [Design system settings](/admin/design-system).
+  </Step>
+</Steps>
+
+## Day 2 — Connect Figma and research inputs (Design + research, ~60 min)
+
+<Steps>
+  <Step title="Connect Figma">
+    In **Settings -> Integrations**, save a Figma personal access token with `current_user:read`, `file_content:read`, and `file_comments:write`. See [Design Agent sources](/design-agent/sources).
+  </Step>
+  <Step title="Upload initial research">
+    Add 5-20 high-signal transcripts, survey exports, persona docs, or recordings to the [Resource Library](/resource-library/research-artifacts).
+  </Step>
+  <Step title="Confirm source access">
+    Open Design Agent, create a project, and paste a Figma file URL. Wait for surfaces to index before day 4.
+  </Step>
+  <Step title="Decide what belongs later">
+    Analytics, qualitative tool connectors, workflow triggers, and calibration sources can be rolled out with your CSM after the first studies. They are not required for the Figma-first path.
+  </Step>
+</Steps>
+
+## Day 3 — Build the first cohort (UX research, ~60-90 min)
+
+<Steps>
+  <Step title="Define population intent">
+    Decide who you want to simulate: "first-time enterprise admins," "design system maintainers," "trial users evaluating onboarding," or another specific audience. Do not model everyone in one cohort.
+  </Step>
+  <Step title="Build the population">
+    Use the **behavioral cohort studio** to write the audience brief, choose 10-100 agents, add behavior patterns, tune demographics, and attach relevant research. See [Build a population](/populations/build).
+  </Step>
+  <Step title="Review the cohort">
+    Check demographics, adopter mix, behavior traits, sample personas, health signals, and qualitative coverage. If it reads generic, narrow the brief or attach better research.
+  </Step>
+</Steps>
+
+## Day 4 — Create design variants (Design, ~60 min)
+
+<Steps>
+  <Step title="Choose one real design question">
+    Pick a live question: onboarding clarity, trust on a pricing page, accessibility risk, IA comprehension, or a contested layout.
+  </Step>
+  <Step title="Use Design Agent or direct Figma input">
+    If you need variants, use [Design Agent](/design-agent/overview). If the design is already ready, use the [simulation wizard](/simulations/wizard) directly.
+  </Step>
+  <Step title="Prepare 1-3 surfaces">
+    Name frames clearly, remove throwaway concepts, and write the research question before launch.
+  </Step>
+</Steps>
+
+## Day 5 — Run, read, and save the first study (Research + design, ~60 min)
+
+<Steps>
+  <Step title="Launch the simulation">
+    Use the 3-step wizard: Decision, Population, Configure. Start with Fast mode for setup validation, then use Deep when the question needs stronger evidence.
+  </Step>
+  <Step title="Read the report together">
+    Start with findings, concern hotspots, recommendations, population lens, and voices. Avoid treating the headline preference as the whole answer.
+  </Step>
+  <Step title="Save evidence">
+    Export or save the report to [Resource Library -> Reports](/resource-library/reports) when it should inform critique, planning, or stakeholder review.
+  </Step>
+  <Step title="Decide the next study">
+    Either revise the design and rerun, compare variants, or create a sharper cohort for a different audience.
+  </Step>
+</Steps>
+
+## Optional after the first week
+
+<CardGroup cols={2}>
+  <Card title="Custom traits" icon="sliders" href="/admin/custom-traits">
+    Add workspace-specific audience dimensions such as AI literacy, security sensitivity, or accessibility reliance.
+  </Card>
+  <Card title="Simulation schedules" icon="calendar-clock" href="/admin/simulation-schedules">
+    Re-run important study templates on a cadence.
+  </Card>
+  <Card title="Social dynamics" icon="users" href="/admin/social-dynamics">
+    Model peer influence for collaboration and adoption questions.
+  </Card>
+  <Card title="Release-loop integrations" icon="plug" href="/integrations/overview">
+    Add analytics, workflow, experimentation, and ship-detection connectors when your team is ready for calibration workflows.
+  </Card>
+</CardGroup>
+
+## After week one
+
+You should have:
+
+- SSO working, team invited, and owner/admin coverage.
+- Figma connected and at least one source indexed.
+- Design system guidance added.
+- At least one focused 10-100 agent cohort.
+- At least one real simulation report saved in the Resource Library.
+- A shared team convention for when to use Sentia before critique, usability testing, or roadmap planning.
+
+From here, the daily loop is: **design question -> cohort -> simulate -> report -> revise or decide.**
+
+<Note>
+  **Recommended cadence:** simulate meaningful design and product decisions: onboarding redesigns, pricing or trust moments, major IA changes, accessibility-sensitive flows, and contested variants. Skip trivial copy tweaks unless they are part of a larger experience change.
+</Note>

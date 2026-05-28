@@ -1,0 +1,146 @@
+---
+title: "Qualitative integrations"
+description: "Dovetail, Intercom, and Zendesk connector guidance for enterprise workspaces."
+---
+
+Qualitative integrations are optional enterprise connectors. In the current Figma-first path, many teams upload transcripts, surveys, and recordings directly through the [Resource Library](/resource-library/research-artifacts) before setting up automatic connectors.
+
+Use these connectors when your team wants ongoing ingestion from a source system rather than manual uploads.
+
+## Dovetail (preferred for interview-heavy teams)
+
+Dovetail provides structured interview transcripts, highlights, and tagged themes — the highest-quality grounding source.
+
+<Steps>
+  <Step title="OAuth via Nango">
+    Integrations → Dovetail → **Connect**. You'll be redirected to Dovetail to grant Sentia read access to projects, transcripts, and highlights.
+  </Step>
+  <Step title="Choose projects">
+    Pick which Dovetail projects to ingest. Most teams start with all active projects from the last 12 months.
+  </Step>
+  <Step title="Initial sync">
+    Sentia pulls transcripts and highlights. ~5–20 minutes for typical workspaces.
+  </Step>
+  <Step title="Verify grounding">
+    Open Populations → existing population → **Sources**. You should see Dovetail listed with verbatim count and last-sync time.
+  </Step>
+</Steps>
+
+**What's synced:**
+- Interview transcripts (full text)
+- Highlights (clip-level)
+- Tags and themes
+- Project + participant metadata (anonymized at boundary)
+
+**Sync cadence:** transcripts hourly, highlights daily.
+
+**Best practice:** tag your highlights generously in Dovetail — Sentia uses tags as relevance signals during agent memory retrieval.
+
+## Intercom
+
+Best for workspaces with high-volume support conversations.
+
+<Steps>
+  <Step title="OAuth via Nango">
+    Integrations → Intercom → **Connect**. Grant Sentia read access.
+  </Step>
+  <Step title="Configure filters">
+    Pick:
+    - **Conversation types:** New conversations, replies, or both
+    - **Status filter:** Open, closed, snoozed
+    - **Tags filter:** Only conversations with specific tags (optional)
+    - **Satisfaction filter:** Only rated conversations (optional, recommended)
+  </Step>
+  <Step title="Initial sync">
+    Pulls conversations from the last 90 days. Typical duration: 15–45 minutes depending on volume.
+  </Step>
+  <Step title="Set ongoing sync window">
+    Default: rolling 90-day window, refreshed every 24 hours.
+  </Step>
+</Steps>
+
+**What's synced:** conversation content, customer satisfaction scores, conversation outcomes, customer attributes (anonymized).
+
+**Best practice:** filter to rated conversations only — they have higher signal density than the average noisy support ticket.
+
+## Zendesk
+
+Same role as Intercom; pick whichever your team actually uses.
+
+<Steps>
+  <Step title="OAuth via Nango">
+    Integrations → Zendesk → **Connect**.
+  </Step>
+  <Step title="Choose ticket scope">
+    - **Brands:** which Zendesk brands to ingest
+    - **Ticket types:** standard, problem, incident, question, task
+    - **Priority filter:** all, or high/urgent only
+    - **Satisfaction filter:** rated only (recommended)
+  </Step>
+  <Step title="Initial sync">
+    Last 90 days. 15–45 minutes.
+  </Step>
+  <Step title="Configure ongoing sync">
+    24-hour cadence.
+  </Step>
+</Steps>
+
+## Combining qualitative sources
+
+You can connect multiple. Sentia de-duplicates by content similarity (cosine threshold) — if the same conversation exists in both Intercom and Zendesk (unusual but possible), it's counted once.
+
+Common combinations:
+
+- **Dovetail + Intercom** — structured interview depth + high-volume in-the-flow feedback
+- **Dovetail + Zendesk** — same, with Zendesk as the in-the-flow source
+- **Intercom only** — when interviews are sparse but support volume is high
+- **Dovetail only** — when interviews are the primary research method
+
+## PII redaction
+
+Sentia auto-redacts PII before storing verbatims:
+
+- Email addresses → `[EMAIL]`
+- Phone numbers → `[PHONE]`
+- Full names (when explicitly tagged in source) → `[NAME]`
+- Credit card patterns → `[REDACTED]`
+
+You can configure additional regex patterns in Settings → Integrations → Privacy.
+
+## Sync health
+
+Each qualitative integration shows:
+
+- Total verbatims synced
+- Net new in last 24 hours
+- Last successful sync timestamp
+- Active filter set
+
+When a sync fails repeatedly (3 consecutive failures), the integration goes to **Error** state and admins get a Slack notification.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Verbatims aren't appearing in populations after sync">
+    Verbatims attach to populations at build time, not at sync time. Existing populations don't auto-receive new verbatims — rebuild or refresh the population to pull in new grounding.
+  </Accordion>
+
+  <Accordion title="Sync is much slower than expected">
+    Likely a provider rate limit. Intercom and Zendesk have per-account API limits Sentia respects. For very high-volume workspaces, sync may take overnight for first run; ongoing syncs are incremental and fast.
+  </Accordion>
+
+  <Accordion title="Agents are quoting outdated phrases ('our old design', etc.)">
+    Your corpus is too historical. Shorten the rolling window (Integrations → integration card → **Sync window**) to 60 or 30 days, and refresh affected populations.
+  </Accordion>
+</AccordionGroup>
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Interview grounding" icon="microphone" href="/populations/interview-grounding">
+    The deep-dive on how qualitative data becomes agent memory.
+  </Card>
+  <Card title="Workflow integrations" icon="bolt" href="/integrations/workflow">
+    Linear, Jira, Figma, Slack — and the auto-triggers they enable.
+  </Card>
+</CardGroup>
