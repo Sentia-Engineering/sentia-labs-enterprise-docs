@@ -3,17 +3,23 @@ title: "Run your first real simulation"
 description: "Pick a real design question, use your first cohort, and read the report honestly."
 ---
 
-This walkthrough assumes you have connected Figma and built a first cohort. The goal is a real design research run: a question your team actually needs to answer.
+This walkthrough assumes Figma is connected and you have one cohort. The goal is a real design research run — a question your team actually needs to answer.
+
+The simulation wizard lives at `/simulations/new` and has **3 steps**: **Decision → Population → Configure**. Open it with the `N` shortcut, the **New simulation** button on the Simulations page, or — from the onboarding wizard — the **Create simulation** action.
+
+<Note>
+  Simulations are gated by the `simulations-page` feature flag. If `S` and `N` don't navigate anywhere and the sidebar is missing the **Simulations** item, ask your CSM to enable the flag.
+</Note>
 
 ## Pick a question worth simulating
 
 Good first candidates:
 
-- An **onboarding redesign** - new first-run flow, removed steps, or setup sequence.
-- A **trust moment** - permissions, security language, pricing, billing, or data access.
-- A **navigation or IA change** - moving major sections, renaming, consolidation.
-- A **variant comparison** - two or three designs with no team consensus.
-- An **accessibility-sensitive flow** - places where comprehension or control matters.
+- An **onboarding redesign** — new first-run flow, removed steps, or setup sequence.
+- A **trust moment** — permissions, security language, pricing, billing, or data access.
+- A **navigation or IA change** — moving major sections, renaming, consolidation.
+- A **variant comparison** — two or three designs with no team consensus.
+- An **accessibility-sensitive flow** — places where comprehension or control matters.
 
 Poor first candidates:
 
@@ -25,41 +31,55 @@ Poor first candidates:
 ## Set up the simulation
 
 <Steps>
-  <Step title="Open the wizard">
-    Press `N`. The 3-step wizard opens.
-  </Step>
-
   <Step title="Step 1 — Decision">
-    Choose **A/B Test**, **Open-ended**, or **Competitive**.
+    Three sub-sections, in order:
 
-    Fill in a concrete question and hypothesis. Example:
+    **Scenario type** (radio group, top of step):
 
-    - **Question:** "Which onboarding variant better helps first-time admins understand why Figma access is needed?"
-    - **Hypothesis:** "The variant with explicit security language will reduce concern without lowering completion intent."
-    - **Success criteria:** "Agents understand the next action, cite fewer security concerns, and prefer the variant for enterprise use."
-  </Step>
+    - **A/B Test** — compare options with confidence scores.
+    - **Open-ended** — freeform feedback and concerns.
+    - **Competitive** — compare against an alternative or incumbent.
 
-  <Step title="Add context and visuals">
-    Use Figma frames when you have them. For early concept work, plain text is acceptable, but concrete visuals produce better design feedback. If you launched from Design Agent, selected surfaces appear as design artifacts automatically.
+    **Add context** (source picker — press `1` or `2` to select):
+
+    - **Plain-text** (`1`) — paste the full context inline.
+    - **Figma** (`2`) — paste a Figma file URL. If Figma is not connected, an inline alert links to **Settings → Integrations**.
+    - **Coded Prototype** and **GitHub** are visible but disabled in the current rollout.
+
+    For A/B scenarios, each variant gets its own context block (text or Figma URL).
+
+    **What decision are you testing?** — the decision description textarea. Be concrete:
+
+    - *"Which onboarding variant better helps first-time admins understand why Figma access is needed?"*
   </Step>
 
   <Step title="Step 2 — Population">
-    Select the population you built in [Build your first population](/onboarding/first-population). Confirm the audience matches the design question.
+    Pick the population you built in [Build your first population](/onboarding/first-population). Confirm the audience matches the design question.
   </Step>
 
   <Step title="Step 3 — Configure">
-    Start with **Fast** and a modest agent count for a first pass. Use **Deep** when the design decision is high-stakes or needs stronger evidence. Click **Launch simulation**.
+    A three-column panel shows **Agents · Estimated cost · Estimated time** that updates as you change agent count.
+
+    - **Agents** — minimum 10, maximum is the lower of 10,000 and your population's size.
+    - **Estimated cost** — `$0.005/agent` in Fast mode (Haiku), `$0.012/agent` in Deep mode (Sonnet).
+    - **Estimated time** — `max(2 min, agentCount / 60)`.
+
+    Below that, the **Simulation Preview** shows top demographics, adopter mix, and 3 example personas drawn from the selected population.
+
+    Press **Launch Simulation** (or `⌘⇧L`) to start. The launch overlay animates while the run is being created.
   </Step>
 </Steps>
 
+Use `⌘↵` to advance a step and `⌘⌫` to go back.
+
 ## Watch it run
 
-Open the live run view. Useful things to do while it runs:
+The run page streams live results. Useful things to do:
 
 - **Read live verbatims** to confirm agents understand the task.
 - **Watch preference split** for A/B and competitive runs.
 - **Watch concerns per agent** to see whether the design is creating friction.
-- **Stop only if setup is wrong**. If the result is merely surprising, let it finish.
+- **Stop only if setup is wrong.** If the result is merely surprising, let it finish.
 
 ## Read results honestly
 
@@ -67,13 +87,13 @@ Completed runs open as a narrative report. For design research, read in this ord
 
 <Steps>
   <Step title="1. Visual comparison">
-    Confirm the correct Figma frames or Design Agent surfaces were evaluated. Do not analyze a report if the input is wrong.
+    Confirm the correct Figma frames or design surfaces were evaluated. Do not analyze a report if the input is wrong.
   </Step>
   <Step title="2. Findings">
     Read the headline findings and what evidence supports them.
   </Step>
   <Step title="3. Concern hotspots">
-    Look for confusion, trust concerns, accessibility issues, and places where users hesitate.
+    Look for confusion, trust concerns, and places where users hesitate. The accessibility audit sub-tab appears only when the `accessibility-audit` flag is enabled.
   </Step>
   <Step title="4. Population lens">
     Check whether reactions differ by trait, behavior pattern, demographic slice, or cohort subgroup.
@@ -88,19 +108,13 @@ Completed runs open as a narrative report. For design research, read in this ord
 
 ## Share the result
 
-Export or save the report. The PDF includes:
+**Export PDF** is gated by the `export-pdf-enabled` flag. With the flag on, the PDF includes the study question, hypothesis, configuration, evaluated surfaces, findings, concerns, recommendations, voices, population details, and the accessibility audit when available.
 
-- Study question, hypothesis, and configuration.
-- Evaluated surfaces or screenshots.
-- Findings, concerns, recommendations, and voices.
-- Population and methodology details.
-- Accessibility audit details when available.
+**A/B comparison** between two completed runs is gated by `compare-feature`. With the flag on, the **Compare** action appears on the Simulations list and on completed run pages.
 
 Save important reports to the [Resource Library](/resource-library/reports) so the team can revisit the evidence.
 
 ## What to do with the answer
-
-Three honest scenarios:
 
 | Result | Action |
 | --- | --- |
@@ -114,7 +128,7 @@ After the first run:
 
 - Revise the surface in Design Agent or Figma.
 - Duplicate or rerun the simulation with a stronger prompt.
-- Compare 2-3 completed runs from the Simulations list.
+- Compare 2 completed runs (`compare-feature` flag).
 - Save the comparison report if it changes the decision.
 
 ## Next

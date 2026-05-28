@@ -1,90 +1,79 @@
 ---
-title: "Week-one checklist"
-description: "A practical first-week rollout for enterprise research and design teams."
+title: "Onboarding checklist"
+description: "What every new workspace does on day one, mapped to the in-app setup guide."
 ---
 
-This checklist takes a new workspace from empty to credible first studies. It is written for UX research and design teams: connect Figma, bring in research context, define a focused cohort, run a design study, and save the evidence.
+The first time an Owner or Admin signs in, Sentia drops them into an **in-app setup guide** at `/onboarding`. It is a five-step wizard that gets a workspace from empty to a first real simulation. This page mirrors that guide so you can plan the rollout and bring the right people to each step.
 
-## Day 1 — Workspace setup (Admin, ~45 min)
+Non-admin teammates skip the wizard entirely. They land on `/welcome`, see a workspace readiness summary (Figma · Population · First simulation · Calibration), and enter the app from there.
+
+## Before the setup guide
+
+Your Customer Success Manager finishes one thing before you sign in: **WorkOS AuthKit SSO** is provisioned against your IdP. There are no password sign-ins. If sign-in fails on the first attempt, see [Sign in with SSO](/onboarding/sso-setup).
+
+## The in-app setup guide (5 steps)
+
+The guide lives at `app.sentialabs.ai/onboarding` and auto-resumes at the first unfinished step. Each step has a **Skip** option except Welcome.
 
 <Steps>
-  <Step title="Confirm SSO is configured">
-    Your workspace ships with WorkOS SSO already wired up at kickoff. Test it by signing in at [app.sentialabs.ai](https://app.sentialabs.ai). If anything fails, see [SSO setup](/onboarding/sso-setup).
+  <Step title="1. Welcome">
+    Confirms the workspace name. No input required — click **Continue**.
   </Step>
-  <Step title="Set up SCIM provisioning (recommended)">
-    SCIM auto-provisions and deprovisions users from your IdP (Okta, Entra ID, OneLogin, Google Workspace). Strongly recommended for enterprise workspaces. See [SSO & SCIM](/admin/sso-scim).
+  <Step title="2. Invite your team">
+    Add teammates one at a time: email + role (**Admin**, **Operator**, or **Viewer** — Owner is reserved for the first sign-up and can be promoted from Settings → Team). Pending invitations show below the form. Invites use SSO, so the invitee's email must be authoritative under your IdP.
   </Step>
-  <Step title="Invite the first cohort">
-    Add 3-5 power users: a UX research lead, design lead, product partner, and workspace admin. See [Invite your team](/onboarding/invite-team).
+  <Step title="3. Connect your design tool">
+    Paste a Figma personal access token (`figd_…`). The token needs `current_user:read`, `file_content:read`, and `file_comments:write`. Generate it at figma.com → Settings → Personal access tokens. The wizard auto-advances once Figma reports `connected`. You can skip and connect later from **Settings → Integrations**.
   </Step>
-  <Step title="Add design context">
-    In **Settings -> Design system**, add the team's design guidance and any accessibility rule PDFs that should inform generated surfaces and audits. See [Design system settings](/admin/design-system).
+  <Step title="4. Build your first population">
+    Clicking **Open population builder** takes you to `/populations/new`. Write a one-paragraph audience brief — Sentia infers behavior, psychology, contexts, and demographic filters from it live as you type. Pick a size (10–100 agents; default 50), optionally attach research artifacts, then create. The wizard auto-advances when the population reports done.
+  </Step>
+  <Step title="5. Launch your first simulation">
+    Clicking **Create simulation** opens the 3-step simulation wizard at `/simulations/new`. Pick a scenario type, add context (Plain-text or Figma), describe the decision, pick the population you just built, set agent count, and **Launch**. Returning to the onboarding step after the run completes shows **Enter Sentia**.
   </Step>
 </Steps>
 
-## Day 2 — Connect Figma and research inputs (Design + research, ~60 min)
+After the last step, the dashboard transition runs and you land on `/overview`.
 
-<Steps>
-  <Step title="Connect Figma">
-    In **Settings -> Integrations**, save a Figma personal access token with `current_user:read`, `file_content:read`, and `file_comments:write`. See [Design Agent sources](/design-agent/sources).
-  </Step>
-  <Step title="Upload initial research">
-    Add 5-20 high-signal transcripts, survey exports, persona docs, or recordings to the [Resource Library](/resource-library/research-artifacts).
-  </Step>
-  <Step title="Confirm source access">
-    Open Design Agent, create a project, and paste a Figma file URL. Wait for surfaces to index before day 4.
-  </Step>
-  <Step title="Decide what belongs later">
-    Analytics, qualitative tool connectors, workflow triggers, and calibration sources can be rolled out with your CSM after the first studies. They are not required for the Figma-first path.
-  </Step>
-</Steps>
+<Tip>
+  You can leave the guide at any time via **Finish setup later** in the header. The next time an Owner or Admin signs in, the guide resumes at the first unfinished step.
+</Tip>
 
-## Day 3 — Build the first cohort (UX research, ~60-90 min)
+## What everyone else sees
 
-<Steps>
-  <Step title="Define population intent">
-    Decide who you want to simulate: "first-time enterprise admins," "design system maintainers," "trial users evaluating onboarding," or another specific audience. Do not model everyone in one cohort.
-  </Step>
-  <Step title="Build the population">
-    Use the **behavioral cohort studio** to write the audience brief, choose 10-100 agents, add behavior patterns, tune demographics, and attach relevant research. See [Build a population](/populations/build).
-  </Step>
-  <Step title="Review the cohort">
-    Check demographics, adopter mix, behavior traits, sample personas, health signals, and qualitative coverage. If it reads generic, narrow the brief or attach better research.
-  </Step>
-</Steps>
+Operators, Viewers, Billing, and Guest roles land on `/welcome` with:
 
-## Day 4 — Create design variants (Design, ~60 min)
+- Their role and a one-line description of what it grants.
+- A workspace readiness checklist (Figma · Population · First simulation · Calibration) that reflects the live state of the workspace.
+- An **Enter Sentia** button that takes them to `/overview`.
 
-<Steps>
-  <Step title="Choose one real design question">
-    Pick a live question: onboarding clarity, trust on a pricing page, accessibility risk, IA comprehension, or a contested layout.
-  </Step>
-  <Step title="Use Design Agent or direct Figma input">
-    If you need variants, use [Design Agent](/design-agent/overview). If the design is already ready, use the [simulation wizard](/simulations/wizard) directly.
-  </Step>
-  <Step title="Prepare 1-3 surfaces">
-    Name frames clearly, remove throwaway concepts, and write the research question before launch.
-  </Step>
-</Steps>
+They never see the setup wizard.
 
-## Day 5 — Run, read, and save the first study (Research + design, ~60 min)
+## What is flag-gated in the current rollout
 
-<Steps>
-  <Step title="Launch the simulation">
-    Use the 3-step wizard: Decision, Population, Configure. Start with Fast mode for setup validation, then use Deep when the question needs stronger evidence.
-  </Step>
-  <Step title="Read the report together">
-    Start with findings, concern hotspots, recommendations, population lens, and voices. Avoid treating the headline preference as the whole answer.
-  </Step>
-  <Step title="Save evidence">
-    Export or save the report to [Resource Library -> Reports](/resource-library/reports) when it should inform critique, planning, or stakeholder review.
-  </Step>
-  <Step title="Decide the next study">
-    Either revise the design and rerun, compare variants, or create a sharper cohort for a different audience.
-  </Step>
-</Steps>
+Several surfaces are behind feature flags during the current rollout. If a sidebar item or page is missing, the flag is off. Ask your CSM to enable any of these for your workspace:
 
-## Optional after the first week
+| Surface | Flag |
+| --- | --- |
+| Design Agent (sidebar item, page, `D` shortcut) | `design-agent` |
+| Simulations (sidebar item, page, `S` and `N` shortcuts) | `simulations-page` |
+| Resource library (sidebar item, page, `R` shortcut) | `resource-library` |
+| A/B comparison flow inside Simulations | `compare-feature` |
+| Export PDF buttons on simulation reports and comparisons | `export-pdf-enabled` |
+| Accessibility audit tab on simulation reports | `accessibility-audit` |
+
+## After the wizard
+
+You should have:
+
+- SSO working, team invited (and pending invitations visible in Settings → Team).
+- Figma connected (or explicitly skipped for now).
+- One focused 10–100 agent population.
+- One real simulation report.
+
+From here the daily loop is: **design question → population → simulate → report → revise or decide.**
+
+## Optional, after the first week
 
 <CardGroup cols={2}>
   <Card title="Custom traits" icon="sliders" href="/admin/custom-traits">
@@ -101,19 +90,6 @@ This checklist takes a new workspace from empty to credible first studies. It is
   </Card>
 </CardGroup>
 
-## After week one
-
-You should have:
-
-- SSO working, team invited, and owner/admin coverage.
-- Figma connected and at least one source indexed.
-- Design system guidance added.
-- At least one focused 10-100 agent cohort.
-- At least one real simulation report saved in the Resource Library.
-- A shared team convention for when to use Sentia before critique, usability testing, or roadmap planning.
-
-From here, the daily loop is: **design question -> cohort -> simulate -> report -> revise or decide.**
-
 <Note>
-  **Recommended cadence:** simulate meaningful design and product decisions: onboarding redesigns, pricing or trust moments, major IA changes, accessibility-sensitive flows, and contested variants. Skip trivial copy tweaks unless they are part of a larger experience change.
+  **Recommended cadence:** simulate meaningful design and product decisions — onboarding redesigns, pricing or trust moments, major IA changes, accessibility-sensitive flows, and contested variants. Skip trivial copy tweaks unless they are part of a larger experience change.
 </Note>
