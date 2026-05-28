@@ -81,11 +81,11 @@ Used for:
 
 ## Production status
 
-For customer-facing service status (incidents, planned maintenance, historical uptime), use the status page:
+For customer-facing service status (incidents, planned maintenance), use the service status page:
 
-[status.sentialabs.ai](https://status.sentialabs.ai)
+[Service status](/reference/status)
 
-The status page is independent of the API health endpoints — it reflects customer-visible incidents declared by Sentia operations, not raw service health.
+The service status page is independent of the API health endpoints — it reflects customer-visible incidents declared by Sentia operations, not raw service health.
 
 ## Errors
 
@@ -99,8 +99,8 @@ These endpoints don't typically return application errors. If you see:
 ## Next
 
 <CardGroup cols={2}>
-  <Card title="Status page" icon="signal-bars" href="https://status.sentialabs.ai">
-    Live status of all production services.
+  <Card title="Service status" icon="signal-bars" href="/reference/status">
+    Current state of production services.
   </Card>
   <Card title="Errors" icon="circle-exclamation" href="/api-reference/errors">
     Standard error envelope for authenticated endpoints.

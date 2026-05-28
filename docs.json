@@ -126,7 +126,8 @@
               "reference/keyboard-shortcuts",
               "reference/limits-and-quotas",
               "reference/release-notes",
-              "reference/support"
+              "reference/support",
+              "reference/status"
             ]
           }
         ]
@@ -199,12 +200,12 @@
         },
         {
           "anchor": "Status",
-          "href": "https://status.sentialabs.ai",
+          "href": "/reference/status",
           "icon": "signal-bars"
         },
         {
           "anchor": "Support",
-          "href": "mailto:support@sentialabs.ai",
+          "href": "mailto:hello@sentialabs.io",
           "icon": "life-ring"
         }
       ]
@@ -218,11 +219,11 @@
     "links": [
       {
         "label": "Status",
-        "href": "https://status.sentialabs.ai"
+        "href": "/reference/status"
       },
       {
         "label": "Support",
-        "href": "mailto:support@sentialabs.ai"
+        "href": "mailto:hello@sentialabs.io"
       }
     ],
     "primary": {
@@ -253,15 +254,14 @@
         "header": "Product",
         "items": [
           { "label": "Dashboard", "href": "https://app.sentialabs.ai" },
-          { "label": "Status", "href": "https://status.sentialabs.ai" }
+          { "label": "Status", "href": "/reference/status" }
         ]
       },
       {
         "header": "Company",
         "items": [
           { "label": "Marketing site", "href": "https://sentialabs.ai" },
-          { "label": "Support", "href": "mailto:support@sentialabs.ai" },
-          { "label": "Security", "href": "mailto:security@sentialabs.ai" }
+          { "label": "Contact", "href": "mailto:hello@sentialabs.io" }
         ]
       }
     ]

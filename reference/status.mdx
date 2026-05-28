@@ -1,0 +1,42 @@
+---
+title: "Service status"
+description: "Current status of Sentia production services."
+---
+
+<Note>
+  **All services online.** Dashboard, Design Agent, simulations, populations, integrations, and the API are operating normally.
+</Note>
+
+If you're seeing errors or unexpected behavior, please reach out to [hello@sentialabs.io](mailto:hello@sentialabs.io) and we'll investigate.
+
+## What this page covers
+
+This page reflects the customer-visible state of Sentia production services. A dedicated real-time status dashboard with incident history and subscriptions is coming soon — until then, this page is the source of truth and is updated by Sentia operations during incidents.
+
+For workspace-specific incidents, your Slack Connect channel and CSM remain the fastest path.
+
+## Reporting an issue
+
+| Type | Where to send it |
+| --- | --- |
+| **Errors or unexpected behavior** | [hello@sentialabs.io](mailto:hello@sentialabs.io) |
+| **Production outage / SEV-1** | [hello@sentialabs.io](mailto:hello@sentialabs.io) with subject prefix `[SUPPORT]` + your Slack Connect channel |
+| **Security incident** | [hello@sentialabs.io](mailto:hello@sentialabs.io) with subject prefix `[SECURITY]` |
+
+When reporting an error, include:
+
+- Workspace slug
+- Time window (UTC)
+- What you were trying to do and what you saw
+- Affected simulation, population, or integration ID if applicable
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Support channels & SLAs" icon="life-ring" href="/reference/support">
+    Full list of channels, escalation paths, and severity definitions.
+  </Card>
+  <Card title="Security & incident response" icon="shield-halved" href="/security/overview">
+    24/7 on-call, postmortems, and customer notification commitments.
+  </Card>
+</CardGroup>

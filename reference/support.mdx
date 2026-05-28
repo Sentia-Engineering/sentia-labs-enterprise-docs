@@ -3,7 +3,7 @@ title: "Support"
 description: "How to get help, report issues, and request features. SLAs and escalation paths."
 ---
 
-Sentia is an enterprise platform with dedicated support. This page lists the channels, what they're for, and the response SLAs.
+Sentia is an enterprise platform with dedicated support. All email goes to a single inbox — [hello@sentialabs.io](mailto:hello@sentialabs.io) — and is routed internally by subject-line prefix. This page covers the channels, what they're for, and the response SLAs.
 
 ## Channels — by intent
 
@@ -24,7 +24,7 @@ Slack Connect channel set up at kickoff is the fastest path. Email backup: your 
 
 ### Technical issues, bugs, incidents
 
-**support@sentialabs.ai**
+Email [hello@sentialabs.io](mailto:hello@sentialabs.io) with subject prefix `[SUPPORT]`.
 
 For:
 
@@ -45,7 +45,7 @@ Email creates a tracked ticket with our 24/7 engineering on-call rotation. Inclu
 
 ### Security incidents and vulnerability reports
 
-**security@sentialabs.ai**
+Email [hello@sentialabs.io](mailto:hello@sentialabs.io) with subject prefix `[SECURITY]`.
 
 For:
 
@@ -59,7 +59,7 @@ PGP key available on request. Response within 1 business day; immediate for crit
 
 ### Procurement, contracts, vendor management
 
-**procurement@sentialabs.ai**
+Email [hello@sentialabs.io](mailto:hello@sentialabs.io) with subject prefix `[PROCUREMENT]`.
 
 For:
 
@@ -71,7 +71,7 @@ For:
 
 ### Privacy-specific requests
 
-**privacy@sentialabs.ai**
+Email [hello@sentialabs.io](mailto:hello@sentialabs.io) with subject prefix `[PRIVACY]`.
 
 For:
 
@@ -82,27 +82,27 @@ For:
 
 ## Response SLAs
 
-| Channel | Initial response | Resolution target |
+| Request type | Initial response | Resolution target |
 | --- | --- | --- |
 | **CSM (Slack Connect)** | Same business day | Per request scope |
-| **support@sentialabs.ai** — SEV-1 (outage) | 15 min | < 4h, with hourly updates |
-| **support@sentialabs.ai** — SEV-2 (major degradation) | 30 min | < 8h |
-| **support@sentialabs.ai** — SEV-3 (single integration / minor) | 2 hours | < 2 business days |
-| **support@sentialabs.ai** — SEV-4 (non-urgent) | 1 business day | Per backlog priority |
-| **security@sentialabs.ai** | 1 business day; immediate for critical | Per scope |
-| **privacy@sentialabs.ai** | 1 business day | GDPR SLAs |
-| **procurement@sentialabs.ai** | 1 business day | Per request |
+| **`[SUPPORT]`** — SEV-1 (outage) | 15 min | < 4h, with hourly updates |
+| **`[SUPPORT]`** — SEV-2 (major degradation) | 30 min | < 8h |
+| **`[SUPPORT]`** — SEV-3 (single integration / minor) | 2 hours | < 2 business days |
+| **`[SUPPORT]`** — SEV-4 (non-urgent) | 1 business day | Per backlog priority |
+| **`[SECURITY]`** | 1 business day; immediate for critical | Per scope |
+| **`[PRIVACY]`** | 1 business day | GDPR SLAs |
+| **`[PROCUREMENT]`** | 1 business day | Per request |
 
 ## Status & incident communication
 
 | Surface | What it covers |
 | --- | --- |
-| **status.sentialabs.ai** | Live status of all production services + incident history |
+| **[Service status](/reference/status)** | Current state of production services and where to report errors |
 | **Slack Connect channel** | Real-time updates for incidents affecting your workspace |
 | **In-app banner** | Workspace-affecting service degradations |
 | **Email** — for SEV-1 only | Customer-affecting outages > 30 min |
 
-Subscribe to the status page for proactive notifications.
+For now, the Slack Connect channel and email are the primary notification surfaces; a subscribable real-time status dashboard is coming soon.
 
 ## Office hours
 
@@ -141,7 +141,7 @@ This documentation site is at [docs.sentialabs.ai](https://docs.sentialabs.ai). 
 - Unclear sections
 - Suggestions for new guides
 
-Use the "Was this page helpful?" feedback at the bottom of any page, or email [docs@sentialabs.ai](mailto:docs@sentialabs.ai).
+Use the "Was this page helpful?" feedback at the bottom of any page, or email [hello@sentialabs.io](mailto:hello@sentialabs.io) with subject prefix `[DOCS]`.
 
 ## Severity definitions (for context)
 
@@ -159,7 +159,7 @@ A few patterns we ask customers to avoid:
 - **Don't paste credentials into support emails.** Use the secure-share link Sentia ops sends instead.
 - **Don't share workspace export bundles outside your IT/security team.** They contain audit-loggable customer activity.
 - **Don't open multiple tickets for the same issue.** Reply to your existing thread; we route accordingly.
-- **For SEV-1, use the support email even if you also ping the CSM Slack channel.** Email triggers the on-call rotation; Slack alone might not.
+- **For SEV-1, email [hello@sentialabs.io](mailto:hello@sentialabs.io) even if you also ping the CSM Slack channel.** Email triggers the on-call rotation; Slack alone might not.
 
 ## Next
 
