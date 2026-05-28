@@ -1,7 +1,7 @@
 ---
 title: "Create population"
 api: "POST /api/populations"
-description: "Build a new population grounded in your connected data sources."
+description: "Build a new 10-100 agent population cohort."
 ---
 
 Creates a new population. Generation runs asynchronously — the request returns immediately with status `building`.
@@ -14,25 +14,19 @@ curl -X POST https://api.sentialabs.ai/api/populations \
   -H "x-workspace-id: $WORKSPACE_ID" \
   -H "Content-Type: application/json" \
   -d '{
-    "name": "SMB trial users — May 2026",
-    "description": "SMB users in their first 14 days of free trial",
-    "agentCount": 1000,
-    "region": "us",
-    "filters": {
-      "census": {
-        "ageRange": [25, 54],
-        "region": "US"
-      },
-      "cohorts": [
-        { "provider": "amplitude", "cohortId": "1234567" }
-      ]
+    "name": "First-time enterprise admins — May 2026",
+    "description": "Admins evaluating Figma connection and onboarding clarity",
+    "agentCount": 50,
+    "cohort": {
+      "name": "Enterprise admins",
+      "folder": "Onboarding research"
     },
-    "grounding": {
-      "sources": [
-        { "type": "dovetail", "projectIds": ["proj_abc"] },
-        { "type": "intercom" }
-      ],
-      "verbatimDateRange": "P90D"
+    "targetAudience": {
+      "ageMin": 28,
+      "ageMax": 60,
+      "locations": ["United States"],
+      "occupations": ["Design operations", "Product operations", "IT administration"],
+      "educationLevels": ["Bachelor's degree", "Master's degree"]
     }
   }'
 ```
@@ -43,36 +37,30 @@ curl -X POST https://api.sentialabs.ai/api/populations \
 | --- | --- | --- | --- |
 | `name` | string | ✅ | Display name |
 | `description` | string | Optional | Internal documentation |
-| `agentCount` | int | ✅ | 1–100,000; 1,000 typical |
-| `region` | enum | Optional | `"us"` or `"eu"`. Defaults to workspace region. |
-| `filters.census` | object | Optional | Demographic filters (ageRange, income, region, etc.) |
-| `filters.cohorts` | array | Optional | Analytics-cohort references |
-| `grounding.sources` | array | Optional | Which qualitative sources to ground on |
-| `grounding.verbatimDateRange` | ISO 8601 duration | Optional | Default `P90D` |
-| `samplingStrategy` | enum | Optional | `"stratified"` (default) or `"random"` |
+| `agentCount` | int | ✅ | 10-100; 50 typical |
+| `targetAudience` | object | Optional | Demographic and audience filters used by the cohort studio. |
+| `cohort` | object | Optional | Cohort name/folder metadata. |
 
 ## Response — 201 Created
 
 ```json
 {
   "id": "pop_8f9a2b...",
-  "name": "SMB trial users — May 2026",
+  "name": "First-time enterprise admins — May 2026",
   "status": "building",
-  "agentCount": 1000,
+  "agentCount": 50,
   "createdAt": "2026-05-25T14:32:17Z",
-  "estimatedBuildDurationMs": 480000,
-  "filters": { "...": "..." },
-  "grounding": { "...": "..." }
+  "targetAudience": { "...": "..." }
 }
 ```
 
-After build completes, status transitions to `validating` → `ready` (or `failed`). Subscribe to `population.built` and `population.validated` webhooks to track.
+After build completes, status transitions to `ready` (or `failed`). Subscribe to population webhooks where enabled.
 
 ## Status lifecycle
 
 ```
-draft → building → validating → ready → (drifted) → archived
-                              ↘ failed
+draft → building → ready
+              ↘ failed
 ```
 
 See [Populations overview](/populations/overview).
@@ -82,7 +70,7 @@ See [Populations overview](/populations/overview).
 | Status | Code | Cause |
 | --- | --- | --- |
 | 422 | `validation_failed` | Filter or grounding misconfiguration |
-| 422 | `unsupported_combination` | No analytics provider connected, or invalid cohort reference |
+| 422 | `unsupported_combination` | Invalid cohort or audience configuration |
 | 422 | `quota_exceeded` | Workspace population quota exceeded |
 
 ## Next

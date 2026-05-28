@@ -1,124 +1,76 @@
 ---
-title: "Interview grounding"
-description: "How real customer verbatims become agent memory — and why this is the single biggest accuracy lever in Sentia."
+title: "Research grounding"
+description: "How uploaded research artifacts become cohort memory."
 ---
 
-Populations grounded only in demographic data top out around **~70% normalized accuracy**. Populations grounded in real customer interviews, support conversations, and verbatims hit **~85%** (Park et al. 2024, validated on Sentia workspaces).
-
-This page explains how grounding works and how to maximize its impact.
+Research grounding is how Sentia moves beyond generic synthetic users. Uploaded artifacts give agents language, concerns, motivations, and context that resemble the people your team studies.
 
 ## The pipeline
 
-```
-Qualitative source         Pinecone vector store        Agent memory
-(Dovetail, Intercom,  ──→  (Cohere embeddings,    ──→  (retrieved at run time
- Zendesk)                   clustered themes)            via similarity scoring)
+```text
+Research artifacts -> parsing and summarization -> memory signals -> cohort agents
 ```
 
-Three stages:
+Artifacts can come from the [Resource Library](/resource-library/research-artifacts) or from inline attachments while building a population.
 
-1. **Ingest** — pull conversations, transcripts, and tickets from connected qualitative sources
-2. **Embed** — chunk verbatims, embed via Cohere, store in Pinecone with persona + segment metadata
-3. **Retrieve** — at simulation time, each agent's profile is used as a query; top-K relevant verbatims (scored by `recency × importance × relevance`) become part of that agent's Memory step
+## Good grounding sources
 
-## Sources
-
-### Dovetail — preferred
-
-- **What you get:** structured interview transcripts and highlights, organized by project
-- **Best for:** workspaces with mature qualitative practice — scheduled interviews, tagged themes, highlight reels
-- **Sync:** OAuth via Nango. Pulls transcripts hourly, highlights daily.
-- **Volume sweet spot:** 50+ interviews across diverse personas
-
-### Intercom
-
-- **What you get:** support conversations + satisfaction ratings
-- **Best for:** workspaces where most user feedback comes through support
-- **Sync:** OAuth via Nango, every 24 hours
-- **Filter:** by satisfaction rating, conversation tags, custom attributes
-
-### Zendesk
-
-- **What you get:** tickets, conversation history, satisfaction scores
-- **Best for:** enterprise-y stacks where Zendesk is the canonical voice-of-customer surface
-- **Sync:** OAuth via Nango, every 24 hours
-- **Filter:** by ticket type, priority, satisfaction, custom fields
-
-### Combining sources
-
-You can ground a single population from multiple sources. Sentia de-duplicates verbatims across sources by content similarity.
-
-A common high-leverage combination: **Dovetail (interviews) + Intercom (in-the-flow support feedback)**. Interviews give structured depth; support gives high-volume current sentiment.
-
-## What "grounding" looks like in practice
-
-Without grounding, an agent's Memory step looks generic:
-
-> *"I value my time and am cautious about new tools. As an early adopter, I'd evaluate this change against my current workflow."*
-
-With grounding (same agent), Memory pulls relevant real verbatims:
-
-> *"From recent interviews: 'We tried shortening trials at our last company — the rushed feeling pushed power users away.' From support: 'The 14-day trial was perfect, I needed every day of it to convince my team.' From a Dovetail highlight: 'Trial length is a leading indicator of commitment quality.'"*
-
-The Reflection and Decision steps that follow are dramatically more grounded.
-
-## Scoring: recency × importance × relevance
-
-When an agent retrieves memories, Sentia ranks verbatims by:
-
-| Factor | What it captures |
+| Source | Why it helps |
 | --- | --- |
-| **Recency** | How recent the verbatim is. Decays exponentially. 30-day half-life by default. |
-| **Importance** | Highlighted/tagged content + high-satisfaction-impact conversations score higher |
-| **Relevance** | Cosine similarity between the agent's profile (query embedding) and the verbatim embedding |
+| **Interview transcripts** | Deep motivations, vocabulary, objections, and task context. |
+| **Survey CSVs** | Patterned responses, NPS comments, and structured feedback. |
+| **Persona documents** | Existing team knowledge about audience segments. |
+| **Audio/video recordings** | Usability sessions, calls, and research conversations after transcription. |
+| **A/B or conversion history** | Prior evidence that can inform calibration and expectation setting. |
 
-Top 5–8 verbatims per agent end up in the Memory step. You can preview this in the [Population Builder](/populations/build) before generation.
+## What grounded memory changes
 
-## Volume guidelines
+Without grounding, an agent may say:
 
-| Verbatim corpus size | Accuracy improvement vs. demographic-only |
+> "I want the setup to be clear and efficient."
+
+With relevant research attached, the same type of agent can cite more specific context:
+
+> "I need to know exactly what Figma access is reading before I connect it, because our design files include roadmap-sensitive work."
+
+That specificity is what makes a simulation useful in critique.
+
+## How much research is enough?
+
+Start with quality, not volume:
+
+| Corpus | Good use |
 | --- | --- |
-| 0 (demographic only) | Baseline (~70%) |
-| 1–50 verbatims | Small lift (~73%) |
-| 100–500 | Meaningful (~78%) |
-| 1,000–5,000 | Strong (~82%) |
-| 5,000+ | Best in class (~85%+) |
+| **3-5 strong artifacts** | First run or focused concept test. |
+| **10-20 artifacts** | Healthy first-week grounding for a cohort. |
+| **50+ artifacts** | Stronger recurring cohort or high-stakes study. |
 
-Quality and persona diversity matter as much as volume. 200 diverse, well-tagged Dovetail interviews beat 5,000 unsorted support tickets.
+A small set of well-labeled, relevant interviews is usually better than a large dump of mixed, stale files.
 
-## What to do if your corpus is small
+## Grounding hygiene
 
-For workspaces new to qualitative research:
+- Attach artifacts that match the cohort, not the whole company archive.
+- Prefer recent research when product context has changed.
+- Include old research only when old expectations still matter.
+- Rename files with audience, date, and topic.
+- Re-parse files when metadata or classification was wrong.
 
-1. **Connect Intercom or Zendesk** — usually the fastest path to 500+ verbatims
-2. **Run a 10-interview discovery sprint** — concentrate on key segments and load into Dovetail
-3. **Use NPS responses** — many workspaces have hundreds of NPS comments sitting unused
-4. **Start small** — even 50 well-tagged verbatims beat zero. You'll see the lift immediately.
+## Signs grounding is weak
 
-Your CSM can help you scope a "qualitative ramp" plan for the first 30 days.
+- Voices sound like generic product advice.
+- Agents miss known objections from your research.
+- The report focuses on irrelevant concerns.
+- Different cohorts sound indistinguishable.
 
-## Privacy & compliance
-
-- **All verbatims stay in your workspace's Pinecone namespace** — strict tenant isolation, no cross-workspace retrieval
-- **PII redaction** — Sentia automatically detects and redacts emails, phone numbers, and full names in stored verbatims (configurable)
-- **Right to erasure** — when a user requests deletion, Sentia cascades through PG, MongoDB, S3, *and* Pinecone — verbatims are permanently removed
-- **EU residency** — workspaces on EU residency use eu-west-1 Pinecone region
-
-See [Security & data handling](/security/data-handling).
-
-## What grounding can't do
-
-- Agents won't predict reactions to products totally outside their experience (e.g., a B2C agent population on an enterprise SaaS feature)
-- Verbatims about old features may anchor agents on outdated framings — refresh the corpus periodically
-- Grounding doesn't fix bad input quality — show agents real UI for full accuracy
+Fix weak grounding by narrowing the audience brief, attaching better artifacts, or creating a more specific custom trait.
 
 ## Next
 
 <CardGroup cols={2}>
-  <Card title="Validation" icon="check-double" href="/populations/validation">
-    Verify your population behaves like real humans.
+  <Card title="Research artifacts" icon="upload" href="/resource-library/research-artifacts">
+    Supported files, upload flow, and parsing behavior.
   </Card>
-  <Card title="Qualitative integrations" icon="microphone" href="/integrations/qualitative">
-    Per-provider setup for Dovetail, Intercom, Zendesk.
+  <Card title="Build a population" icon="users-gear" href="/populations/build">
+    Attach research while composing a cohort.
   </Card>
 </CardGroup>

@@ -3,7 +3,7 @@ title: "Decision lifecycle"
 description: "Proposed → Simulated → Shipped → Validated → Reverted. What happens at each stage."
 ---
 
-Every decision in Sentia moves through a five-stage lifecycle. Each stage has a clear definition, who can advance it, and what triggers the transition.
+For workspaces using the release-loop features, decisions can move through a five-stage lifecycle. First-week research and design onboarding does not require this loop; it becomes useful when simulations are connected to shipped outcomes.
 
 ## The five stages
 
@@ -117,14 +117,14 @@ Transitions are audit-logged. You can see who advanced what, when, and from whic
 | --- | --- |
 | Anything | Owner |
 | Most things | Admin |
-| Proposed → Simulated (via running a sim) | Builder, Admin, Owner |
-| Simulated → Shipped (manual) | Builder, Admin, Owner |
+| Proposed → Simulated (via running a sim) | Operator, Admin, Owner |
+| Simulated → Shipped (manual) | Operator, Admin, Owner |
 | Shipped → Reverted (manual) | Admin, Owner |
 | Edit question/hypothesis | Decision owner + Admin + Owner |
 | Delete (Proposed only) | Decision owner + Admin + Owner |
 | Archive | Admin, Owner |
 
-Builders can advance decisions through the routine flow. Sensitive transitions (deletion, revert, post-hoc edits) require Admin+ roles. Viewers can only read.
+Operators can advance decisions through the routine flow. Sensitive transitions (deletion, revert, post-hoc edits) require Admin+ roles. Viewers can only read.
 
 See [Members & roles](/admin/members-and-roles).
 

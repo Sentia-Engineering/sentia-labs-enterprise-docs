@@ -1,109 +1,59 @@
 ---
 title: "Fast vs. Deep mode"
-description: "Two modes optimized for different jobs. Pick the right one and your runs converge faster, cost less, and read clearer."
+description: "Choose the right run mode for exploratory design reads and higher-stakes studies."
 ---
 
-Sentia has two preset modes that bundle agent count, wave size, and convergence sensitivity. You can also configure custom values, but ~95% of runs should use one of these presets.
+Sentia exposes two practical modes in the simulation wizard: **Fast** and **Deep**. Pick based on how much evidence the decision needs.
 
 ## Fast mode
 
-**For directional signals. Quick to read, cheap to run.**
+Use Fast for:
 
-| Parameter | Value |
-| --- | --- |
-| Agent count | 200–500 |
-| Wave size | 100 |
-| Typical wave count | 2–3 |
-| Duration | 2–5 minutes |
-| LLM cost | ~600–1,500 calls |
+- First-pass validation that the prompt, cohort, and visuals are set up correctly.
+- Early design comparison.
+- Exploring whether there is any signal before spending more time.
+- Iterating on Design Agent variants.
 
-**Use Fast mode when:**
-
-- Exploring a new decision space ("Is there *any* signal here?")
-- Comparing 3+ competing options quickly
-- Iterating on capture inputs or hypotheses
-- Cheap sanity-check before a high-stakes Deep run
-- Token budget is tight and you want a directional answer
-
-**Don't use Fast mode for:**
-
-- Segment-level claims ("Pro users will react differently than SMB")
-- Anything you're about to ship to many users
-- Decisions where you'll be asked "what's the confidence on this number?"
+For first-week cohorts, Fast runs often use 10-50 agents depending on population size.
 
 ## Deep mode
 
-**For high-confidence answers with segment-level detail.**
+Use Deep for:
 
-| Parameter | Value |
-| --- | --- |
-| Agent count | 1,000–5,000 |
-| Wave size | 200–500 |
-| Typical wave count | 4–8 |
-| Duration | 8–25 minutes |
-| LLM cost | ~3,000–15,000 calls |
+- Higher-stakes design decisions.
+- Reports that will be shared with stakeholders.
+- Variant comparisons where small differences matter.
+- Accessibility, trust, pricing, or onboarding flows where the team needs stronger evidence.
 
-**Use Deep mode when:**
-
-- The decision is going to ship and you need accuracy
-- You need segment breakdowns that hold up to scrutiny
-- Stakeholders will ask "what about Pro users specifically?"
-- The decision affects > 5% of your users
-- You're calibrating against an A/B test (need sample sizes that match)
-
-**Don't use Deep mode for:**
-
-- First-pass exploration (do Fast first, then Deep on the survivor)
-- Rapid iteration on captures or hypotheses
-- Anything where the team will only read the headline
-
-## Custom mode
-
-For unusual cases:
-
-- **Very large populations** (5,000–10,000 agents) — useful for highly-segmented enterprise simulations
-- **Tight convergence threshold** (< 0.90) — for high-stakes decisions where you want stricter stability
-- **Loose convergence threshold** (> 0.97) — for early exploration where you'll re-run anyway
-- **Extended duration** — give a divisive simulation more time to find a stable distribution
-
-Your CSM can advise on custom configurations for specific decision classes.
+Deep uses the stronger model path and should be reserved for questions where the team will read the full report, not only the headline.
 
 ## A useful pattern
 
-For high-stakes decisions, run **Fast → Deep → Calibrated**:
+For important studies, run:
 
 <Steps>
   <Step title="Fast run">
-    300 agents, ~3 minutes. Confirms the population and captures produce sensible reasoning. If results are nonsense, fix the population or inputs before spending Deep tokens.
+    Validate that the cohort understands the task and that the design input is correct.
+  </Step>
+  <Step title="Revise setup if needed">
+    Fix wrong frames, vague prompts, or a mismatched population before spending more.
   </Step>
   <Step title="Deep run">
-    2,000 agents, ~15 minutes. Real answer. Read segments carefully.
-  </Step>
-  <Step title="Ship + calibrate">
-    Ship the feature (or a guarded A/B test). Sentia auto-pulls actuals 14 days later. The Deep run gets a calibration grade.
+    Run the sharper setup and save the report when it influences the decision.
   </Step>
 </Steps>
 
-This pattern saves ~70% of total token cost vs. starting in Deep mode and discovering input or population issues mid-run.
+## When not to go deeper
 
-## What if it doesn't converge?
-
-Possibilities, in order of likelihood:
-
-1. **The decision is divisive.** Different segments strongly disagree. Read Segments tab — this is signal, not failure.
-2. **Mode too small for the scenario complexity.** Re-run in Deep with 2× the agent count.
-3. **Population too generic.** Ground it in interview data, rebuild, re-run.
-4. **Captures too thin.** Add a real UI capture instead of text only.
-
-A non-converged result is not a "broken" simulation. See [Convergence](/simulations/convergence) for the math and how to read it.
+Do not rerun in Deep just because the answer is surprising. First read the voices, concern hotspots, and population lens. The surprising pattern may be the useful finding.
 
 ## Next
 
 <CardGroup cols={2}>
   <Card title="Convergence" icon="bullseye" href="/simulations/convergence">
-    What convergence means mathematically and how to read the live chart.
+    How to read stability while a run is in progress.
   </Card>
   <Card title="Reading results" icon="chart-mixed" href="/simulations/results">
-    The 8-tab tour.
+    How to turn completed reports into decisions.
   </Card>
 </CardGroup>

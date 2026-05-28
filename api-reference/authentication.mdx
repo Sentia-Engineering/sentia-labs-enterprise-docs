@@ -39,7 +39,7 @@ For automation and CI:
     Admin → API keys → **+ Create service account**.
   </Step>
   <Step title="Assign a role">
-    Pick the role (typically Builder or Viewer). Service accounts can't be Owners.
+    Pick the role (typically Operator or Viewer). Service accounts can't be Owners.
   </Step>
   <Step title="Issue an API key">
     The service account gets one or more API keys. Multiple keys allow rotation without downtime.
@@ -50,13 +50,7 @@ Service accounts don't have email addresses; their actions audit-log as `service
 
 ### 3. CLI token
 
-The `@sentia/capture` CLI uses its own auth flow:
-
-```bash
-sentia auth login
-```
-
-Opens your browser, runs SSO, exchanges for a CLI-scoped token. Stored at `~/.sentia/credentials`. See [Inputs → Captured localhost UI](/simulations/inputs#captured-localhost-ui).
+Some enterprise capture workflows use a CLI-scoped token. Your CSM will provide setup details if this is enabled for your workspace.
 
 ## Using the token
 

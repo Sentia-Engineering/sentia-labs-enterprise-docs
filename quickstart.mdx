@@ -1,9 +1,9 @@
 ---
 title: "Quickstart"
-description: "From sign-in to your first simulation result in under 10 minutes."
+description: "From sign-in to your first design simulation."
 ---
 
-This quickstart gets you to your first simulation result fast. You'll connect one analytics provider, use a Sentia-provided sample population, and run a short simulation against a real scenario.
+This quickstart gets a researcher or designer from a new workspace to the first useful simulation. The shortest path is: connect Figma, define a small cohort, add a design or text scenario, and read the report.
 
 <Note>
   **Prerequisites:** Your workspace owner has finished SSO setup and invited you. If you don't have an invite, ping your CSM or [support@sentialabs.ai](mailto:support@sentialabs.ai).
@@ -15,125 +15,119 @@ This quickstart gets you to your first simulation result fast. You'll connect on
   <Step title="Open the dashboard">
     Visit [app.sentialabs.ai](https://app.sentialabs.ai). You'll be redirected to your corporate identity provider (Okta, Entra ID, Google Workspace, etc.).
   </Step>
-  <Step title="Land on Simulations">
-    After SSO, you'll land on `/simulations`. The left nav is your map; press `?` any time to see all keyboard shortcuts.
+  <Step title="Learn the nav">
+    The main areas are Overview (`O`), Design Agent (`D`), Simulations (`S`), Populations (`P`), Resource Library (`R`), and Settings (`⌘,`). Press `?` in the app to see shortcuts.
   </Step>
 </Steps>
 
 <Tip>
-  Sentia is **desktop-first** and tuned for screens ≥1024px. Most workflows are also fully keyboard-driven — try `S`, `P`, `D`, `I`, `C` to jump between sections.
+  Sentia is desktop-first. Use a laptop or external monitor for Design Agent, simulation reports, and comparison work.
 </Tip>
 
-## Step 2 · Connect one analytics provider
-
-Sentia needs at least one analytics source to ground agents in real usage data. Pick **one** of Amplitude, Mixpanel, or PostHog (these are mutually exclusive — one per workspace).
+## Step 2 · Connect Figma
 
 <Steps>
-  <Step title="Open Integrations">
-    Press `I` or click **Integrations** in the sidebar.
+  <Step title="Open Settings">
+    Press `I` or go to **Settings -> Integrations**.
   </Step>
-  <Step title="Connect your provider">
-    Click the **Connect** button on your provider card. For Amplitude/Mixpanel you'll paste an API key pair; for PostHog you'll paste a personal API key and host URL.
-    
-    See the per-provider setup guides: [Amplitude](/integrations/analytics#amplitude), [Mixpanel](/integrations/analytics#mixpanel), [PostHog](/integrations/analytics#posthog).
+  <Step title="Save the workspace Figma token">
+    Connect Figma with a personal access token that has `current_user:read`, `file_content:read`, and `file_comments:write`. See [Design Agent sources](/design-agent/sources).
   </Step>
-  <Step title="Wait for first sync">
-    Initial sync runs immediately and typically completes in 5–15 minutes for cohorts, funnels, and event frequency. You'll see a green **Connected** badge with last-sync time.
+  <Step title="Confirm access">
+    Paste a Figma file URL in Design Agent or the simulation wizard. If Sentia can read frames, setup is complete.
   </Step>
 </Steps>
 
-<Warning>
-  Don't connect a second analytics provider — they're mutually exclusive by design so agent memory stays consistent. If you need to switch, contact support.
-</Warning>
-
-## Step 3 · Use the sample population
-
-Every new workspace ships with a **Sample US Census Population (1,000 agents)** so you can run a simulation before building your own.
+## Step 3 · Build a first cohort
 
 <Steps>
   <Step title="Open Populations">
-    Press `P` to navigate. You should see the sample population card with **1,000 agents**, a segment breakdown chart, and a green **Validated** badge.
+    Press `P`, then create a new population.
   </Step>
-  <Step title="(Optional) Inspect it">
-    Click the card to see the demographic mix, adopter category distribution (Innovator → Laggard), and the behavioral validation report.
+  <Step title="Describe the audience">
+    Use a concrete research brief, such as "First-time enterprise workspace admins evaluating design-tool onboarding." Keep the first cohort narrow.
   </Step>
-</Steps>
-
-<Tip>
-  You'll build a custom, interview-grounded population in the onboarding flow. For your first run, the sample is enough to see results end-to-end. See [Build a population](/populations/build) when you're ready.
-</Tip>
-
-## Step 4 · Run your first simulation
-
-<Steps>
-  <Step title="Open the wizard">
-    Press `N` (or click **New simulation**). The 4-step wizard opens.
+  <Step title="Pick size">
+    Start with **50 agents**. Cohorts currently support **10-100 agents**; 50 is enough for first-pass design research while staying fast.
   </Step>
-  <Step title="Decision (Step 1)">
-    Choose a **proposed product change** to evaluate. For your first run, pick a built-in template — for example, *"Reduce free trial from 14 days to 7 days"*. The template prefills the scenario, success criteria, and a sample analytics filter.
-  </Step>
-  <Step title="Scenario (Step 2)">
-    Add a **visual input**. The fastest first-run option is **Text only** — paste a 2–3 sentence description of the change. (Captured UI is ~15–20% more accurate; you'll learn that in [Inputs](/simulations/inputs).)
-  </Step>
-  <Step title="Population (Step 3)">
-    Select the **Sample US Census Population**. Sentia auto-suggests segments to focus on; leave the defaults.
-  </Step>
-  <Step title="Configure (Step 4)">
-    Pick **Fast mode (200 agents)** for your first run. It converges in 2–3 waves and finishes in ~3–5 minutes. Click **Launch simulation** (or `⌘⇧L`).
+  <Step title="Attach research if you have it">
+    Upload or attach transcripts, survey CSVs, persona docs, or recordings from the [Resource Library](/resource-library/research-artifacts). You can also build the first cohort from the brief alone.
   </Step>
 </Steps>
 
-## Step 5 · Watch it run
+## Step 4 · Choose the design input
 
-You'll land on the live run page. A few things to watch:
+Pick one of two paths:
 
 <CardGroup cols={2}>
-  <Card title="Agent counter" icon="users">
-    Updates every 10 agents. Announced via `aria-live` for screen readers.
+  <Card title="Use Design Agent" icon="pen-ruler" href="/design-agent/overview">
+    Best when you want to import a Figma file, generate variants, and send selected surfaces to simulation.
   </Card>
-  <Card title="Convergence chart" icon="chart-line">
-    Jensen-Shannon divergence across waves. Two consecutive stable waves trigger convergence.
-  </Card>
-  <Card title="Distribution chart" icon="chart-bar">
-    Real-time choice distribution. Watch how it stabilizes as agents accumulate.
-  </Card>
-  <Card title="Live transcripts" icon="message">
-    Tail individual agent reasoning as the simulation runs. Pause anytime.
+  <Card title="Use the simulation wizard" icon="wand-magic-sparkles" href="/simulations/wizard">
+    Best when you already know the study question and want to simulate Figma frames or a text scenario directly.
   </Card>
 </CardGroup>
 
-## Step 6 · Read your results
+For the fastest first run, start the simulation wizard with `N`.
 
-When the run completes, you'll see the **8-tab results view**:
+## Step 5 · Run the 3-step simulation wizard
 
-| Tab | What it shows |
-| --- | --- |
-| **Overview** | Headline distribution, confidence score, top concerns, NPS prediction |
-| **Recommendations** | Sentia-generated actions to address objections and amplify positives |
-| **Segments** | Breakdown by adopter category, persona, plan tier, tenure |
-| **Objections** | Top concern themes — clustered customer-verbatim style |
-| **Agents** | Individual agent decisions, sortable and filterable |
-| **Transcripts** | Full agent reasoning chains for any agent |
-| **Adoption Cascade** | Innovator → Laggard adoption curve over a 12-month horizon |
-| **Calibration** | Predicted vs. actual once you've shipped the feature |
+<Steps>
+  <Step title="Decision">
+    Choose **A/B Test**, **Open-ended**, or **Competitive**. Add the research question, scenario context, and visual input. Figma and plain text are the main first-week sources.
+  </Step>
+  <Step title="Population">
+    Select the cohort you just built. The wizard only lets you launch against ready populations with usable agents.
+  </Step>
+  <Step title="Configure">
+    Use **Fast** mode for the first pass and 10-50 agents depending on cohort size. Use **Deep** when the question is high-stakes or you need stronger evidence.
+  </Step>
+</Steps>
 
-<Tip>
-  Press `1`–`8` to switch tabs. Press `⌘E` to export the report as PDF for your stakeholders.
-</Tip>
+## Step 6 · Watch it run
+
+You'll land on the live run page. Watch these signals:
+
+<CardGroup cols={2}>
+  <Card title="Agents completed" icon="users" href="/simulations/results">
+    Shows how many agents have finished the study.
+  </Card>
+  <Card title="Preference split" icon="chart-bar" href="/simulations/results">
+    For A/B and competitive runs, watch which option is gaining support.
+  </Card>
+  <Card title="Concerns per agent" icon="message-exclamation" href="/simulations/results">
+    A rising concern rate means the design needs closer reading.
+  </Card>
+  <Card title="Live verbatims" icon="message" href="/simulations/results">
+    Read early reasoning to catch obvious setup or audience mismatch issues.
+  </Card>
+</CardGroup>
+
+## Step 7 · Read and save the report
+
+Completed simulations open as a narrative report. For a design study, read in this order:
+
+1. **Verdict and visual comparison** - confirm the evaluated surfaces and headline outcome.
+2. **Findings** - understand the strongest patterns.
+3. **Concern hotspots** - locate confusing, risky, or inaccessible parts of the design.
+4. **Recommendations** - turn objections into design follow-ups.
+5. **Population lens and voices** - check who reacted differently and pull representative quotes.
+
+Export or save the PDF when the evidence matters. Saved reports appear in [Resource Library -> Reports](/resource-library/reports).
 
 ## You're done
 
 That's your first simulation. From here, you have three productive next steps:
 
 <CardGroup cols={3}>
-  <Card title="Build a real population" icon="users-gear" href="/populations/build">
-    Replace the sample with one grounded in your analytics + interview transcripts. Aim for ~85% accuracy.
+  <Card title="Build a sharper cohort" icon="users-gear" href="/populations/build">
+    Add research artifacts, behavior patterns, traits, and demographic filters.
   </Card>
-  <Card title="Wire up auto-triggers" icon="bolt" href="/simulations/triggers">
-    Auto-simulate when Linear/Jira issues hit "In Review" or a Figma frame is marked "simulate".
+  <Card title="Use Design Agent" icon="pen-ruler" href="/design-agent/overview">
+    Import Figma, create variants, and send selected surfaces to simulation.
   </Card>
-  <Card title="Connect ship detection" icon="rotate" href="/calibration/overview">
-    Connect LaunchDarkly, GitHub, or Statsig/Eppo so Sentia learns from every release.
+  <Card title="Upload research" icon="upload" href="/resource-library/research-artifacts">
+    Bring transcripts, surveys, and recordings into the workspace.
   </Card>
 </CardGroup>
 

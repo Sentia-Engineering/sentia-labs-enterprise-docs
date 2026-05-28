@@ -12,15 +12,17 @@ Production: [docs.sentialabs.ai](https://docs.sentialabs.ai)
 ├── favicon.svg
 ├── logo/                     # Light + dark logos (white-fill variant for dark mode)
 ├── index.mdx                 # Welcome page
-├── quickstart.mdx            # 10-minute first-simulation guide
-├── concepts/                 # Core concepts — primitives, lifecycle, glossary
+├── quickstart.mdx            # First design simulation guide
+├── concepts/                 # Core concepts, lifecycle, glossary
 ├── onboarding/               # Week-one checklist + per-step guides
+├── design-agent/             # Figma import, sources, simulation handoff
 ├── simulations/              # Wizard, inputs, modes, convergence, results, triggers, best-practices
-├── populations/              # Build, interview grounding, validation
+├── populations/              # Build, research grounding, validation
+├── resource-library/         # Research artifacts and saved reports
 ├── decisions/                # Log + lifecycle
-├── integrations/             # Per-category guides (15 integrations)
+├── integrations/             # Figma-first + enterprise connector guides
 ├── calibration/              # Flywheel, ship detection, accuracy, drift
-├── admin/                    # Workspaces, members/roles, SSO/SCIM, billing, audit
+├── admin/                    # Workspaces, roles, SSO/SCIM, design system, billing, audit
 ├── security/                 # SOC 2 posture, data handling, sub-processors, GDPR, LLM safety
 ├── reference/                # Keyboard shortcuts, limits, release notes, support
 └── api-reference/            # REST API reference + per-endpoint pages + OpenAPI spec

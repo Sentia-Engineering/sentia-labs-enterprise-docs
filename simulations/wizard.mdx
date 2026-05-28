@@ -1,122 +1,105 @@
 ---
 title: "The simulation wizard"
-description: "A walkthrough of the 4-step Decision → Scenario → Population → Configure flow."
+description: "A walkthrough of the 3-step Decision -> Population -> Configure flow."
 ---
 
-Every simulation starts with the wizard at `/simulations/new`. Press `N` from anywhere to open it.
+Every simulation can start from `/simulations/new`. Press `N` from anywhere to open it. Design Agent can also send selected surfaces into simulation directly.
 
-The wizard has four steps. You can move forward with `⌘Enter`, back with `⌘⌫`. Your draft auto-saves so you can leave and resume.
+The wizard has three steps:
+
+```text
+Decision  ->  Population  ->  Configure
+```
 
 ## Step 1 · Decision
 
-Describe what you're evaluating in three fields:
+This step captures the study design: what you want agents to evaluate and what context they should see.
 
-| Field | What goes here | Example |
-| --- | --- | --- |
-| **Question** | The decision as a clear question | "Should we shorten the free trial from 14 days to 7?" |
-| **Hypothesis** | Your team's current best guess | "Conversion will increase 5–10% because urgency drives action." |
-| **Success criteria** | What "win" looks like measurably | "Trial-to-paid conversion ≥ baseline; no drop in 90-day retention." |
+### Scenario type
 
-<Tip>
-  These fields are *passed into agent reasoning*. Agents see your hypothesis and success criteria — clearer framing → clearer answers. Vague hypotheses produce vague results.
-</Tip>
+| Type | Use it for |
+| --- | --- |
+| **A/B Test** | Compare two or more variants. Figma A/B/C variants can support up to 10 options. |
+| **Open-ended** | Ask agents to react, explain, or identify friction without forcing a choice. |
+| **Competitive** | Compare your concept against competitor or alternative descriptions. |
 
-### Templates
+### Context source
 
-The Decision step has built-in templates for common decisions:
+| Source | Current use |
+| --- | --- |
+| **Plain text** | Early concepts, research prompts, and non-visual scenarios. |
+| **Figma** | Primary visual input for first-week onboarding and design studies. Requires Figma connected in Settings. |
+| **Design Agent artifacts** | Automatically attached when launched from selected Design Agent surfaces. |
+| **Coded prototype** | Reserved for prototype capture workflows when enabled for your workspace. |
+| **GitHub** | Reserved for repo and PR context when enabled for your workspace. |
 
-- Pricing change (tier add, increase, restructure)
-- Onboarding redesign (trial length, steps, gating)
-- Plan-tier feature shift
-- Navigation restructure
-- Feature deprecation
-- Notification frequency change
+For a Figma study, paste the frame or file URL and wait for capture to finish before continuing. Sentia records selected frames, screenshots, text content, component names, hotspots, and design-token hints where available.
 
-Picking a template prefills hypothesis defaults, success criteria, and recommended captures. You can edit anything.
+### Framing fields
 
-## Step 2 · Scenario
+Use the fields to make the study legible:
 
-Attach **captures** — what the change *looks like* — so agents can react to the actual experience, not just a written description.
+| Field | Good example |
+| --- | --- |
+| **Question** | "Which onboarding variant helps first-time admins understand why Figma access is needed?" |
+| **Hypothesis** | "Explicit security language will reduce concern without lowering setup intent." |
+| **Success criteria** | "Agents can name the next step, express fewer security concerns, and prefer the variant for enterprise use." |
 
-| Capture type | How | Accuracy lift |
-| --- | --- | --- |
-| **Captured localhost UI** | `@sentia/capture` CLI against your local dev server | Highest |
-| **Figma frame** | Paste a Figma frame URL | High |
-| **Captured URL** | Provide a URL; Sentia screenshots via headless browser | High |
-| **Uploaded image** | Drag-drop PNGs/JPGs | Medium-high |
-| **Text description** | Paste-only fallback | Moderate |
+Clear framing is passed into agent reasoning. Vague framing produces vague results.
 
-You can attach multiple captures per scenario (e.g., before + after screenshots).
+## Step 2 · Population
 
-See [Inputs](/simulations/inputs) for setup details.
+Pick the cohort that should react to the scenario.
 
-### Context auto-attached
+The picker shows ready populations with usable agents. If you came from a population card, the wizard can open with that population preselected.
 
-When you launched the wizard from an integration (Linear, Jira, Figma, Slack), Sentia auto-attaches relevant context:
+Before launching, confirm:
 
-- Linear/Jira issue title, description, attached Figma URLs, linked PRDs
-- Figma file context if the wizard came from a frame trigger
-- Slack thread + reacted message if triggered by `:simulate:` emoji
+- The audience matches the research question.
+- The population is **Ready** and has agents.
+- The cohort size supports the agent count you plan to run.
+- Research artifacts and traits are adequate for the stakes of the decision.
 
-You can edit, replace, or remove auto-attachments before launching.
+If the right audience does not exist yet, create it in [Populations](/populations/build) before launching.
 
-## Step 3 · Population
+## Step 3 · Configure
 
-Pick which population to run against.
+Configure the run:
 
-The picker shows:
+| Setting | Notes |
+| --- | --- |
+| **Mode** | Fast for setup validation and exploration; Deep for higher-stakes evidence. |
+| **Agent count** | Minimum 10 for practical first-week studies; cannot exceed available population agents in the UI. |
+| **Model tier** | Fast uses the cheaper/quick model path; Deep uses the stronger reasoning path. |
+| **Power preview** | Helps judge whether the run can support the comparison you want to make. |
+| **Deterministic seed** | Optional. Use when reproducibility matters. |
+| **Agent context** | Optional preamble such as "Right now you are evaluating a first-run onboarding flow." |
 
-- All populations you've built, with **agent count**, **fidelity score**, and **last validation date**
-- Auto-suggested **segment focus** (e.g., "Early Adopters only", or "Pro plan tier") based on your decision text
-- Sample size projection — if you focus on a segment, Sentia tells you how many agents you'll actually run
-
-<Warning>
-  If a population's fidelity score is below 0.7 or has drift > 10%, you'll see an amber warning. You can still launch, but consider rebuilding for high-stakes decisions. See [Validation](/populations/validation).
-</Warning>
-
-## Step 4 · Configure
-
-Set the run parameters.
-
-| Setting | Default | Notes |
-| --- | --- | --- |
-| **Mode** | Deep | Fast for quick directional signals, Deep for segment-level claims |
-| **Agent count** | 1,000 | 200–10,000 range |
-| **Convergence threshold** | 0.95 | Lower = stricter, slower; higher = looser, faster |
-| **Max duration** | 30 min | Hard timeout. Beyond this, partial results are returned |
-| **Provider** | Auto (Claude → Gemini fallback) | Override only if your CSM advised it |
-| **Notification** | Slack channel | Where to ping when run completes |
-
-### Cost preview
-
-The wizard shows an LLM cost preview before launch: approximate token count and contract-allocation impact. For a 2,000-agent Deep run, expect ~6,000 LLM calls and ~10 minutes of compute.
+The wizard also previews cost and estimated duration before launch.
 
 ## Launch
 
-Click **Launch simulation** or press `⌘⇧L`.
+Click **Launch simulation**. You are redirected to the live run page, where you can watch completion count, preference split, simulated SUS, concerns, verbatims, and convergence. See [Simulation lifecycle](/concepts/lifecycle).
 
-You're redirected to the live run page. The simulation queues, then enters the running state typically within 10 seconds. See [Simulation lifecycle](/concepts/lifecycle).
+## Launching from Design Agent
 
-## Editing a running simulation
+When you launch from Design Agent:
 
-You can't change the population or scenario mid-run, but you can:
+- Select 1-5 surfaces.
+- Use one evaluation prompt.
+- Sentia starts one independent simulation per surface.
+- Each run uses the workspace default population.
+- Results stream back into the Design Agent session and appear in Simulations.
 
-- **Pause** the simulation (preserves partial results)
-- **Cancel** the simulation (no further token cost)
-- **Adjust the max-duration timeout** (extend only)
-- **Re-route notifications** to a different Slack channel
-
-## Saving as a template
-
-Once a simulation completes, you can click **Save as template** to reuse Decision + Scenario + Population + Config. Useful for recurring decisions ("monthly pricing test") or for sharing a canonical setup with teammates.
+See [Send designs to simulation](/design-agent/simulation-handoff).
 
 ## Next
 
 <CardGroup cols={2}>
-  <Card title="Picking inputs" icon="image" href="/simulations/inputs">
-    Which capture type to use and how to set each up.
+  <Card title="Inputs" icon="image" href="/simulations/inputs">
+    Which context source to use and how to prepare it.
   </Card>
   <Card title="Reading results" icon="chart-mixed" href="/simulations/results">
-    The 8-tab tour, with patterns to look for.
+    How to read completed reports.
   </Card>
 </CardGroup>

@@ -3,7 +3,7 @@ title: "Analytics integrations"
 description: "Amplitude, Mixpanel, or PostHog. Pick one — analytics grounds agents in your real usage data."
 ---
 
-Sentia requires exactly **one** analytics provider per workspace. Agents use this data to know how your real users behave — feature adoption, retention, cohort membership, frequency.
+Analytics integrations are optional enterprise connectors. They are not required for the Figma-first onboarding path. When enabled, Sentia supports exactly **one** analytics provider per workspace so event schemas and cohort definitions stay consistent.
 
 If you need to switch providers later, contact your CSM. A guided migration preserves population history.
 
@@ -113,7 +113,7 @@ Typical timeline: 3–10 business days depending on workspace size.
     Most often: scope/role too restrictive. Amplitude needs full read on cohort + funnel APIs; PostHog needs the scopes listed above. Re-create credentials with broader scope.
   </Accordion>
 
-  <Accordion title="Cohorts not appearing in the Population Builder">
+  <Accordion title="Cohorts not appearing in the Population Composer">
     Run an on-demand sync from the integration card. If cohorts still don't appear, check that the cohorts are not marked as private/personal in the provider — Sentia only sees cohorts your service account/key has access to.
   </Accordion>
 
@@ -133,6 +133,6 @@ Typical timeline: 3–10 business days depending on workspace size.
     Dovetail, Intercom, Zendesk — the highest accuracy lever.
   </Card>
   <Card title="Build a population" icon="users-gear" href="/populations/build">
-    Now that analytics is connected, build your first real population.
+    Build a focused cohort for simulations.
   </Card>
 </CardGroup>

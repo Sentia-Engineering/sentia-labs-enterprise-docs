@@ -1,80 +1,86 @@
 ---
 title: "Populations overview"
-description: "What a population is, how it's grounded, and why it's the single biggest accuracy lever."
+description: "What a population is, how cohorts are built, and why they determine simulation quality."
 ---
 
-A **population** is a reusable, validated set of synthetic agents grounded in census data, behavioral science, and your real customer data. Every simulation runs against one population. Better population → better simulation.
+A **population** is a reusable cohort of synthetic users. Every simulation runs against one population, so cohort fit is the strongest determinant of whether a report reads like useful research or generic feedback.
+
+In the current app, populations are built as **10-100 agent behavioral cohorts**. Use multiple focused cohorts rather than one broad "all users" population.
 
 ## What a population contains
 
-```
+```text
 Population
-├── Agents (1,000 – 100,000)
-│   ├── Demographic profile (census-grounded)
-│   ├── Behavioral profile (adopter category, decision biases)
-│   ├── Usage history (from your analytics)
-│   └── Memory (verbatims retrieved from your qualitative data)
-├── Segments (auto-tagged + custom cohorts)
-├── Validation report (5-experiment behavioral suite)
-└── Drift status (compared to baseline demographic mix)
+├── Agents (10-100 in the UI path)
+│   ├── Demographic profile
+│   ├── Behavioral patterns
+│   ├── Psychological drivers
+│   ├── Research memories from attached artifacts
+│   └── Optional custom trait scores
+├── Cohort description and target audience
+├── Health and qualitative coverage signals
+└── Simulation history
 ```
 
-## Where the grounding comes from
+## Where grounding comes from
 
 | Layer | Source | What it contributes |
 | --- | --- | --- |
-| **Demographic baseline** | US/EU Census Bureau | Age, income, education, region, household composition |
-| **Behavioral priors** | Sentia's behavioral science library | Adopter categories, decision biases, social proof, loss aversion, urgency response |
-| **Usage history** | Your analytics (Amplitude / Mixpanel / PostHog) | Feature adoption, retention, frequency, cohort membership |
-| **Qualitative memory** | Your interviews + support (Dovetail / Intercom / Zendesk) | Real verbatims clustered into pain points, retrieved during simulation |
+| **Audience brief** | Your natural-language description | The main steering input for who agents should represent. |
+| **Demographics** | ACS PUMS for US cohorts; WorldPop and World Bank for global cohorts | Age, gender, education, occupation, location, and region-specific context. |
+| **Behavior patterns** | Population Composer selections and inference | Workarounds, setup abandonment, comparison shopping, support escalation, and similar patterns. |
+| **Psychological drivers** | Trait presets and optional custom traits | Risk aversion, novelty seeking, trust seeking, privacy sensitivity, automation skepticism, and more. |
+| **Research artifacts** | Resource Library uploads | Interview language, survey responses, persona context, recordings, and prior experiment evidence. |
 
-The first two are always present. The last two are what separate ~70% accuracy populations from ~85% accuracy populations.
+## What makes a good cohort
 
-## Why "reusable"
+Good cohorts are:
 
-A population is built once and used many times. Cost is paid up-front (generation + validation, typically 5–15 minutes for 1,000 agents). Simulations against the population are then fast.
+- **Specific** enough that agents share a meaningful context.
+- **Research-backed** enough that voices do not feel generic.
+- **Reusable** across several related studies.
+- **Small enough** to understand and iterate quickly.
 
-Most workspaces have 3–8 active populations:
+Examples:
 
-- A broad "all customers" population for high-level roadmap questions
-- 2–4 segment-specific populations (e.g., "SMB trial users", "Enterprise admins", "Power users")
-- 1–2 special-purpose populations (e.g., "Churned users", "New signups")
+- "First-time enterprise admins connecting Figma during onboarding."
+- "Procurement-sensitive design leaders evaluating pricing-page trust."
+- "Accessibility-reliant users completing a setup flow."
+- "Power users comparing workflow shortcuts."
 
-You can have many. There's no limit beyond contract allocation.
+## Population lifecycle
 
-## Population health
-
-Each population has three health signals:
-
-| Signal | Healthy threshold | What it means |
-| --- | --- | --- |
-| **Validation pass rate** | ≥ 80% | Fraction of behavioral experiments where agents respond like real humans |
-| **Fidelity score** | ≥ 0.7 | Overall behavioral realism — composite of pass rate, verbatim retrieval quality, and demographic coverage |
-| **Drift** | < 10% | How much the population's demographic mix has diverged from baseline since build |
-
-The Populations list view shows all three at a glance. Rebuild any population with drift > 10% — it takes < 10 minutes and keeps accuracy up.
-
-## Lifecycle
-
-```
-DRAFT          ──→ BUILDING ──→ VALIDATING ──→ READY ──→ DRIFTED ──→ ARCHIVED
-(configuring)      (~5-15min)    (~2min)       (use it)  (rebuild)   (history only)
+```text
+Draft -> Building -> Ready -> Used in simulations -> Refined or duplicated
 ```
 
-You can pause a building population at any time. Validation is automatic on first build; you can re-run it anytime.
+You can rename, duplicate, archive, and delete populations. Deletion can be blocked while a population is building or when simulations depend on it.
 
-Archived populations stay in your workspace history for audit purposes but can't be used in new simulations.
+## What to review before using a population
+
+Open the population detail and check:
+
+- Agent count and status.
+- Sample personas.
+- Demographic panels.
+- Behavior trait radar.
+- Adoption or readiness profile.
+- Qualitative coverage.
+- Validation or health signals when available.
+- Simulation history.
+
+If a population looks wrong, fix it before interpreting simulation results.
 
 ## Next
 
 <CardGroup cols={2}>
   <Card title="Build a population" icon="users-gear" href="/populations/build">
-    Step-by-step: filters, grounding, generation.
+    Step-by-step cohort creation.
   </Card>
-  <Card title="Interview grounding" icon="microphone" href="/populations/interview-grounding">
-    The single biggest accuracy lever. How qualitative data ends up in agent memory.
+  <Card title="Research artifacts" icon="upload" href="/resource-library/research-artifacts">
+    Upload the evidence that grounds cohorts.
   </Card>
-  <Card title="Validation" icon="check-double" href="/populations/validation">
-    The 5-experiment behavioral suite and how to read it.
+  <Card title="Custom traits" icon="sliders" href="/admin/custom-traits">
+    Add audience dimensions specific to your workspace.
   </Card>
 </CardGroup>

@@ -1,0 +1,56 @@
+---
+title: "Custom traits"
+description: "Add workspace-specific audience dimensions on top of Sentia's default behavioral model."
+---
+
+Custom traits let your team define audience dimensions that matter for your product but are not captured by default demographic or behavioral fields.
+
+Examples:
+
+- AI literacy.
+- Security sensitivity.
+- Cost scrutiny.
+- Accessibility reliance.
+- Design-system familiarity.
+- Procurement influence.
+- Automation skepticism.
+
+## When to use custom traits
+
+Use them when a trait is important enough to appear repeatedly in analysis and simulation comparisons.
+
+Good custom traits:
+
+- Are specific to your product or market.
+- Have observable evidence in research artifacts or cohort definitions.
+- Help explain why one audience slice reacts differently.
+
+Avoid traits that are just another name for a population. If the whole audience is "enterprise admins," make that a cohort, not a custom trait.
+
+## Scoring methods
+
+| Method | Use when |
+| --- | --- |
+| **Keyword match** | Research artifacts contain clear phrases that indicate the trait. |
+| **Segment membership** | The trait maps to known user or account segments. |
+| **Manual** | Researchers need to curate the score based on qualitative knowledge. |
+
+Custom traits are applied during population build and can appear in downstream trait-correlation analysis.
+
+## Governance
+
+- Name traits in language researchers and designers already use.
+- Document what high and low scores mean.
+- Review old traits quarterly so the model does not accumulate unused dimensions.
+- Coordinate with your CSM for high-stakes trait definitions.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Build a population" icon="users-gear" href="/populations/build">
+    Apply traits while composing cohorts.
+  </Card>
+  <Card title="Reports" icon="file-lines" href="/resource-library/reports">
+    Save evidence where custom traits explain a design decision.
+  </Card>
+</CardGroup>

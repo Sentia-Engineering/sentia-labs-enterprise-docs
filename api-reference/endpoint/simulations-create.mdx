@@ -43,7 +43,7 @@ curl -X POST https://api.sentialabs.ai/api/simulations \
 | `populationId` | UUID | ✅ | Must be a Ready-state population |
 | `scenarioId` | UUID | ✅ | Created beforehand via the Scenarios endpoint (or auto-created in the wizard) |
 | `config.mode` | enum | ✅ | `"fast"` or `"deep"` |
-| `config.agentCount` | int | ✅ | 1–10,000 |
+| `config.agentCount` | int | ✅ | UI runs cannot exceed the selected population; API programs can support up to 10,000 where enabled |
 | `config.maxDurationMs` | int | ✅ | Hard timeout in milliseconds |
 | `config.convergenceThreshold` | float | Optional | 0.50–0.99, default 0.95 |
 

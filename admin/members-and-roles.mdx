@@ -1,6 +1,6 @@
 ---
 title: "Members & roles"
-description: "Owner / Admin / Builder / Viewer — what each role can do."
+description: "Owner / Admin / Operator / Viewer — what each role can do."
 ---
 
 Sentia uses four roles, enforced at the API middleware. Every mutation is audit-logged with actor, role, target, and timestamp.
@@ -10,20 +10,23 @@ Sentia uses four roles, enforced at the API middleware. Every mutation is audit-
 | Role | Who typically holds it | What they can do |
 | --- | --- | --- |
 | **Owner** | Workspace founders, leadership | Full admin: settings, billing, integrations, SSO, data deletion, team. Cannot be removed except by another owner. |
-| **Admin** | Operations leads, IT, security | Everything except billing and SSO. Manages integrations, populations, simulations, members. |
-| **Builder** | PMs, researchers, designers | Creates and runs simulations, builds populations, connects integrations they own. Most teammates land here. |
+| **Admin** | Research/design ops, IT, security | Manages members, integrations, populations, simulations, design system context, and workspace settings. |
+| **Operator** | UX researchers, designers, PM partners | Creates Design Agent projects, runs simulations, builds populations, uploads research, and saves reports. Most active teammates land here. |
 | **Viewer** | Execs, observers, external stakeholders | Read-only. Sees simulations, results, populations. Cannot run simulations or modify config. |
 
 Roles can change. Demoting or promoting is immediate and audit-logged.
 
 ## Capability matrix
 
-| Capability | Owner | Admin | Builder | Viewer |
+| Capability | Owner | Admin | Operator | Viewer |
 | --- | --- | --- | --- | --- |
 | View simulations & results | ✅ | ✅ | ✅ | ✅ |
 | Run simulations | ✅ | ✅ | ✅ | ❌ |
 | Build / edit populations | ✅ | ✅ | ✅ | ❌ |
-| Connect integrations | ✅ | ✅ | ✅ (own connections only) | ❌ |
+| Use Design Agent | ✅ | ✅ | ✅ | ❌ |
+| Upload research artifacts | ✅ | ✅ | ✅ | ❌ |
+| Save reports | ✅ | ✅ | ✅ | ❌ |
+| Connect integrations | ✅ | ✅ | ❌ | ❌ |
 | Manage workspace integrations | ✅ | ✅ | ❌ | ❌ |
 | Manage trigger configurations | ✅ | ✅ | ❌ | ❌ |
 | View audit log | ✅ | ✅ | ❌ | ❌ |
@@ -53,7 +56,7 @@ The recommended pattern at scale: **SCIM with IdP group mapping**. Your IdP beco
 | --- | --- |
 | `sentia-owners` | Owner |
 | `sentia-admins` | Admin |
-| `sentia-builders` | Builder |
+| `sentia-operators` | Operator |
 | `sentia-viewers` | Viewer |
 
 Group names are configurable per workspace. Default to the convention above for simplicity.
@@ -62,7 +65,7 @@ Group names are configurable per workspace. Default to the convention above for 
 
 | Transition | Who can do it |
 | --- | --- |
-| Builder → Admin | Admin or Owner |
+| Operator → Admin | Admin or Owner |
 | Admin → Owner | Owner |
 | Owner → Admin | Another Owner (cannot self-demote if last Owner) |
 | Any → Viewer (demotion) | Admin or Owner |
@@ -75,7 +78,7 @@ Transitions are immediate; the affected user sees their new permissions next sig
 For external collaborators (agency partners, consultants, contract designers):
 
 - Request **Guest** seats from your CSM
-- Guests are scoped to specific populations or decisions you grant
+- Guests are scoped to specific projects, reports, or workspace areas you grant
 - Guests can't see workspace-wide settings, billing, or other populations
 - Guests auto-expire after 90 days unless renewed
 
@@ -86,7 +89,7 @@ Guests don't count against your standard contract seat allocation; they're bille
 For programmatic API access from CI, internal tooling, or scripts:
 
 - Create a **Service account** in Admin → API keys
-- Service accounts have their own role (typically Builder or Viewer)
+- Service accounts have their own role (typically Operator or Viewer)
 - They authenticate with workspace-scoped API keys, not SSO
 - All actions are audit-logged with the service account name
 

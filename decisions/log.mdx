@@ -3,7 +3,7 @@ title: "The decisions log"
 description: "Track every product decision you've simulated, shipped, and calibrated against — in one place."
 ---
 
-The **Decisions log** at `/decisions` is the source of truth for everything your team has evaluated with Sentia. Every simulation creates a decision; every shipped decision becomes a calibration event.
+The **Decisions log** is an advanced release-loop surface for workspaces that connect simulations to shipped outcomes and calibration. It is not required for first-week design research onboarding, where most teams live in Design Agent, Simulations, Populations, and the Resource Library.
 
 ## What's in the log
 
@@ -32,16 +32,16 @@ Each decision shows:
 Three real uses:
 
 <CardGroup cols={2}>
-  <Card title="Audit trail" icon="clipboard-list">
+  <Card title="Audit trail" icon="clipboard-list" href="/admin/audit-log">
     Every product decision is recorded with its prediction, what shipped, and how it actually performed. Useful for retrospectives, quarterly reviews, and onboarding new PMs.
   </Card>
-  <Card title="Calibration trust" icon="rotate">
+  <Card title="Calibration trust" icon="rotate" href="/calibration/accuracy">
     Browse decisions sorted by calibration grade to build a mental model of where Sentia is sharp and where it needs more grounding.
   </Card>
-  <Card title="Pattern recognition" icon="chart-network">
+  <Card title="Pattern recognition" icon="chart-network" href="/calibration/drift">
     Filter to `state=reverted` to find decisions that shipped and got pulled — often a teaching set for what to look for in future simulations.
   </Card>
-  <Card title="Roadmap context" icon="map">
+  <Card title="Roadmap context" icon="map" href="/decisions/lifecycle">
     When proposing a new decision similar to a past one, link to the prior decision — the prediction and calibration history give your team well-founded context.
   </Card>
 </CardGroup>

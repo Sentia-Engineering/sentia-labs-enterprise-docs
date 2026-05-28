@@ -1,0 +1,70 @@
+---
+title: "Research artifacts"
+description: "Upload research files so cohorts can use real customer context."
+---
+
+Research artifacts are files your team already has: transcripts, surveys, persona documents, recordings, and experiment history. Sentia parses them into reusable research memory for cohort grounding.
+
+## Supported files
+
+| Type | Extensions | Limit |
+| --- | --- | --- |
+| Documents and data | CSV, TSV, DAT, TXT, PDF, DOCX | 25 MB per file |
+| Audio | MP3, WAV, M4A, FLAC, OGG | 200 MB per file |
+| Video | MP4, MOV, WEBM | 200 MB per file |
+
+Audio and video uploads are transcribed before they are added to the research pipeline.
+
+## Artifact kinds
+
+When uploading, Sentia classifies files into one of these kinds:
+
+| Kind | Typical file |
+| --- | --- |
+| **Survey CSV** | Survey exports, tabular feedback, NPS comments. |
+| **Transcript** | Interview notes, PDF/TXT transcripts, call notes. |
+| **A/B history** | Prior experiment or conversion history files. |
+| **Persona doc** | Existing persona or segment documentation. |
+| **Audio transcript** | Recorded interviews or calls. |
+| **Video transcript** | Recorded walkthroughs or usability sessions. |
+
+You can adjust metadata after upload when the automatic classification is not specific enough.
+
+## Upload flow
+
+<Steps>
+  <Step title="Open Resource Library">
+    Press `R`, then stay on **My research**.
+  </Step>
+  <Step title="Upload files">
+    Drop files into the upload dialog. Sentia validates type and size before upload.
+  </Step>
+  <Step title="Review parsing status">
+    Each row shows whether the file is processing, ready, or failed. Ready files include an AI summary.
+  </Step>
+  <Step title="Use in a cohort">
+    Open Populations and attach relevant artifacts when composing the audience.
+  </Step>
+</Steps>
+
+## Managing artifacts
+
+You can rename, download, re-parse, or delete artifacts from the row actions. Deleting a file removes it from the library; research signals already distributed to existing agents remain available to those existing agents so old simulations stay reproducible.
+
+## Practical guidance
+
+- Upload the smallest useful set first: 5-10 strong interviews beat a folder of poorly labeled files.
+- Prefer artifacts that describe the audience you plan to simulate.
+- Include recency in the title when old and new research conflict.
+- Re-parse files after correcting metadata or replacing a bad upload.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Build a population" icon="users-gear" href="/populations/build">
+    Attach research artifacts while composing a cohort.
+  </Card>
+  <Card title="Resource Library overview" icon="file-lines" href="/resource-library/overview">
+    Understand both library tabs.
+  </Card>
+</CardGroup>

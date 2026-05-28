@@ -1,9 +1,9 @@
 ---
 title: "Welcome to Sentia Labs Enterprise"
-description: "Run thousands of AI agents through your product decisions — and know how your users will respond before you ship."
+description: "Import design work, build behavioral cohorts, and run synthetic user studies before you ship."
 ---
 
-Sentia is a **behavioral product simulation platform** built for enterprise product, research, and design teams. Connect your stack, define a decision, and a population of synthetic agents — grounded in census data, behavioral science, and your real customer verbatims — predicts how your users will react before you ship.
+Sentia is a **design research simulation platform** for enterprise UX research, design, and product teams. Connect Figma, define a behavioral cohort, and run synthetic users through design decisions before you spend cycles building or shipping.
 
 <CardGroup cols={2}>
   <Card title="10-minute quickstart" icon="rocket" href="/quickstart">
@@ -17,27 +17,30 @@ Sentia is a **behavioral product simulation platform** built for enterprise prod
 ## What you can do with Sentia
 
 <CardGroup cols={2}>
+  <Card title="Iterate in Design Agent" icon="pen-ruler" href="/design-agent/overview">
+    Import Figma files, generate editable surfaces, create variants, and move the strongest options into simulation.
+  </Card>
   <Card title="Simulate decisions" icon="flask" href="/simulations/overview">
-    Run 200–10,000 agents through any product change. Get a distribution of choices, confidence score, segment breakdowns, and NPS prediction.
+    Run behavioral cohorts through A/B preference, open-ended, or competitive studies. Get a report with findings, concerns, recommendations, and population lenses.
   </Card>
-  <Card title="Ground agents in real users" icon="users" href="/populations/interview-grounding">
-    Pull behavioral data from your analytics + qualitative tools so agents reflect your actual users — not generic personas.
+  <Card title="Build research cohorts" icon="users" href="/populations/overview">
+    Compose 10-100 synthetic users from a natural-language audience brief, demographics, behavior patterns, traits, and uploaded research.
   </Card>
-  <Card title="Trigger from your tools" icon="bolt" href="/simulations/triggers">
-    Auto-simulate when a Linear or Jira ticket moves to "In Review", a Figma frame is marked, or a teammate reacts `:simulate:` in Slack.
+  <Card title="Preserve evidence" icon="file-lines" href="/resource-library/overview">
+    Upload research inputs and save simulation or comparison reports in the Resource Library.
   </Card>
-  <Card title="Close the loop" icon="rotate" href="/calibration/overview">
-    After you ship, Sentia compares predicted vs. actual metrics and recalibrates. Every release makes the next simulation more accurate.
+  <Card title="Configure workspace context" icon="sliders" href="/admin/design-system">
+    Add design system guidance, accessibility rules, custom traits, and team access controls.
   </Card>
 </CardGroup>
 
 ## How Sentia works
 
-Every agent in a simulation runs through a three-step decision chain:
+Every agent in a simulation runs through a three-step reasoning chain:
 
 <Steps>
   <Step title="Memory" icon="brain">
-    The agent recalls its behavioral profile, usage history, and real customer verbatims from your connected tools.
+    The agent recalls its demographic profile, behavioral traits, research memories, and relevant cohort context.
   </Step>
   <Step title="Reflection" icon="lightbulb">
     The agent reasons about the scenario, weighing its history, preferences, and concerns.
@@ -47,19 +50,19 @@ Every agent in a simulation runs through a three-step decision chain:
   </Step>
 </Steps>
 
-Results converge through wave-based sampling. With interview-grounded populations, Sentia achieves **~85% normalized accuracy** vs. ~70% for demographic-only agents.
+Results stream live, then compile into a decision report designed for critique, prioritization, and stakeholder review.
 
 ## Who Sentia is for
 
 <Columns cols={3}>
-  <Card title="Product managers" icon="briefcase">
-    Pressure-test roadmap bets, pricing changes, onboarding flows, and feature trade-offs before committing eng time.
+  <Card title="UX researchers" icon="magnifying-glass" href="/resource-library/research-artifacts">
+    Turn existing transcripts, surveys, and recordings into study context, then run structured "what if" research against defined cohorts.
   </Card>
-  <Card title="UX researchers" icon="magnifying-glass">
-    Extend qualitative insight into quantitative prediction. Run "what if" studies on populations 100× larger than any interview cohort.
+  <Card title="Designers" icon="palette" href="/design-agent/overview">
+    Generate and compare design variants, surface confusion and accessibility issues, and bring better questions into critique.
   </Card>
-  <Card title="Designers" icon="palette">
-    Validate design hypotheses with thousands of grounded agents. Catch objections and confusion before usability testing.
+  <Card title="Product partners" icon="briefcase" href="/simulations/overview">
+    Pressure-test roadmap, onboarding, pricing, and IA choices before committing roadmap or engineering time.
   </Card>
 </Columns>
 
@@ -67,10 +70,10 @@ Results converge through wave-based sampling. With interview-grounded population
 
 <CardGroup cols={2}>
   <Card title="Core concepts" icon="book-open" href="/concepts/overview">
-    Simulations, populations, decisions, calibration — the four primitives.
+    Design Agent, simulations, populations, resource library, and decision lifecycle.
   </Card>
   <Card title="Connect your tools" icon="plug" href="/integrations/overview">
-    15 integrations across analytics, qualitative, workflow, docs, experimentation, and ship detection.
+    Figma-first setup, plus enterprise integrations for teams that need broader release-loop context.
   </Card>
   <Card title="API reference" icon="terminal" href="/api-reference/introduction">
     REST API for programmatic access. WorkOS JWT auth, workspace-scoped, rate-limited.

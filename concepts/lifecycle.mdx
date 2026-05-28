@@ -1,88 +1,58 @@
 ---
 title: "Simulation lifecycle"
-description: "What happens between hitting Launch and reading results — and how to interpret each stage."
+description: "What happens between launch and the completed report."
 ---
 
-A simulation moves through five well-defined stages. Knowing them helps you read the live run view and debug surprising outcomes.
+A simulation moves through a small set of stages. Knowing them helps you catch setup problems while a run is live and understand what appears in the completed report.
 
-## The five stages
+## Stages
 
 <Steps>
-  <Step title="Queued" icon="hourglass-half">
-    The simulation is accepted and assigned to a Temporal workflow. Agents and configuration are validated. Typical duration: < 10 seconds.
-
-    **What you see:** Spinner with "Queued" badge. Cancellable at no token cost.
+  <Step title="Queued">
+    The run is accepted, configuration is validated, and work is assigned.
   </Step>
-
-  <Step title="Running" icon="play">
-    Agents begin executing in **waves** — small batches that run in parallel. Each agent in a wave goes through the three-call Memory → Reflection → Decision chain.
-
-    **What you see:** Live agent counter, distribution chart filling in, and live transcripts you can tail.
+  <Step title="Running">
+    Agents evaluate the scenario in waves. The live page updates completion count, preference split, concerns, verbatims, and other metrics.
   </Step>
-
-  <Step title="Converging" icon="bullseye">
-    After each wave, Sentia measures **Jensen-Shannon divergence** between the new distribution and the previous wave's. When divergence stays under your convergence threshold for **two consecutive waves**, the simulation converges.
-
-    **What you see:** The convergence chart turns from amber to green. The "Waves run" counter stops climbing.
+  <Step title="Converging">
+    Sentia checks whether additional agents are still changing the answer. Divisive studies may stay less stable because audience slices genuinely disagree.
   </Step>
-
-  <Step title="Completed" icon="circle-check">
-    Final aggregation runs: segment breakdowns, objection clustering, recommendations generation, calibration baseline recorded.
-
-    **What you see:** The 8-tab results view loads. PDF export becomes available.
+  <Step title="Completed">
+    Final aggregation creates findings, concerns, recommendations, population analysis, voices, and methodology.
   </Step>
-
-  <Step title="Failed (rare)" icon="circle-xmark">
-    The simulation didn't converge within `maxDurationMs`, or a critical dependency failed. Partial results are preserved for inspection.
-
-    **What you see:** Failure reason + last-known distribution. No token cost for failed convergence.
+  <Step title="Failed or canceled">
+    The run stops before completion. Inspect the failure reason, fix the setup if needed, and rerun.
   </Step>
 </Steps>
 
-## Why waves?
+## What to monitor live
 
-Running 5,000 agents one-at-a-time would take hours and most aren't needed. Wave-based sampling:
-
-- **Detects convergence early** — many scenarios stabilize after 800–1,200 agents, even if you allocated 5,000
-- **Saves tokens** — Sentia stops as soon as the result is statistically stable
-- **Catches divisive scenarios** — if waves stay divergent, the scenario is genuinely polarizing (a valid result)
-
-Default wave size is 100–250 agents depending on mode. You don't configure this directly.
-
-## Convergence in plain language
-
-A simulation has converged when **adding more agents stops changing the answer**.
-
-Mathematically: the Jensen-Shannon divergence between consecutive wave distributions falls below `convergenceThreshold` (default `0.95`) and stays there for two waves in a row.
-
-- **High convergence (>0.95)** → distribution is stable, you can trust the headline number
-- **Mid (0.85–0.95)** → directional signal but verify before high-stakes decisions
-- **Low (< 0.85)** → scenario is genuinely divisive, or you need more agents
-
-The **two consecutive waves** rule prevents false positives from one lucky stable wave.
+| Live signal | Why it matters |
+| --- | --- |
+| **Agents completed** | Confirms the run is moving. |
+| **Preference split** | Shows early choice distribution for A/B and competitive studies. |
+| **Concerns per agent** | Indicates friction density. |
+| **Live verbatims** | Helps confirm agents understand the prompt and audience. |
+| **Convergence** | Shows whether the distribution is stabilizing. |
 
 ## Confidence vs. convergence
 
-These are different and people mix them up:
+These are different:
 
-| Metric | What it measures | Typical "good" value |
-| --- | --- | --- |
-| **Convergence score** | Has the distribution stabilized? Did adding more agents stop changing the answer? | > 0.95 |
-| **Confidence score** | How well-supported is the decision by the population's grounded data? | > 0.8 |
+| Metric | Meaning |
+| --- | --- |
+| **Convergence** | Whether adding agents is still changing the distribution. |
+| **Confidence** | How strongly supported the result appears, given the responses and cohort context. |
 
-You can converge confidently to a low-confidence answer ("the population is sure it doesn't know"). You can also have high per-agent confidence but a divisive distribution (segments disagree strongly). Read both.
+A study can converge to a split result. That is not a failure; it often means the design works for one slice of the cohort and not another.
 
-## What if it doesn't converge?
+## Next
 
-Two real possibilities:
-
-1. **The scenario is divisive.** Different segments strongly disagree. This is a *valid* result — read the Segments tab to see who splits and why.
-2. **The population is too small or generic.** If you ran Fast mode (200 agents) on a complex scenario, try Deep mode. If your population was demographic-only, ground it in interviews.
-
-A non-converged result is never a "broken" simulation. It's signal.
-
-## Where it runs
-
-Simulations execute on Temporal workflows on Sentia's infrastructure. You don't manage workers. Token-level cost is tracked per workspace and visible in Admin → Usage.
-
-LLM provider: **Anthropic Claude** primary, **Google Gemini** fallback. If Anthropic has an outage, simulations continue automatically on Gemini with a small quality-degradation flag in the run metadata. See [Security & LLM safety](/security/llm-safety).
+<CardGroup cols={2}>
+  <Card title="Reading results" icon="chart-mixed" href="/simulations/results">
+    Turn the completed report into design evidence.
+  </Card>
+  <Card title="Convergence" icon="bullseye" href="/simulations/convergence">
+    Read stability signals in more detail.
+  </Card>
+</CardGroup>

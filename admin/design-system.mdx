@@ -1,0 +1,45 @@
+---
+title: "Design system settings"
+description: "Give Sentia your design and accessibility rules so generated surfaces match your standards."
+---
+
+Admins can add workspace-level design guidance in **Settings -> Design system**. Sentia uses this context when generating Design Agent surfaces and when reporting accessibility issues in simulation results.
+
+## Design document
+
+Paste or upload a `.md` or `.txt` document that describes how your team designs product surfaces.
+
+Good content includes:
+
+- Component usage rules.
+- Voice and tone guidance.
+- Layout and spacing conventions.
+- Form, table, modal, and navigation standards.
+- Accessibility commitments.
+- Product-specific patterns that should not be changed casually.
+
+The design document is capped at 50,000 characters. Keep it practical: concise rules beat a dumped design-system site.
+
+## Accessibility rule PDFs
+
+You can upload up to five PDF rule documents. Use these for accessibility checklists, legal requirements, procurement standards, or internal audit guidance.
+
+Simulation reports with visual inputs can surface an **Accessibility Audit** layer when relevant. The audit uses these workspace rules as context.
+
+## Governance
+
+- Keep the design document owned by a design-system lead or admin.
+- Update it when the design system materially changes.
+- Remove outdated PDFs so audits do not mix old and new guidance.
+- Treat generated surfaces as proposals; final design-system compliance remains a team review responsibility.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Design Agent" icon="pen-ruler" href="/design-agent/overview">
+    Use the design system context while generating and editing surfaces.
+  </Card>
+  <Card title="Reading results" icon="chart-mixed" href="/simulations/results">
+    Review concern hotspots and accessibility audit findings.
+  </Card>
+</CardGroup>

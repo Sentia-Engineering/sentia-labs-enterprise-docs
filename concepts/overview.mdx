@@ -1,102 +1,78 @@
 ---
 title: "Core concepts"
-description: "Four primitives — simulations, populations, decisions, and calibration — make up the entire Sentia mental model."
+description: "The current Sentia mental model for research and design teams."
 ---
 
-Sentia has exactly four primitives. Everything you do in the dashboard is one of these.
+Sentia is organized around five concepts: **Design Agent**, **Simulations**, **Populations**, **Resource Library**, and the **Decision Lifecycle**.
 
 <CardGroup cols={2}>
+  <Card title="Design Agent" icon="pen-ruler" href="/design-agent/overview">
+    Import Figma files, generate editable surfaces, create variants, and hand selected designs to simulation.
+  </Card>
   <Card title="Simulation" icon="flask" href="/simulations/overview">
-    A run of N agents through a specific scenario. Produces a distribution of choices with a confidence score, segment breakdowns, and NPS prediction.
+    A synthetic user study against one scenario and one population.
   </Card>
   <Card title="Population" icon="users" href="/populations/overview">
-    A reusable set of synthetic agents — grounded in census data + your analytics + your interview transcripts. Validated for behavioral fidelity.
+    A reusable 10-100 agent cohort grounded in an audience brief, demographics, behavior traits, and research artifacts.
   </Card>
-  <Card title="Decision" icon="diamond" href="/decisions/log">
-    A product change you're evaluating: proposed, simulated, shipped, validated, or reverted. The unit of the calibration flywheel.
+  <Card title="Resource Library" icon="file-lines" href="/resource-library/overview">
+    Research uploads and saved simulation or comparison reports.
   </Card>
-  <Card title="Calibration" icon="rotate" href="/calibration/overview">
-    The continuous loop that compares predicted vs. actual outcomes after you ship, then adjusts per-segment correction factors.
+  <Card title="Decision Lifecycle" icon="rotate" href="/decisions/lifecycle">
+    The longer loop for teams that connect simulations to shipping, calibration, and release evidence.
   </Card>
 </CardGroup>
 
 ## How they relate
 
-```
-┌─────────────┐      ┌─────────────┐
-│  Decision   │─────▶│ Simulation  │
-│ (proposed)  │      │   (run N    │
-└─────────────┘      │   agents)   │
-       │             └──────┬──────┘
-       │                    │
-       │             ┌──────▼──────┐
-       │             │ Population  │
-       │             │ (grounded)  │
-       │             └─────────────┘
-       │
-       │   ship
-       ▼
-┌─────────────┐      ┌─────────────┐
-│  Decision   │─────▶│ Calibration │
-│  (shipped)  │      │ (predicted  │
-└─────────────┘      │  vs actual) │
-                     └──────┬──────┘
-                            │
-                            ▼
-                     adjust correction
-                     factors per segment
-                            │
-                            ▼
-                     next simulation is
-                     more accurate
+```text
+Research artifacts  ->  Population
+Figma / Design Agent -> Simulation -> Report -> Resource Library
+Report evidence      -> Design critique, product decision, or follow-up study
 ```
 
 ## Walking through a real flow
 
-A product manager wants to evaluate shortening the free trial from 14 to 7 days.
-
 <Steps>
-  <Step title="They create a Decision">
-    *"Reduce free trial: 14 → 7 days. Success: maintain trial-to-paid conversion ≥ current baseline."* The decision starts in the **proposed** state.
+  <Step title="Upload context">
+    A researcher adds onboarding interview transcripts and survey comments to the Resource Library.
   </Step>
-  <Step title="They run a Simulation">
-    They select an existing Population (~5,000 agents grounded in their Amplitude data + Dovetail interviews), add a Figma capture of the proposed shorter onboarding, and configure Deep mode (3,000 agents).
+  <Step title="Build a cohort">
+    The team creates "first-time enterprise admins connecting Figma" as a 50-agent population.
   </Step>
-  <Step title="The agents reason">
-    Each agent recalls its profile and verbatims (Memory), reasons about the change (Reflection), and commits to a decision (Decision). Wave-by-wave the distribution converges.
+  <Step title="Prepare surfaces">
+    A designer imports the onboarding Figma file into Design Agent and creates a security-forward variant.
   </Step>
-  <Step title="They read results">
-    62% adopt, 28% churn, 10% upgrade earlier. Concerns cluster around *"not enough time to evaluate"* for late-tenure trials. NPS predicted to drop 4 points.
+  <Step title="Run a simulation">
+    The team sends both surfaces to simulation with the same prompt and population.
   </Step>
-  <Step title="They ship — or don't">
-    They decide to test on the SMB segment only. The Decision moves to **shipped**. LaunchDarkly flags the rollout.
+  <Step title="Read the report">
+    The report shows that the security-forward variant reduces access concerns but adds setup friction.
   </Step>
-  <Step title="Sentia measures">
-    14 days later, Calibration pulls actuals from Amplitude. Predicted 62% adopt vs. actual 58%. The Bayesian correction model updates per-segment factors. Next simulation in this area is more accurate.
+  <Step title="Save evidence">
+    The team saves the comparison report to the Resource Library and uses it in critique.
   </Step>
 </Steps>
 
 ## What grounds the agents
 
-Agents aren't generic personas. They draw from real data your workspace has connected:
+Agents are not generic personas. They draw from:
 
 | Source | What it contributes |
 | --- | --- |
-| **US/EU Census** | Demographic baseline — age, income, education, region, household composition |
-| **Behavioral science library** | Adopter categories, decision biases, social proof responses, loss-aversion calibration |
-| **Your analytics** (Amplitude / Mixpanel / PostHog) | Usage frequency, feature adoption, retention curves, cohort behaviors |
-| **Your qualitative data** (Dovetail / Intercom / Zendesk) | Real customer language — concerns, delights, objections — embedded into agent memory |
-| **Your experimentation history** (Statsig / Eppo) | Past A/B test outcomes used as calibration ground truth |
-
-Without your data connected, agents fall back to generic profiles. **The single biggest accuracy lever is connecting qualitative data.** See [Interview grounding](/populations/interview-grounding).
+| **Audience brief** | Who the cohort should represent and what context matters. |
+| **Demographic grounding** | Country, region, age, education, occupation, and related context. |
+| **Behavioral library** | Patterns such as setup abandonment, price checking, trust seeking, and privacy sensitivity. |
+| **Research artifacts** | Real language and concerns from transcripts, surveys, recordings, and persona docs. |
+| **Custom traits** | Workspace-specific dimensions such as AI literacy or security sensitivity. |
 
 ## Where to go next
 
 <CardGroup cols={2}>
-  <Card title="Simulation lifecycle" icon="diagram-project" href="/concepts/lifecycle">
-    Queued → running → converging → completed. What happens at each stage and why.
+  <Card title="Workspace tour" icon="map" href="/onboarding/workspace-tour">
+    Learn the dashboard areas and shortcuts.
   </Card>
   <Card title="Glossary" icon="book" href="/concepts/glossary">
-    Adopter category, convergence threshold, DPD, J-S divergence, normalized accuracy, fidelity score — definitions in one place.
+    Definitions in one place.
   </Card>
 </CardGroup>

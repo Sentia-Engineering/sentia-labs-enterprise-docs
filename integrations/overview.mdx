@@ -1,108 +1,67 @@
 ---
 title: "Integrations overview"
-description: "15 integrations across analytics, qualitative, workflow, documentation, experimentation, and ship detection."
+description: "Figma-first setup, plus enterprise connectors for broader release-loop programs."
 ---
 
-Sentia connects to your existing product stack so you don't have to manually re-enter data. Each integration plays a specific role in the simulation + calibration loop.
+The current self-serve onboarding path is **Figma-first**. Connect Figma, build a cohort, and run the first design simulation. Other integrations are available for enterprise programs where Sentia is connected to analytics, workflow, documentation, experimentation, or ship-detection systems.
 
-## All 15 integrations
+## Current first-week integration
 
-| Category | Provider | Role |
+| Provider | Where | Purpose |
 | --- | --- | --- |
-| **Analytics** (one per workspace) | Amplitude | Cohorts, funnels, event frequency → agent memory |
-| | Mixpanel | Same — agent memory |
-| | PostHog | Same — agent memory (supports self-hosted) |
-| **Qualitative** (one per workspace recommended) | Intercom | Conversations, satisfaction → agent verbatims |
-| | Zendesk | Tickets, satisfaction → agent verbatims |
-| | Dovetail | Interview transcripts, highlights → agent verbatims |
-| **Workflow + triggers** | Linear | Issues + status-change triggers |
-| | Jira | Issues + status-change triggers |
-| | Figma | Frame captures + frame-name triggers |
-| | Slack | Webhook commands + `:simulate:` reaction triggers |
-| **Documentation** | Notion | PRDs and design docs → simulation context |
-| | Confluence | Same — simulation context |
-| **Experimentation** | Statsig | A/B test results → calibration ground truth (3× weight) |
-| | Eppo | Same — calibration ground truth (3× weight) |
-| **Ship detection** | LaunchDarkly | Flag rollout → ship detection |
-| | GitHub | Merged PR with label → ship detection |
-| | Segment | CDP source → user traits + event schemas |
+| **Figma** | Settings -> Integrations | Import frames into the simulation wizard and Design Agent. Post Design Agent summaries back to Figma comments. |
 
-## Mutually-exclusive integrations
+Figma uses a workspace-saved personal access token in the current rollout. Required scopes are `current_user:read`, `file_content:read`, and `file_comments:write`.
 
-Some integration types are mutually exclusive **per workspace**:
+## Enterprise connector categories
 
-- **Analytics:** Connect ONE of Amplitude, Mixpanel, or PostHog. Agent memory needs a consistent event schema; using multiple would create incoherent grounding.
-- **Qualitative:** You *can* connect multiple, but most workspaces pick one primary (typically Dovetail for interviews or Intercom for support). Sentia de-duplicates verbatims across sources.
+These categories may be enabled with your CSM depending on contract, workspace readiness, and rollout stage:
 
-If you need to switch your analytics provider, contact your CSM — a guided migration preserves population history.
+| Category | Providers | Role |
+| --- | --- | --- |
+| **Analytics** | Amplitude, Mixpanel, PostHog | Usage cohorts, funnels, events, and release measurement. |
+| **Qualitative** | Dovetail, Intercom, Zendesk | Interviews, support conversations, tickets, and customer language. |
+| **Workflow** | Linear, Jira, Slack, GitHub | Issue context, handoffs, notifications, and release signals. |
+| **Documentation** | Notion, Confluence | PRDs, design docs, and background context. |
+| **Experimentation** | Statsig, Eppo | A/B test results and calibration evidence. |
+| **Ship detection** | LaunchDarkly, GitHub, Segment | Rollout detection for decision lifecycle workflows. |
 
-## All other integrations: multiple allowed
+## What to connect first
 
-You can connect:
+For researchers and designers:
 
-- Linear *and* Jira (some teams use both)
-- Both Notion and Confluence
-- Multiple ship-detection sources (LaunchDarkly + GitHub label = belt-and-suspenders)
-- Statsig *and* Eppo (rare, but supported)
+1. **Figma** - required for the main design workflow.
+2. **Resource Library uploads** - no external connector required; upload research artifacts directly.
+3. **Documentation or qualitative sources** - useful after the first week if your team wants automatic ingestion.
+4. **Analytics and experimentation** - useful when connecting simulation evidence to shipped outcomes.
 
-## Auth model
+## Auth and security
 
-| Auth | Providers |
-| --- | --- |
-| **OAuth via Nango** | Intercom, Zendesk, Dovetail, Linear, Jira, Figma, Slack, Notion, Confluence, GitHub, Segment |
-| **API Key (Basic Auth)** | Amplitude |
-| **Service Account** | Mixpanel (rate-limited queue) |
-| **Personal API Key** | PostHog |
-| **Console API Key (direct)** | Statsig, Eppo |
-| **API Key + Webhook** | LaunchDarkly |
+Credentials are stored encrypted and workspace-scoped. Admins should own connection setup and periodically review which integrations are active.
 
-All credentials are encrypted at rest with per-tenant KMS keys. See [Data handling](/security/data-handling).
-
-## Sync cadence
-
-| Provider | Cadence |
-| --- | --- |
-| Linear, Jira | 15 minutes |
-| Notion, Confluence | 30 minutes |
-| Statsig, Eppo | 30 minutes |
-| GitHub | 15 minutes |
-| Amplitude, Mixpanel, PostHog, Intercom, Zendesk, Segment | 24 hours |
-| Figma | 24 hours |
-| Slack | Real-time (webhooks) |
-| LaunchDarkly | Webhook-driven |
-
-You can trigger an on-demand sync from any integration card. Useful when you've just landed a new cohort or shipped an experiment and want to use the fresh data immediately.
-
-## Connection health
-
-Each integration card shows:
-
-- **Status** — Connected (green), Syncing (amber), Stale (amber, > 2 sync intervals missed), Error (red), Disconnected (gray)
-- **Last sync** — relative timestamp
-- **Data summary** — e.g., "1,247 conversations synced, 89 new today"
-- **Recent activity** — last 5 sync events with status
-
-When an integration goes Stale or Error, an admin gets a Slack notification (if Slack is connected) and the affected populations show a stale-data badge.
+See [Data handling](/security/data-handling) for storage, redaction, and tenant-isolation details.
 
 ## Per-category guides
 
+Some category pages describe enterprise connectors that may not be visible in your current self-serve catalog. If a provider is not shown in Settings, ask your CSM before attempting setup.
+
 <CardGroup cols={2}>
+  <Card title="Workflow" icon="bolt" href="/integrations/workflow">
+    Figma, Linear, Jira, Slack, and related workflow context.
+  </Card>
   <Card title="Analytics" icon="chart-mixed" href="/integrations/analytics">
-    Amplitude, Mixpanel, PostHog. Setup, what gets synced, troubleshooting.
+    Amplitude, Mixpanel, and PostHog for enterprise release loops.
   </Card>
   <Card title="Qualitative" icon="microphone" href="/integrations/qualitative">
-    Dovetail, Intercom, Zendesk. The highest-leverage category.
-  </Card>
-  <Card title="Workflow" icon="bolt" href="/integrations/workflow">
-    Linear, Jira, Figma, Slack. Where most auto-triggers live.
+    Dovetail, Intercom, and Zendesk for automatic customer-language ingestion.
   </Card>
   <Card title="Documentation" icon="file-lines" href="/integrations/documentation">
-    Notion, Confluence. PRDs auto-attach to simulations.
+    Notion and Confluence context for mature workflows.
   </Card>
   <Card title="Experimentation" icon="flask" href="/integrations/experimentation">
-    Statsig, Eppo. The fastest path to calibration accuracy.
+    Statsig and Eppo for calibration programs.
   </Card>
   <Card title="Ship detection" icon="rocket" href="/integrations/ship-detection">
-    LaunchDarkly, GitHub, Segment. Closes the calibration loop.
+    LaunchDarkly, GitHub, and Segment for shipped-decision detection.
   </Card>
 </CardGroup>

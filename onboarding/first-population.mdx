@@ -1,104 +1,91 @@
 ---
 title: "Build your first population"
-description: "Move from the sample US Census population to one grounded in your real users."
+description: "Create a focused behavioral cohort for the first design study."
 ---
 
-The single highest-leverage thing you can do early is build a population grounded in your data. This page walks you through the first real one.
+A population is a reusable cohort of synthetic users. For first-week onboarding, keep it small and specific: one audience, one research purpose, and enough context that designers recognize the reactions.
 
 ## Before you start
 
-Have these connected:
+Helpful inputs:
 
-- ✅ **One analytics provider** (Amplitude, Mixpanel, or PostHog)
-- ✅ **At least one qualitative source** (Dovetail, Intercom, or Zendesk) — strongly recommended
+- A clear audience brief.
+- Figma connected if the cohort will evaluate design work.
+- Optional research artifacts in the [Resource Library](/resource-library/research-artifacts).
+- Optional design system guidance in [Settings -> Design system](/admin/design-system).
 
-Without qualitative data, your population will use demographic priors only and top out around 70% normalized accuracy. With interviews, you'll hit ~85%.
+You can build the first cohort without uploaded research. Add artifacts as soon as you have them; they make the cohort easier to trust.
 
 ## Pick your scope
 
-Start narrow. The instinct to model "everyone" produces blurry populations that converge slowly and read flat. Some good first-population scopes:
+Start narrow. The instinct to model "everyone" produces blurry cohorts that read flat. Good first-population scopes:
 
-- **"All paying customers in our top 3 segments"**
-- **"SMB free-trial users in their first 14 days"**
-- **"Enterprise admins on the Pro plan"**
-- **"Users who triggered the activation event in the last 90 days"**
+- **"First-time enterprise admins connecting Figma during onboarding"**
+- **"UX researchers evaluating whether a prototype is ready for stakeholder review"**
+- **"Procurement-sensitive buyers comparing pricing-page trust signals"**
+- **"Accessibility-reliant users working through a setup flow"**
 
-Each of these is sharp enough to make meaningful predictions and broad enough to be useful across many simulations.
+Each scope is specific enough for meaningful design feedback and broad enough to reuse across several simulations.
 
 ## Build it
 
 <Steps>
   <Step title="Open Populations → New">
-    Press `P`, then click **+ New population**. The builder opens.
+    Press `P`, then create a new population.
   </Step>
 
-  <Step title="Step 1: Define">
-    Name it ("SMB trial users — May 2026"), pick agent count (start at **1,000** — enough for fast convergence and segment breakdowns), and set the region (US or EU).
+  <Step title="Write the audience brief">
+    Name the cohort and describe who the agents represent, what they are trying to do, and what context they bring. Example: "First-time enterprise admins responsible for connecting Figma and proving value to design leadership."
   </Step>
 
-  <Step title="Step 2: Filter">
-    Combine **census filters** (age range, income, region, household, education) with **analytics cohorts** (a saved cohort from your provider). Examples:
-    
-    - Census: 25–54, US, household income $50k–$200k
-    - Amplitude cohort: "Trial started, < 14 days, did not complete activation"
-
-    The right-side preview updates live, showing a sample-size projection and a demographic chart.
+  <Step title="Choose size">
+    Pick **10-100 agents**. Start with **50** unless you have a reason to go smaller or larger.
   </Step>
 
-  <Step title="Step 3: Ground">
-    Pick which qualitative sources to weight into agent memory:
-    
-    - **Dovetail projects** — interview transcripts, highlights
-    - **Intercom conversations** — last 90 days, satisfaction-rated
-    - **Zendesk tickets** — last 90 days, resolved
-    
-    Sentia clusters verbatims into pain points and assigns them to agents by behavioral similarity. You can preview a sample of verbatims that will ground a sample agent.
+  <Step title="Tune the cohort">
+    Add behavior patterns, psychological drivers, research contexts, and demographic filters. For US cohorts, state and race/ethnicity filters are available; global cohorts support age, gender, education, occupation, and country context.
   </Step>
 
-  <Step title="Step 4: Build">
-    Click **Build population**. Generation runs in the background — typically 3–8 minutes for 1,000 agents. You'll see a Slack notification (and an in-app toast) when it's done.
+  <Step title="Attach research">
+    Add relevant transcripts, surveys, persona docs, recordings, or experiment history. Sentia uses these artifacts to seed the cohort's memories and language.
+  </Step>
+
+  <Step title="Build">
+    Start the build. Generation runs in the background and the population becomes selectable for simulations when it reaches **Ready**.
   </Step>
 </Steps>
 
-## Validate fidelity
+## Review the cohort
 
-Once built, every population should pass the **5-experiment behavioral validation suite** before you trust it for real decisions.
+Open the population detail before using it for a high-stakes study. Look for:
 
-<Steps>
-  <Step title="Open the population">
-    Click the population card. The first tab is **Validation**.
-  </Step>
-  <Step title="Run validation">
-    Click **Run validation**. It executes a sample of agents through 5 canonical behavioral economics experiments (dictator game, trust game, public goods, prisoner's dilemma, ultimatum). ~2 minutes.
-  </Step>
-  <Step title="Read the score">
-    - **Pass rate ≥ 80%** + **Fidelity ≥ 0.7** → healthy. Use the population for simulations.
-    - Below either threshold → your population is too generic or too narrow. Add more qualitative data, broaden the cohort, or rebuild with different filters.
-  </Step>
-</Steps>
+- **Sample personas** that sound like the audience.
+- **Behavior trait radar** that matches the study purpose.
+- **Demographic mix** that is intentional, not accidental.
+- **Qualitative coverage** showing which artifacts contributed.
+- **Health signals** that indicate the population has usable agents.
 
 <Tip>
-  Fidelity below 0.7 isn't a "failed" population — it's a signal you need more grounding. The fastest fix is connecting Dovetail interviews. The slowest is broadening census filters.
+  If the cohort reads generic, narrow the audience brief before adding more knobs. The brief is the strongest steering input.
 </Tip>
 
 ## A common first-week pattern
 
-Many new workspaces build **two populations** in week one:
+Many new workspaces build two cohorts in week one:
 
-1. A broad "Our customers" population (3,000 agents) for high-level roadmap questions
-2. A narrow "Active enterprise admins" or "First-week trial users" population (1,000 agents) for focused product changes
+1. A broad-enough "target users for onboarding" cohort (50 agents).
+2. A narrower "enterprise admins with security concerns" or "new designers evaluating setup" cohort (30-50 agents).
 
-You can have many populations. They're cheap to keep around. Simulations bind to one population each.
+You can keep multiple populations active. Simulations bind to one population each, so pick the cohort that best matches the design question.
 
 ## Maintenance
 
-Populations slowly go stale as your user base evolves. Sentia automatically:
+Maintain populations when:
 
-- Re-syncs your analytics cohorts daily
-- Re-embeds new interview transcripts hourly
-- Flags populations whose demographic mix has drifted > 10% from baseline (you'll see an amber "Drift detected" badge)
-
-When drift is flagged, rebuild the population — it takes < 10 minutes and keeps accuracy up.
+- The target audience changes.
+- You upload better research artifacts.
+- The cohort has been reused for several decisions and the team has learned its blind spots.
+- A simulation report shows generic or implausible reasoning.
 
 ## Next
 

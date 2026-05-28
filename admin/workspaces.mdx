@@ -3,16 +3,18 @@ title: "Workspaces"
 description: "Tenant isolation, multi-workspace patterns, and workspace settings."
 ---
 
-A **workspace** is the unit of tenant isolation in Sentia. All data — simulations, populations, integrations, decisions, calibration history — is workspace-scoped.
+A **workspace** is the unit of tenant isolation in Sentia. All data - members, Figma sources, Design Agent sessions, simulations, populations, research artifacts, reports, integrations, decisions, and calibration history - is workspace-scoped.
 
 ## What's in a workspace
 
 ```
 Workspace
 ├── Members (with roles)
-├── Integrations (15 supported)
+├── Figma and enterprise integrations
+├── Design Agent projects and sources
 ├── Populations
 ├── Simulations
+├── Resource Library
 ├── Decisions log
 ├── Calibration history
 ├── Workspace settings (region, branding, defaults)
@@ -41,16 +43,17 @@ If you're not sure whether you need multiple workspaces, default to one. Cross-w
 | **Region** | US (default) or EU. Determines data residency. Cannot be changed post-creation. |
 | **Time zone** | Default for displaying timestamps; user-level overrides possible |
 | **Default simulation mode** | Fast or Deep; default the wizard suggests |
-| **Default convergence threshold** | 0.95 default |
-| **Default notification channel** | Slack channel for completion alerts |
-| **Trigger conventions** | Per-integration defaults for status names, labels, emoji |
+| **Design system guidance** | Workspace design document and accessibility rule PDFs |
+| **Default population** | Used by Design Agent simulation handoff |
+| **Default notification channel** | Completion alerts when workflow integrations are enabled |
+| **Trigger conventions** | Per-integration defaults for status names, labels, emoji when enabled |
 | **Branding** | Workspace name + logo on exported PDFs |
 
 ## Data residency
 
 | Region | Where data lives | Sub-processors |
 | --- | --- | --- |
-| **US** (default) | AWS us-east-1 + us-west-2 | LLM, vector, analytics providers in US data centers |
+| **US** (default) | AWS us-east-1 + us-west-2 | LLM, vector, and enabled provider data paths in US data centers |
 | **EU** (eu.sentialabs.ai) | AWS eu-west-1 | Same but EU-resident |
 
 Region is set at workspace creation and cannot be changed. If you need to migrate, contact your CSM.
@@ -76,7 +79,7 @@ If you're a member of multiple workspaces:
 - Each workspace has its own URL (`app.sentialabs.ai/{workspace-slug}/...`)
 - Your role can differ per workspace
 
-The CLI (`@sentia/capture`) supports per-workspace contexts: `sentia workspace use <slug>`.
+Connected sources, Design Agent sessions, populations, reports, and API requests remain scoped to the selected workspace.
 
 ## Archiving
 
@@ -103,7 +106,7 @@ For genuine multi-tenant analytics, your CSM can discuss the **Group Workspace**
 
 <CardGroup cols={2}>
   <Card title="Members & roles" icon="user-group" href="/admin/members-and-roles">
-    Owner / Admin / Builder / Viewer permissions.
+    Owner / Admin / Operator / Viewer permissions.
   </Card>
   <Card title="SSO & SCIM" icon="key" href="/admin/sso-scim">
     Authentication and auto-provisioning.

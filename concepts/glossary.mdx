@@ -1,121 +1,96 @@
 ---
 title: "Glossary"
-description: "Key terms in Sentia — definitions in one place."
+description: "Key terms in Sentia, defined for research and design teams."
 ---
 
 ## A
 
-**Adopter category**
-A behavioral science classification — Innovator, Early Adopter, Early Majority, Late Majority, Laggard — that segments how users respond to new things. Sentia tags every agent and breaks results down by category by default.
-
 **Agent**
-A single synthetic respondent in a simulation. Each agent has a behavioral profile, retrieved memories, and runs a Memory → Reflection → Decision chain. Cost ≈ 3 LLM calls per agent.
+A single synthetic respondent in a simulation. Each agent has demographic context, behavioral traits, memories, and a reasoning chain.
 
-**Agent narrative profile**
-The structured persona attached to an agent: demographics, behavioral traits, usage history, preferences, concerns. Drives memory retrieval and decision reasoning.
-
-## B
-
-**Behavioral validation suite**
-Five canonical behavioral economics experiments (dictator game, trust game, public goods, prisoner's dilemma, ultimatum) run against a sample of agents in a population to confirm fidelity. Pass rate ≥ 80% and fidelity score ≥ 0.7 are healthy.
+**Agent context**
+Optional instruction in the simulation wizard that frames the agent's current task, such as "Right now you are evaluating a first-run onboarding flow."
 
 ## C
 
-**Calibration**
-The continuous process of comparing predicted vs. actual outcomes after a feature ships, and adjusting per-segment correction factors. The flywheel that makes Sentia more accurate every release.
+**Cohort**
+The practical form of a population in the current app: a 10-100 agent audience created from a research brief, demographics, behavior patterns, traits, and optional artifacts.
 
-**Capture**
-A piece of input attached to a simulation: a URL screenshot, a localhost capture, a Figma frame, or a text description. Used by agents to "see" the change being evaluated.
-
-**Confidence score**
-How well-supported a simulation result is by the population's grounded data. 0–1 scale; > 0.8 is high confidence.
+**Confidence**
+A report signal for how strongly supported the result appears, given the responses and cohort context.
 
 **Convergence**
-A simulation has converged when the choice distribution stops changing wave-over-wave. Measured by Jensen-Shannon divergence falling below `convergenceThreshold` for two consecutive waves.
+A live-run signal that shows whether additional agents are still changing the result distribution.
 
-**Correction factor**
-A per-segment multiplier applied to future simulation predictions, learned from past predicted-vs-actual gaps. Updates via Bayesian model after each shipped feature.
+**Custom trait**
+A workspace-specific audience dimension, such as AI literacy, security sensitivity, accessibility reliance, or cost scrutiny.
 
 ## D
 
-**Decision**
-A product change being evaluated. Lifecycle: `proposed → simulated → shipped → validated → reverted`. The unit of the calibration flywheel.
-
-**Decision chain**
-The three LLM calls each agent runs: Memory (recall), Reflection (reason), Decision (commit).
-
 **Deep mode**
-Simulation mode running 1,000–5,000 agents over 4–8 waves. Required for segment-level insights and high-confidence predictions.
+The stronger simulation mode for higher-stakes studies and reports that need more robust evidence.
 
-**DPD (Demographic Parity Difference)**
-A bias-detection metric. Sentia alerts when DPD exceeds a threshold across protected demographic segments in the population.
+**Design Agent**
+The Sentia workspace for importing Figma files, generating editable surfaces, creating variants, and handing selected designs to simulation.
 
-**Drift (prediction drift)**
-A pattern where actual outcomes systematically diverge from predictions over time. Detected via CUSUM on the calibration accuracy series.
+**Design artifact**
+A Design Agent surface attached to a simulation. It can include rendered HTML/CSS state and metadata from the design session.
 
 ## F
 
 **Fast mode**
-Simulation mode running 200–500 agents over 2–3 waves. Good for quick directional signals; less reliable for segment-level claims.
+The lighter simulation mode for setup checks, exploration, and early design comparison.
 
-**Fidelity score**
-A 0–1 measure of how closely a population's behavior matches established behavioral economics priors. Reported on the validation page.
-
-## G
-
-**Ground truth**
-The real-world outcome a simulation is calibrated against. Best source: A/B test results from Statsig or Eppo (weighted 3×). Acceptable: observational changes in Amplitude/Mixpanel/PostHog cohort metrics.
-
-## I
-
-**Interview grounding**
-Embedding real customer verbatims (from Dovetail, Intercom, Zendesk) into agent memory so agents reflect real language and concerns instead of generic priors. Lifts accuracy from ~70% → ~85% normalized.
-
-## J
-
-**Jensen-Shannon divergence**
-A symmetric, smoothed information-theoretic distance between two probability distributions. Sentia uses it to measure how much a wave changed the result. Lower = more stable.
-
-## K
-
-**KL divergence**
-Kullback-Leibler divergence — an asymmetric distance between distributions. Used alongside J-S divergence for stability checks.
-
-## N
-
-**Normalized accuracy**
-Accuracy adjusted for natural human behavioral inconsistency (≈81% test-retest baseline). A normalized accuracy of 1.0 means "as accurate as humans predicting their own behavior." Above 0.85 is excellent for decision-making.
-
-**NPS prediction**
-Per-segment and overall predicted change in Net Promoter Score from the simulated change. Surfaced on the Overview results tab.
+**Figma source**
+A connected Figma file, frame, page, or prototype URL used by Design Agent or the simulation wizard.
 
 ## P
 
 **Population**
-A reusable, named, validated set of synthetic agents. Built from census filters + your analytics data + interview transcripts.
+A reusable synthetic user audience. In the UI path, populations are built as focused 10-100 agent cohorts.
+
+**Population lens**
+The report section that explains how traits, demographics, or cohort slices reacted differently.
+
+## R
+
+**Research artifact**
+A file uploaded to the Resource Library or attached during cohort creation: transcripts, surveys, persona docs, recordings, or experiment history.
+
+**Resource Library**
+The workspace area for uploaded research and saved simulation or comparison reports.
 
 ## S
 
-**Segment**
-A slice of the population by adopter category, plan tier, tenure, persona, or custom analytics cohort. All results are sliceable by segment.
+**Simulation**
+A synthetic user study against one scenario and one population.
 
-**Ship detection**
-Automatically detecting when a feature has rolled out, kicking off the 14-day measurement window. Sources: LaunchDarkly (flag > 50% rollout), GitHub PR merge with label, Slack `/shipped`, or manual.
+**Simulation comparison**
+A report comparing 2-3 completed simulations side by side.
 
-## T
-
-**Trigger**
-A condition in a connected tool that auto-launches a simulation. Built-in: Linear/Jira status → "In Review", Figma frame named "simulate" or page "Testing", Slack `:simulate:` reaction.
+**Social dynamics**
+An experimental setting where later-wave agents can see sampled peer rationales from earlier waves.
 
 ## V
 
 **Verbatim**
-A direct quote from a real customer interview, support conversation, or NPS response. Embedded via Cohere, stored in Pinecone, retrieved by agents during the Memory step. The source of agents sounding like *your* users.
+A representative quote-style response from an agent. When cohorts are research-grounded, voices should reflect language from the attached evidence.
 
 ## W
 
 **Wave**
-A batch of agents run in parallel as part of one simulation. Convergence is measured between waves, not between individual agents.
+A batch of agents run in parallel as part of a simulation.
 
 **Workspace**
-A tenant. All data, integrations, populations, and simulations are workspace-scoped. PostgreSQL row-level security enforces complete isolation.
+An enterprise tenant. Data, users, integrations, populations, simulations, research artifacts, and reports are workspace-scoped.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Workspace tour" icon="map" href="/onboarding/workspace-tour">
+    See how these terms map to the dashboard.
+  </Card>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Run the first-study workflow.
+  </Card>
+</CardGroup>

@@ -14,7 +14,7 @@ description: "Add teammates manually or use SCIM auto-provisioning."
 
 <Steps>
   <Step title="Open Settings → Team">
-    Press `⌘,` then click **Team**, or visit `app.sentialabs.ai/settings/team`.
+    Press `⌘,` then click **Team**, or visit `app.sentialabs.ai/settings?tab=team`.
   </Step>
   <Step title="Invite by email">
     Click **Invite member**. Paste up to 50 email addresses, comma- or newline-separated.
@@ -36,8 +36,8 @@ description: "Add teammates manually or use SCIM auto-provisioning."
 | Role | Capabilities |
 | --- | --- |
 | **Owner** | Full admin: workspace settings, billing, integrations, SSO, data deletion, team management. Cannot be removed except by another owner. |
-| **Admin** | Everything except billing and SSO. Manages integrations, populations, simulations, members. |
-| **Builder** | Creates and runs simulations, builds populations, connects integrations they own. Most teammates land here. |
+| **Admin** | Manages members, integrations, design system context, populations, simulations, and workspace settings. |
+| **Operator** | Creates Design Agent projects, runs simulations, builds populations, uploads research, and saves reports. Most active researchers and designers land here. |
 | **Viewer** | Read-only. Sees simulations, results, populations. Cannot run simulations or modify config. Good for execs and observers. |
 
 Role assignments are enforced at the API middleware. Every mutation is audit-logged with actor, role, target, and timestamp.
@@ -48,20 +48,20 @@ For initial seeding > 10 users, paste a CSV in the invite dialog:
 
 ```csv
 email,role
-ada@example.com,Builder
+ada@example.com,Operator
 grace@example.com,Admin
 linus@example.com,Viewer
 ```
 
-Roles must match exactly: `Owner`, `Admin`, `Builder`, `Viewer`.
+Roles must match exactly: `Owner`, `Admin`, `Operator`, `Viewer`.
 
 ## Guest access
 
 For agency partners or external consultants, request **Guest** seats from your CSM. Guests:
 
-- Are scoped to specific populations or decisions you grant them
+- Are scoped to the projects, reports, or workspace areas you grant them
 - Can't see workspace-wide settings, billing, or other populations
-- Can't trigger calibration writes
+- Can't manage workspace settings
 - Auto-expire after 90 days unless renewed
 
 ## What teammates see on first sign-in
@@ -70,8 +70,8 @@ A brief 4-screen welcome:
 
 1. **Welcome to \{your workspace name\}** — explainer + their role
 2. **Pick your role focus** — PM / Researcher / Designer / Other (tailors keyboard hints and recommended templates)
-3. **Tour** — `S`, `P`, `D`, `I`, `C` nav shortcuts and `?` for the full overlay
-4. **First sim suggestion** — Sentia suggests a sample simulation they can run immediately
+3. **Tour** — `D`, `S`, `P`, `R`, `I` nav shortcuts and `?` for the full overlay
+4. **First study suggestion** — Sentia points them toward Figma, a population, or a first simulation depending on workspace readiness
 
 They can skip the welcome anytime. It's available again from the help menu.
 
@@ -82,6 +82,6 @@ They can skip the welcome anytime. It's available again from the help menu.
     Auto-provisioning from your IdP — the long-term answer.
   </Card>
   <Card title="Build your first population" icon="users" href="/onboarding/first-population">
-    Once your team is in, build a population grounded in your real users.
+    Once your team is in, build a focused cohort for the first study.
   </Card>
 </CardGroup>

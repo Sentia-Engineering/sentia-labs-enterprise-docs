@@ -1,9 +1,9 @@
 ---
 title: "Workflow integrations"
-description: "Linear, Jira, Figma, Slack — where most auto-triggers live, and how decisions move from your tools into Sentia."
+description: "Figma for the current design workflow, plus Linear, Jira, and Slack for enterprise trigger programs."
 ---
 
-Workflow integrations connect Sentia to where your team already plans and discusses product changes. They power [auto-triggers](/simulations/triggers) and round-trip context.
+Workflow integrations connect Sentia to where your team already designs, plans, and discusses product changes. In the current self-serve rollout, Figma is the primary visible workflow integration. Linear, Jira, and Slack may be enabled for enterprise trigger programs with your CSM.
 
 ## Linear
 
@@ -57,30 +57,28 @@ Same role as Linear, on Atlassian Cloud or Jira Server.
 
 ## Figma
 
-Two modes: **frame triggers** and **on-demand capture**.
+Figma powers the main design workflow: Design Agent imports and simulation wizard captures.
 
 <Steps>
-  <Step title="OAuth via Nango">
-    Integrations → Figma → **Connect**. Authorize Sentia for read access to your team's files.
+  <Step title="Save a personal access token">
+    Go to **Settings -> Integrations -> Figma**. Save a token with `current_user:read`, `file_content:read`, and `file_comments:write`.
   </Step>
-  <Step title="Choose trigger convention">
-    Pick one:
-    - **Frame naming:** any frame whose name starts with `simulate` triggers when modified
-    - **Page naming:** every frame on a page named `Testing` triggers when modified
+  <Step title="Import into Design Agent">
+    Paste a Figma file URL in Design Agent to index frames and generate editable surfaces.
   </Step>
-  <Step title="Set default population + scenario">
-    Figma triggers can't infer a population from the design. Configure workspace defaults.
+  <Step title="Capture in the wizard">
+    Paste Figma frame or file URLs in the Decision step to attach visuals to a simulation.
   </Step>
-  <Step title="On-demand capture">
-    You can also paste any Figma frame URL into the simulation wizard — no trigger needed.
+  <Step title="Post back to Figma">
+    Design Agent can post an edit summary as a Figma comment when you export from a session.
   </Step>
 </Steps>
 
-**What's synced:** frame images, file metadata, frame-level annotations, comments.
+**What's read:** frame images, file metadata, text content, component names, hotspots, and design-token hints where available.
 
-**Sync cadence:** 24-hour polling for the file index; on-demand rendering when used in simulations.
+**Capture cadence:** on demand when you import a source, refresh a session, or capture frames in a simulation.
 
-**File access:** Sentia respects Figma file permissions. If your service user can't see a file, neither can Sentia.
+**File access:** Sentia can read files available to the Figma account that created the token.
 
 ## Slack
 
@@ -146,7 +144,7 @@ When webhooks start failing (HMAC mismatches, 4xx responses), admins get a Slack
   </Accordion>
 
   <Accordion title="Figma captures look low-resolution">
-    Sentia renders Figma frames at the default Figma export resolution. For ultra-high-detail captures, use the localhost capture flow instead.
+    Confirm you linked directly to the relevant frame or section and re-capture. If the issue continues, contact support with the Figma file and frame URL.
   </Accordion>
 
   <Accordion title="Slack `:simulate:` reaction does nothing">

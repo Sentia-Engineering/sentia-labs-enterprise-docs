@@ -1,0 +1,78 @@
+---
+title: "Design Agent overview"
+description: "Import Figma work, generate editable surfaces, iterate with Sentient, and hand designs to simulation."
+---
+
+Design Agent is the design workspace inside Sentia. It helps researchers and designers move from a Figma file to editable variants and then into a synthetic user study without rebuilding the same context in multiple tools.
+
+## What Design Agent does
+
+<CardGroup cols={2}>
+  <Card title="Import Figma" icon="figma" href="/design-agent/sources">
+    Connect a Figma file, index screens and components, and generate editable surfaces.
+  </Card>
+  <Card title="Iterate with Sentient" icon="sparkles">
+    Ask for copy, layout, hierarchy, accessibility, or flow changes while keeping the source context attached.
+  </Card>
+  <Card title="Inspect and edit" icon="sliders">
+    Select elements, adjust properties, pin important areas, and compare generated variants.
+  </Card>
+  <Card title="Send to simulation" icon="flask" href="/design-agent/simulation-handoff">
+    Send 1-5 selected surfaces to independent simulation runs against the workspace default population.
+  </Card>
+</CardGroup>
+
+## Project flow
+
+<Steps>
+  <Step title="Create or open a project">
+    Go to **Design Agent** (`D`). Use search, filters, and grid/list view to find existing work, or create a new project.
+  </Step>
+  <Step title="Connect a source">
+    Attach a Figma file. If your team has a GitHub component library indexed, you can link it so generated surfaces follow production components more closely.
+  </Step>
+  <Step title="Wait for indexing">
+    Sentia reads the file, identifies screens and components, captures source metadata, and prepares editable surfaces.
+  </Step>
+  <Step title="Select a surface">
+    Open a surface to enter the working view: canvas, chat, variants, inspector, preview, export, share, and simulation handoff.
+  </Step>
+  <Step title="Create variants">
+    Use chat or direct edits to create alternatives. Pin critical elements so follow-up edits preserve the parts you care about.
+  </Step>
+</Steps>
+
+## What to ask Design Agent
+
+Good prompts are specific about the user, the task, and the design criterion:
+
+> "Create a lower-friction onboarding variant for first-time admins. Keep the same product promise, reduce the number of decisions on the first screen, and make the primary action more explicit."
+
+Useful request types:
+
+- Reduce cognitive load in a flow.
+- Create an accessibility-improved variant.
+- Generate a more enterprise-trustworthy version of a screen.
+- Compare two layouts and explain what changed.
+- Prepare 2-3 variants for simulation.
+
+## Outputs
+
+Design Agent work can produce:
+
+- Editable surfaces and variants inside Sentia.
+- Shared links for review.
+- A Figma comment that summarizes the edit session.
+- Simulation runs for selected surfaces.
+- Report evidence saved into the Resource Library.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Sources" icon="database" href="/design-agent/sources">
+    Figma setup, optional GitHub context, and source indexing.
+  </Card>
+  <Card title="Simulation handoff" icon="flask" href="/design-agent/simulation-handoff">
+    How to turn selected surfaces into research runs.
+  </Card>
+</CardGroup>

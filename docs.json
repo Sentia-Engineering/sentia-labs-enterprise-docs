@@ -2,7 +2,7 @@
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
   "name": "Sentia Labs Enterprise",
-  "description": "Behavioral product simulation platform. Run thousands of AI agents through decision scenarios to predict how user segments will respond — before shipping.",
+  "description": "Enterprise design research simulation platform. Import Figma work, build behavioral cohorts, and run synthetic user studies before shipping.",
   "colors": {
     "primary": "#0066FF",
     "light": "#3B82F6",
@@ -28,10 +28,36 @@
             "group": "Onboarding",
             "pages": [
               "onboarding/checklist",
+              "onboarding/workspace-tour",
               "onboarding/sso-setup",
               "onboarding/invite-team",
               "onboarding/first-population",
               "onboarding/first-simulation"
+            ]
+          },
+          {
+            "group": "Design Agent",
+            "pages": [
+              "design-agent/overview",
+              "design-agent/sources",
+              "design-agent/simulation-handoff"
+            ]
+          },
+          {
+            "group": "Resource Library",
+            "pages": [
+              "resource-library/overview",
+              "resource-library/research-artifacts",
+              "resource-library/reports"
+            ]
+          },
+          {
+            "group": "Populations",
+            "pages": [
+              "populations/overview",
+              "populations/build",
+              "populations/interview-grounding",
+              "populations/validation"
             ]
           },
           {
@@ -48,22 +74,6 @@
             ]
           },
           {
-            "group": "Populations",
-            "pages": [
-              "populations/overview",
-              "populations/build",
-              "populations/interview-grounding",
-              "populations/validation"
-            ]
-          },
-          {
-            "group": "Decisions",
-            "pages": [
-              "decisions/log",
-              "decisions/lifecycle"
-            ]
-          },
-          {
             "group": "Integrations",
             "pages": [
               "integrations/overview",
@@ -76,8 +86,10 @@
             ]
           },
           {
-            "group": "Calibration",
+            "group": "Decision Lifecycle",
             "pages": [
+              "decisions/log",
+              "decisions/lifecycle",
               "calibration/overview",
               "calibration/ship-detection",
               "calibration/accuracy",
@@ -90,6 +102,10 @@
               "admin/workspaces",
               "admin/members-and-roles",
               "admin/sso-scim",
+              "admin/design-system",
+              "admin/custom-traits",
+              "admin/simulation-schedules",
+              "admin/social-dynamics",
               "admin/billing-and-usage",
               "admin/audit-log"
             ]

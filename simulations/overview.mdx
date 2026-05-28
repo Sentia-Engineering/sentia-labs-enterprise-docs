@@ -1,109 +1,113 @@
 ---
 title: "Simulations overview"
-description: "Anatomy of a simulation — what it does, when to use it, and what to expect from results."
+description: "Anatomy of a simulation, when to use it, and what to expect from results."
 ---
 
-A **simulation** is one run of N agents through one specific decision scenario. It produces a distribution of choices, segment breakdowns, an NPS prediction, top objections, and Sentia-generated recommendations.
+A **simulation** is one synthetic user study: a defined cohort reacts to a specific design, product, or research scenario. It produces live signals while running and a completed report with findings, concerns, recommendations, population lenses, representative voices, and methodology.
 
 ## When to run a simulation
 
 <CardGroup cols={2}>
-  <Card title="Pre-launch validation" icon="rocket">
-    Before shipping a non-trivial change — pricing, onboarding, plan structure, major UX flow.
+  <Card title="Design variant comparison" icon="pen-ruler" href="/design-agent/simulation-handoff">
+    Compare Figma or Design Agent variants when the team disagrees about user reaction.
   </Card>
-  <Card title="Tradeoff resolution" icon="scale-balanced">
-    Two competing designs and no consensus. Run both, compare segment receptivity.
+  <Card title="Pre-launch validation" icon="rocket" href="/simulations/wizard">
+    Check a non-trivial change before it reaches engineering or rollout.
   </Card>
-  <Card title="Risk surfacing" icon="triangle-exclamation">
-    "What could go wrong?" — Objections tab reveals concerns clustered from real verbatims.
+  <Card title="Risk surfacing" icon="triangle-exclamation" href="/simulations/results">
+    Find comprehension, trust, accessibility, or expectation issues before a formal study.
   </Card>
-  <Card title="Roadmap prioritization" icon="list-ol">
-    Run candidate features in parallel against the same population. Compare predicted NPS lift, adoption curves.
+  <Card title="Roadmap prioritization" icon="list-ol" href="/simulations/best-practices">
+    Run candidate concepts against the same cohort and compare the evidence.
   </Card>
 </CardGroup>
 
-Bad fits: bug fixes, copy tweaks, internal tooling. Agents simulate end users — they have no opinion on engineering churn.
+Bad fits: bug fixes, isolated copy tweaks, and internal tooling your cohort would not use.
 
-## The four parts of a simulation
+## The three setup steps
 
-A simulation always has these four pieces:
+A simulation wizard has three steps:
 
-```
-┌────────────┐   ┌────────────┐   ┌────────────┐   ┌────────────┐
-│  Decision  │   │  Scenario  │   │ Population │   │   Config   │
-│            │   │ + captures │   │            │   │            │
-└────────────┘   └────────────┘   └────────────┘   └────────────┘
+```text
+Decision + context  ->  Population  ->  Configure
 ```
 
 | Part | What it is |
 | --- | --- |
-| **Decision** | The change being evaluated. Question, hypothesis, success criteria. |
-| **Scenario + captures** | The "what does the change look like?" — Figma frames, captured UI, URL screenshots, or text. |
-| **Population** | The "who is reacting?" — your validated population. |
-| **Config** | The "how rigorous?" — mode (Fast/Deep), agent count, convergence threshold, max duration. |
+| **Decision** | Study type, research question, hypothesis, scenario context, and design source. |
+| **Population** | The cohort reacting to the scenario. Only ready populations with usable agents can launch. |
+| **Configure** | Fast or Deep mode, agent count, seed/context controls, power preview, and launch details. |
 
-You configure these in the 4-step [wizard](/simulations/wizard).
+You configure these in the [wizard](/simulations/wizard), or launch selected Design Agent surfaces through [simulation handoff](/design-agent/simulation-handoff).
 
 ## What you get back
 
-After the run completes, the 8-tab results view:
+During the run, the live page shows:
 
 <CardGroup cols={2}>
-  <Card title="Overview" icon="chart-pie">
-    Headline distribution, confidence, top concerns, NPS prediction.
+  <Card title="Agents completed" icon="users" href="/simulations/results">
+    Completion against target agent count.
   </Card>
-  <Card title="Recommendations" icon="lightbulb">
-    Sentia-generated actions to address objections and amplify positives.
+  <Card title="Preference split" icon="chart-bar" href="/simulations/results">
+    Live choice distribution for A/B and competitive studies.
   </Card>
-  <Card title="Segments" icon="users">
-    Breakdown by adopter category, persona, plan tier, tenure. The most important tab.
+  <Card title="Simulated SUS" icon="gauge" href="/simulations/results">
+    Usability-style signal when the run collects enough structured data.
   </Card>
-  <Card title="Objections" icon="message-exclamation">
-    Top concern clusters with sample verbatims.
+  <Card title="Concerns and verbatims" icon="message" href="/simulations/results">
+    Emerging concerns, live quotes, and convergence signals.
   </Card>
-  <Card title="Agents" icon="user">
-    Per-agent decisions, sortable and filterable.
+</CardGroup>
+
+After completion, the report includes:
+
+<CardGroup cols={2}>
+  <Card title="Verdict and visuals" icon="image" href="/simulations/results">
+    Headline outcome plus visual comparison for Figma and Design Agent inputs.
   </Card>
-  <Card title="Transcripts" icon="message-lines">
-    Full Memory → Reflection → Decision chain for any agent.
+  <Card title="Findings and signals" icon="chart-mixed" href="/simulations/results">
+    Evidence-backed findings, excitement signals, and concern density.
   </Card>
-  <Card title="Adoption Cascade" icon="chart-line">
-    12-month projected adoption curve, Innovator → Laggard.
+  <Card title="Concern hotspots" icon="message-exclamation" href="/simulations/results">
+    Where the design caused confusion, friction, or accessibility risk.
   </Card>
-  <Card title="Calibration" icon="bullseye">
-    Predicted vs. actual once the feature ships. Updates in real time.
+  <Card title="Population lens" icon="users" href="/simulations/results">
+    Which traits, demographics, or cohort slices reacted differently.
   </Card>
 </CardGroup>
 
 ## How long it takes
 
-| Mode | Agents | Duration | LLM cost (approx) |
-| --- | --- | --- | --- |
-| **Fast** | 200–500 | 2–5 min | ~600–1,500 calls |
-| **Deep** | 1,000–5,000 | 8–25 min | ~3,000–15,000 calls |
-| **Custom** | Up to 10,000 | Up to 60 min | Per agent × 3 calls |
+| Mode | Good for | Agent count |
+| --- | --- | --- |
+| **Fast** | Setup validation, exploratory design reads, first-pass variant checks | 10-50 for first-week cohorts |
+| **Deep** | Higher-stakes study questions and stronger evidence | As many agents as the selected population supports |
 
-Cost is metered per-token against your workspace contract allocation. Visible in Admin → Usage.
+Population size currently caps at 100 agents in the app. API simulation requests can accept larger counts for enterprise programs, but the UI path is cohort-first.
+
+## Simulation list and comparison
+
+The Simulations page supports search, status filters, project filters, tags, saved views, duplicate/rerun actions, and comparison mode. Select 2-3 completed runs to create a comparison report, then save the PDF to the Resource Library when it becomes decision evidence.
 
 ## Where to go from here
 
 <CardGroup cols={2}>
   <Card title="The wizard" icon="wand-magic-sparkles" href="/simulations/wizard">
-    Walk through the 4-step setup in detail.
+    Walk through the 3-step setup in detail.
   </Card>
-  <Card title="Input quality hierarchy" icon="image" href="/simulations/inputs">
-    Captured UI beats Figma beats URL beats text. Why and by how much.
+  <Card title="Inputs" icon="image" href="/simulations/inputs">
+    Figma, Design Agent surfaces, text, and other inputs.
   </Card>
   <Card title="Fast vs. Deep" icon="gauge-high" href="/simulations/modes">
     When to pick each mode.
   </Card>
   <Card title="Reading results" icon="chart-mixed" href="/simulations/results">
-    The 8-tab tour with screenshots of patterns to look for.
+    How to read completed reports.
   </Card>
-  <Card title="Auto-triggers" icon="bolt" href="/simulations/triggers">
-    Run simulations automatically from Linear, Jira, Figma, or Slack.
+  <Card title="Design Agent handoff" icon="pen-ruler" href="/design-agent/simulation-handoff">
+    Send 1-5 selected surfaces into simulation.
   </Card>
   <Card title="Best practices" icon="trophy" href="/simulations/best-practices">
-    Input quality, convergence, calibration, accuracy benchmarks.
+    Cohort fit, input quality, disagreement, and reruns.
   </Card>
 </CardGroup>

@@ -4,7 +4,7 @@ api: "POST /api/populations/{populationId}/validate"
 description: "Run the 5-experiment behavioral suite against a sample of agents to verify behavioral fidelity."
 ---
 
-Runs the canonical behavioral validation suite — dictator game, trust game, public goods, prisoner's dilemma, and ultimatum — against a 200-agent sample from the population. Returns when complete (~2 minutes).
+Runs the canonical behavioral validation suite — dictator game, trust game, public goods, prisoner's dilemma, and ultimatum — against an available sample from the population. Returns when complete.
 
 See [Validation (dashboard)](/populations/validation) for what the suite measures and how to read results.
 
@@ -20,7 +20,7 @@ curl -X POST https://api.sentialabs.ai/api/populations/pop_8f9a2b.../validate \
 
 | Parameter | Type | Notes |
 | --- | --- | --- |
-| `populationId` | UUID | Must be in `ready` or `drifted` state |
+| `populationId` | UUID | Must be in `ready` state |
 
 ## Response — 200 OK
 

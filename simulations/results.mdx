@@ -1,142 +1,108 @@
 ---
 title: "Reading results"
-description: "A tour of the 8-tab results view, with the patterns to look for in each."
+description: "How to read the completed simulation report and turn it into design evidence."
 ---
 
-A completed simulation lands at `/simulations/[id]/results`. Eight tabs, each a different cut of the same data. The temptation is to read Overview only and stop — discipline yourself to read at least Segments and Objections too.
+A completed simulation opens as a narrative report, not a tab tour. Read it like a research artifact: verify the inputs, understand the strongest patterns, inspect where the design failed, then decide what to do next.
 
-Press `1`–`8` to switch tabs. Press `⌘E` to export the full report as PDF.
+## Recommended reading order
 
-## 1 · Overview
+<Steps>
+  <Step title="1. Verify the setup">
+    Confirm the evaluated Figma frames, Design Agent surfaces, scenario type, population, agent count, and method match the study you intended to run.
+  </Step>
+  <Step title="2. Read the verdict">
+    Use the headline result as orientation, not the final answer. Preference share is useful only after you understand why agents reacted that way.
+  </Step>
+  <Step title="3. Inspect visual comparison">
+    For design inputs, compare screenshots or surfaces so you know exactly what agents saw.
+  </Step>
+  <Step title="4. Read findings">
+    Findings explain the behavioral pattern behind the result. Look for evidence-backed statements, not just recommendations.
+  </Step>
+  <Step title="5. Review concerns and hotspots">
+    This is usually the highest-value section for designers. Find the copy, layout, trust, accessibility, or comprehension issues that created hesitation.
+  </Step>
+  <Step title="6. Check the population lens">
+    Look for trait, demographic, and behavioral slices that reacted differently. A split result can still be actionable if the split maps to launch strategy.
+  </Step>
+  <Step title="7. Pull voices">
+    Use representative quotes for critique notes, stakeholder readouts, or follow-up research planning.
+  </Step>
+</Steps>
 
-The headline tab. What you'd put on the first slide of a decision review.
+## Report sections
 
-**Components:**
+| Section | What it helps answer |
+| --- | --- |
+| **Hero / verdict** | What happened at the highest level? |
+| **Visual comparison** | What did agents evaluate? |
+| **Metrics strip** | How strong are the headline signals? |
+| **Findings** | What behavioral patterns explain the result? |
+| **Signals** | What excited or reassured agents? |
+| **Concern hotspots / concerns** | Where did the design create friction? |
+| **Recommendations** | What should the team try next? |
+| **Population analysis** | How did the cohort behave overall? |
+| **Population lens** | Which traits or audience slices matter? |
+| **Voices** | What quotes summarize agent reasoning? |
+| **Methodology** | How was the simulation run? |
 
-- **Final distribution** (bar chart) — agents' final choices across the simulation
-- **Confidence + convergence scores** — at-a-glance trust signals
-- **NPS prediction** — predicted change in Net Promoter Score, overall and per-segment
-- **Top 3 concerns** — clustered objection themes
-- **Top 3 amplifiers** — what excited agents most
+Some workspaces may also see a newer report view with sections such as **Recommended change**, **Friction map**, **Who reacted how**, **What they said**, **The panel**, and **Trustworthiness**.
 
-**What to look for:**
+## Live run signals
 
-- Is the distribution lopsided or balanced? Lopsided + high confidence = clear answer. Balanced + high confidence = genuinely contested.
-- Is NPS predicted to move? Negative movements > 3 points are worth deep investigation in the Segments tab.
+Before completion, the live view helps you catch setup problems:
 
-## 2 · Recommendations
+| Signal | Use |
+| --- | --- |
+| **Agents completed** | Confirms the run is progressing. |
+| **Preference split** | Shows early distribution for A/B and competitive studies. |
+| **Simulated SUS** | Gives a usability-style read when available. |
+| **Population behavior** | Shows emerging behavior patterns. |
+| **Concerns per agent** | Flags friction density. |
+| **Live verbatims** | Lets you sanity-check whether agents understand the task. |
+| **Convergence** | Shows whether additional agents are still changing the distribution. |
 
-Sentia-generated actions to address objections and amplify positives. Each recommendation includes:
+## Comparison reports
 
-- The specific objection or amplifier it addresses
-- A concrete action suggestion
-- Which segments benefit most
-- Confidence in the recommendation
+From the Simulations list, select 2-3 completed runs and compare them. Comparison is useful when:
 
-**Treat as a checklist, not a script.** Recommendations are starting points; your team adds product judgment.
+- Design Agent produced several variants.
+- You ran Fast then Deep and want to compare stability.
+- You tested the same design against different cohorts.
+- You need a concise side-by-side artifact for critique.
 
-## 3 · Segments
+Comparison PDFs can be saved to the [Resource Library](/resource-library/reports).
 
-**The most important tab.** Always read this before forming a conclusion.
+## Exporting and saving
 
-Shows the distribution sliced by:
+Use the report actions to:
 
-- **Adopter category** — Innovator → Laggard
-- **Persona** (if your population has persona tags)
-- **Plan tier** — Free / Pro / Enterprise (from your analytics)
-- **Tenure** — < 30d, 30–90d, 90d+ (from your analytics)
-- **Custom cohorts** — any cohort you defined in your analytics provider
+- Export a PDF.
+- Save the report to the Resource Library.
+- Schedule a recurring run when the study should repeat.
+- Push to Linear when that integration is enabled.
+- Open Ask AI for follow-up analysis.
 
-**Pattern to look for:** large variance across segments. If Innovators love it and Laggards hate it, that's not "mixed signal" — that's a launch strategy (target Innovators first, plan messaging for Laggards).
+Save reports that influenced a decision. Do not save every exploratory run unless your team explicitly wants that archive.
 
-## 4 · Objections
+## How to use the answer
 
-Top concern clusters with sample verbatims. Powered by clustering of agent reasoning, grounded in your real customer language (when interview-grounded).
-
-Each cluster shows:
-
-- A short label ("Trial too short to evaluate")
-- 5 sample verbatim-style quotes
-- The segments most likely to raise this objection
-- Approximate share of agents voicing this concern
-
-**What to look for:** objections that sound exactly like things you've heard in real interviews. That's the validation signal that your interview grounding is working. Objections that sound generic suggest your population needs more qualitative data.
-
-## 5 · Agents
-
-Sortable, filterable table of every individual agent's decision.
-
-Columns: agent ID, persona, segment, choice, confidence, rationale (first 80 chars), concerns, NPS delta.
-
-**Use it for:**
-
-- Auditing specific segments ("show me only Pro+Tenure 90d+ agents who chose Adopt")
-- Spot-checking that reasoning makes sense
-- Building a presentation-ready quote pull (filter, sort by confidence, export to CSV)
-
-`J` / `K` to navigate rows, `Enter` to expand the full agent transcript.
-
-## 6 · Transcripts
-
-Full Memory → Reflection → Decision chain for any agent.
-
-**Memory step:** the retrieved verbatims, behavioral profile, and usage history the agent had access to.
-
-**Reflection step:** the agent's reasoning, including weighing its history and the scenario.
-
-**Decision step:** the final choice, confidence, rationale, concerns, NPS delta.
-
-**Why you'd open this:** to build trust. After reading 3–5 transcripts, you'll have a strong intuition for whether the agents "sound right" for your users. If they don't, the population needs more grounding.
-
-## 7 · Adoption Cascade
-
-A 12-month projected adoption curve, Innovator → Laggard.
-
-Shows:
-
-- Cumulative adoption % over 12 months
-- Adopter category contribution per quarter
-- Confidence band (P10 / P90)
-- Comparison to baseline (last quarter's adoption rate for similar features)
-
-**What it's for:** roadmap forecasting and capacity planning. Don't over-fit on the exact slope — the relative ranking between features matters more than the absolute numbers.
-
-## 8 · Calibration
-
-Once you ship the feature and Sentia detects the rollout, this tab populates with predicted vs. actual.
-
-**Empty state (pre-ship):** "Ship this feature to start calibration. Sentia auto-detects via LaunchDarkly, GitHub PR, or `/shipped` in Slack."
-
-**During measurement (14-day window):** real-time chart of actuals streaming in, alongside the predicted distribution.
-
-**Post-measurement:** final predicted vs. actual delta, normalized accuracy score, per-segment correction factors applied to future simulations.
-
-See [Calibration](/calibration/overview).
-
-## Exporting
-
-| Format | How | Includes |
-| --- | --- | --- |
-| **PDF** | `⌘E` | All 8 tabs, branded, ready for stakeholder review |
-| **CSV** (Agents tab) | Click "Export" in Agents tab | Per-agent rows for analysis in Excel/Sheets |
-| **JSON** (raw) | API `GET /simulations/{id}` | Full structured data; see [API reference](/api-reference/endpoint/simulations-get) |
-| **Slack snapshot** | Click "Share to Slack" | Posts headline + chart image to a channel |
-
-## Sharing with your team
-
-Three patterns we see work:
-
-1. **PDF + decision meeting** — export PDF, share async 24h before the meeting, use the meeting to discuss segments and objections (not headline numbers)
-2. **Slack snapshot + link** — for quick async updates; the link goes to the live results page where teammates can drill in
-3. **Push to Linear/Jira** — `⌘⇧L` from the results page pushes the headline + link into the originating issue, closing the loop on the decision
+| Result | What to do |
+| --- | --- |
+| Clear preference, low concern density | Use as support for moving the design forward. |
+| Clear preference, high concern density | Keep the direction but address hotspots before shipping or testing. |
+| Split preference by cohort slice | Segment the launch, messaging, or follow-up research. |
+| Low confidence or generic voices | Improve the cohort, attach better research, or sharpen the prompt. |
+| Surprising contradiction | Read voices and concerns before rerunning; the contradiction is often the useful signal. |
 
 ## Next
 
 <CardGroup cols={2}>
-  <Card title="Auto-triggers" icon="bolt" href="/simulations/triggers">
-    Run simulations automatically from Linear, Jira, Figma, Slack.
+  <Card title="Resource Library reports" icon="file-lines" href="/resource-library/reports">
+    Save and share durable evidence.
   </Card>
   <Card title="Best practices" icon="trophy" href="/simulations/best-practices">
-    The patterns that consistently produce high-accuracy results.
+    Patterns that make reports more reliable.
   </Card>
 </CardGroup>

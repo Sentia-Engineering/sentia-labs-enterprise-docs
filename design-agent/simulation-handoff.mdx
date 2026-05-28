@@ -1,0 +1,76 @@
+---
+title: "Send designs to simulation"
+description: "How Design Agent surfaces become simulation runs and comparison evidence."
+---
+
+Use simulation handoff when you have one to five surfaces that need behavioral evidence from a target audience. Each selected surface becomes its own simulation run using the same prompt and the workspace default population.
+
+## When to hand off from Design Agent
+
+Good moments:
+
+- You have two or more variants and need a preference signal.
+- A screen has an obvious risk: trust, comprehension, accessibility, pricing, or task clarity.
+- A stakeholder disagreement is about user reaction rather than visual taste.
+- You need verbatim-style concerns before a design critique or usability study.
+
+Avoid handoff for tiny visual tweaks, internal admin screens your population would not use, or unfinished surfaces that do not represent a real user task.
+
+## Handoff flow
+
+<Steps>
+  <Step title="Select surfaces">
+    In the Design Agent working view, select 1-5 surfaces or variants. Multi-surface handoff starts independent runs in parallel.
+  </Step>
+  <Step title="Write the evaluation prompt">
+    Describe the task and what you want agents to judge. Be explicit about context, audience, and success criteria.
+  </Step>
+  <Step title="Confirm the population">
+    Handoff uses the workspace default population. If the audience is wrong, create or switch the default cohort before launching.
+  </Step>
+  <Step title="Launch">
+    Sentia starts one simulation per surface. Results stream back into the Design Agent session and are also available in Simulations.
+  </Step>
+  <Step title="Compare reports">
+    Compare completed runs from the Simulations list when you need a side-by-side decision artifact.
+  </Step>
+</Steps>
+
+## Prompt pattern
+
+Use this structure for reliable design research runs:
+
+```text
+Audience: [who should react]
+Task: [what they are trying to accomplish]
+Question: [what decision the team needs to make]
+Success criteria: [what would make this design successful]
+Watch for: [known risks, e.g. trust, comprehension, accessibility, pricing anxiety]
+```
+
+Example:
+
+> "Audience: first-time workspace admins at enterprise SaaS companies. Task: understand whether the onboarding screen helps them connect Figma and build a first cohort. Question: which variant creates the clearest next step? Success criteria: users understand why Figma is needed and feel comfortable continuing. Watch for security concerns, jargon, and unclear ownership."
+
+## Reading the results
+
+For design handoffs, start with:
+
+1. **Visual comparison** - confirm the right surfaces were evaluated.
+2. **Findings** - read the headline behavior and the strongest evidence.
+3. **Concern hotspots** - find where the design caused confusion, trust issues, or accessibility friction.
+4. **Population lens** - check whether reactions differ by trait or audience slice.
+5. **Voices** - pull representative quotes for critique notes.
+
+Save the report to the Resource Library when it becomes part of a decision record.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Simulation wizard" icon="wand-magic-sparkles" href="/simulations/wizard">
+    Run simulations directly from Figma or text without Design Agent.
+  </Card>
+  <Card title="Reports library" icon="file-lines" href="/resource-library/reports">
+    Save and share simulation evidence.
+  </Card>
+</CardGroup>

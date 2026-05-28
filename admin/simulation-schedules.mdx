@@ -1,0 +1,49 @@
+---
+title: "Simulation schedules"
+description: "Re-run important simulation templates on a cadence."
+---
+
+Simulation schedules are for recurring checks: a template run is cloned on a cron schedule so your team can monitor whether a design or audience reaction is changing over time.
+
+## Good uses
+
+- Weekly onboarding-flow sentiment checks.
+- Monthly pricing-page trust checks.
+- Post-release follow-up on a high-risk flow.
+- Regression-style checks after frequent design changes.
+
+Avoid schedules for one-off design comparisons or early exploration. Manual runs are clearer until the question is stable.
+
+## How schedules work
+
+<Steps>
+  <Step title="Start from a completed or reusable simulation">
+    Use a run whose scenario, population, and configuration are worth repeating.
+  </Step>
+  <Step title="Create a schedule">
+    Configure cadence in **Settings -> Simulation schedules** or from a report action when available.
+  </Step>
+  <Step title="Review generated runs">
+    Each scheduled execution creates a fresh simulation with the same template inputs.
+  </Step>
+  <Step title="Pause, resume, run now, or delete">
+    Admins can manage schedules as research priorities change.
+  </Step>
+</Steps>
+
+## Governance
+
+- Use clear names that include audience and study question.
+- Review schedule value monthly.
+- Save only the reports that matter; scheduled runs can produce noise if every output is treated as final evidence.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Simulation results" icon="chart-mixed" href="/simulations/results">
+    Know what scheduled reports contain.
+  </Card>
+  <Card title="Reports library" icon="file-lines" href="/resource-library/reports">
+    Preserve meaningful scheduled-run evidence.
+  </Card>
+</CardGroup>
